@@ -1,1 +1,3 @@
 /sources/*.user
+/bin/debug
+/bin/release
