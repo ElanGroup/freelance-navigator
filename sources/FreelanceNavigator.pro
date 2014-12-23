@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     elanceapiclient.cpp \
-    elancesettingsdialog.cpp
+    elancesettingsdialog.cpp \
+    elancedatareader.cpp \
+    elancetokensdata.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
-    elancesettingsdialog.h
+    elancesettingsdialog.h \
+    elancedatareader.h \
+    elancetokensdata.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui

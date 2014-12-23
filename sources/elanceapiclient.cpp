@@ -5,9 +5,9 @@
 #include <QSettings>
 #include <QUrl>
 #include <QUrlQuery>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include "elanceapiclient.h"
+#include "elancedatareader.h"
+#include "elancetokensdata.h"
 
 using namespace FreelanceNavigator;
 
@@ -19,12 +19,10 @@ ElanceApiClient::ElanceApiClient(QObject * parent) :
     m_authorizeDialog(0),
     m_networkManager(new QNetworkAccessManager(this))
 {
-
 }
 
 ElanceApiClient::~ElanceApiClient()
 {
-
 }
 
 bool ElanceApiClient::readSettings()
@@ -120,45 +118,27 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
     disconnect(m_networkManager, &QNetworkAccessManager::finished,
                this, &ElanceApiClient::processTokensReply);
 
-    bool areTokensReadSuccessfully = false;
     if (reply->error() == QNetworkReply::NoError)
     {
-        QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
-        if (!document.isNull())
+        QSharedPointer<ElanceTokensData> tokensData =
+            ElanceDataReader::readTokensData(reply->readAll());
+        reply->deleteLater();
+        if (!tokensData->isNull())
         {
-            QJsonValue dataValue = document.object()["data"];
-            if (!dataValue.isUndefined() && dataValue.isObject())
+            m_accessToken = tokensData->accessToken();
+            m_refreshToken = tokensData->refreshToken();
+            if (m_authorizeDialog)
             {
-                QJsonObject dataObject = dataValue.toObject();
-                QJsonValue accessToken = dataObject["access_token"];
-                if (!accessToken.isUndefined() && accessToken.isString())
-                {
-                    m_accessToken = accessToken.toString();
-
-                    QJsonValue refreshToken = dataObject["refresh_token"];
-                    if (!refreshToken.isUndefined() && refreshToken.isString())
-                    {
-                        m_refreshToken = refreshToken.toString();
-                        areTokensReadSuccessfully = true;
-                    }
-                }
+                m_authorizeDialog->accept();
+                return;
             }
         }
     }
 
     if (m_authorizeDialog)
     {
-        if (areTokensReadSuccessfully)
-        {
-            m_authorizeDialog->accept();
-        }
-        else
-        {
-            m_authorizeDialog->reject();
-        }
+        m_authorizeDialog->reject();
     }
-
-    reply->deleteLater();
 }
 
 void ElanceApiClient::post(const QString & url, const QUrlQuery & data)
