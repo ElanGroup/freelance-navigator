@@ -23,7 +23,9 @@ HEADERS  += mainwindow.h \
     elanceapiclient.h \
     elancesettingsdialog.h \
     elancedatareader.h \
-    elancetokensdata.h
+    elancetokensdata.h \
+    ielancetokensdata.h \
+    ielancedata.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui

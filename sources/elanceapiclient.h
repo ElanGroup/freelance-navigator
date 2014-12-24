@@ -19,12 +19,14 @@ public:
 
     bool readSettings();
     bool authorize();
+    void getJobs();
 
 signals:
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
     void processTokensReply(QNetworkReply * reply);
+    void processJobsReply(QNetworkReply * reply);
 
 private:
     void getTokens(const QString & authorizationCode);
@@ -32,6 +34,7 @@ private:
 
     static const QString m_authorizeUrl;
     static const QString m_tokenUrl;
+    static const QString m_jobsUrl;
 
     QString m_clientId;
     QString m_clientSecret;

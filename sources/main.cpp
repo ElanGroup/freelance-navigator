@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     if (elanceApiClient.authorize())
     {
-        FreelanceNavigator::MainWindow mainWindow(elanceApiClient);
+        FreelanceNavigator::MainWindow mainWindow(&elanceApiClient);
         mainWindow.show();
         return application.exec();
     }

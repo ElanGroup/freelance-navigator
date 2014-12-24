@@ -7,12 +7,13 @@
 #include <QUrlQuery>
 #include "elanceapiclient.h"
 #include "elancedatareader.h"
-#include "elancetokensdata.h"
+#include "ielancetokensdata.h"
 
 using namespace FreelanceNavigator;
 
 const QString ElanceApiClient::m_authorizeUrl("https://api.elance.com/api2/oauth/authorize");
 const QString ElanceApiClient::m_tokenUrl("https://api.elance.com/api2/oauth/token");
+const QString ElanceApiClient::m_jobsUrl("https://api.elance.com/api2/jobs");
 
 ElanceApiClient::ElanceApiClient(QObject * parent) :
     QObject(parent),
@@ -118,20 +119,18 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
     disconnect(m_networkManager, &QNetworkAccessManager::finished,
                this, &ElanceApiClient::processTokensReply);
 
-    if (reply->error() == QNetworkReply::NoError)
+    QNetworkReply::NetworkError error = reply->error();
+    QSharedPointer<IElanceTokensData> tokensData =
+        ElanceDataReader::readTokensData(reply->readAll());
+    reply->deleteLater();
+    if (error == QNetworkReply::NoError && !tokensData->isNull())
     {
-        QSharedPointer<ElanceTokensData> tokensData =
-            ElanceDataReader::readTokensData(reply->readAll());
-        reply->deleteLater();
-        if (!tokensData->isNull())
+        m_accessToken = tokensData->accessToken();
+        m_refreshToken = tokensData->refreshToken();
+        if (m_authorizeDialog)
         {
-            m_accessToken = tokensData->accessToken();
-            m_refreshToken = tokensData->refreshToken();
-            if (m_authorizeDialog)
-            {
-                m_authorizeDialog->accept();
-                return;
-            }
+            m_authorizeDialog->accept();
+            return;
         }
     }
 
@@ -139,6 +138,28 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
     {
         m_authorizeDialog->reject();
     }
+}
+
+void ElanceApiClient::getJobs()
+{
+    connect(m_networkManager, &QNetworkAccessManager::finished,
+            this, &ElanceApiClient::processJobsReply);
+
+    QUrl url(m_jobsUrl);
+    QUrlQuery urlQuery;
+    urlQuery.addQueryItem("access_token", m_accessToken);
+    url.setQuery(urlQuery);
+    QNetworkRequest request(url);
+    m_networkManager->get(request);
+}
+
+void ElanceApiClient::processJobsReply(QNetworkReply * reply)
+{
+    disconnect(m_networkManager, &QNetworkAccessManager::finished,
+               this, &ElanceApiClient::processJobsReply);
+
+    //QString test(reply->readAll());
+    reply->deleteLater();
 }
 
 void ElanceApiClient::post(const QString & url, const QUrlQuery & data)

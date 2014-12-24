@@ -1,24 +1,29 @@
 #ifndef ELANCETOKENSDATA_H
 #define ELANCETOKENSDATA_H
 
-#include <QString>
+#include "ielancetokensdata.h"
 
 namespace FreelanceNavigator
 {
-class ElanceTokensData
+class ElanceTokensData : public IElanceTokensData
 {
 public:
     ElanceTokensData();
-    ElanceTokensData(const QString & accessToken, const QString & refreshToken);
     ~ElanceTokensData();
 
-    inline bool isNull() const { return m_isNull; }
+    inline virtual bool isNull() const { return m_isNull; }
 
-    inline QString accessToken() const { return m_accessToken; }
+    inline virtual QString accessToken() const { return m_accessToken; }
 
-    inline QString refreshToken() const { return m_refreshToken; }
+    inline virtual QString refreshToken() const { return m_refreshToken; }
+
+    void setAccessToken(const QString & accessToken);
+    void setRefreshToken(const QString & refreshToken);
 
 private:
+    ElanceTokensData(const ElanceTokensData &);
+    ElanceTokensData & operator=(const ElanceTokensData &);
+
     bool m_isNull;
     QString m_accessToken;
     QString m_refreshToken;

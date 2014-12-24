@@ -5,7 +5,7 @@
 
 namespace FreelanceNavigator
 {
-class ElanceTokensData;
+class IElanceTokensData;
 
 class ElanceDataReader
 {
@@ -13,7 +13,7 @@ public:
     ElanceDataReader();
     ~ElanceDataReader();
 
-    static QSharedPointer<ElanceTokensData> readTokensData(const QByteArray & data);
+    static QSharedPointer<IElanceTokensData> readTokensData(const QByteArray & data);
 };
 }
 

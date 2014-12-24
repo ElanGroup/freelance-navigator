@@ -4,12 +4,14 @@
 
 using namespace FreelanceNavigator;
 
-MainWindow::MainWindow(const ElanceApiClient & elanceApiClient, QWidget * parent) :
+MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_elanceApiClient(elanceApiClient)
 {
     ui->setupUi(this);
+
+    m_elanceApiClient->getJobs();
 }
 
 MainWindow::~MainWindow()

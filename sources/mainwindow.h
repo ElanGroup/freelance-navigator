@@ -17,12 +17,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(const ElanceApiClient & elanceApiClient, QWidget * parent = 0);
+    explicit MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent = 0);
     ~MainWindow();
 
 private:
     Ui::MainWindow * ui;
-    const ElanceApiClient & m_elanceApiClient;
+    ElanceApiClient * m_elanceApiClient;
 };
 }
 
