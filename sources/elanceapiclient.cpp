@@ -8,6 +8,7 @@
 #include "elanceapiclient.h"
 #include "elancedatareader.h"
 #include "ielancetokensdata.h"
+#include "ielancejobsdata.h"
 
 using namespace FreelanceNavigator;
 
@@ -123,7 +124,7 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
     QSharedPointer<IElanceTokensData> tokensData =
         ElanceDataReader::readTokensData(reply->readAll());
     reply->deleteLater();
-    if (error == QNetworkReply::NoError && !tokensData->isNull())
+    if (error == QNetworkReply::NoError && tokensData->isValid())
     {
         m_accessToken = tokensData->accessToken();
         m_refreshToken = tokensData->refreshToken();
@@ -140,7 +141,7 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
     }
 }
 
-void ElanceApiClient::getJobs()
+void ElanceApiClient::loadJobs()
 {
     connect(m_networkManager, &QNetworkAccessManager::finished,
             this, &ElanceApiClient::processJobsReply);
@@ -158,8 +159,13 @@ void ElanceApiClient::processJobsReply(QNetworkReply * reply)
     disconnect(m_networkManager, &QNetworkAccessManager::finished,
                this, &ElanceApiClient::processJobsReply);
 
-    //QString test(reply->readAll());
+    QNetworkReply::NetworkError error = reply->error();
+    QSharedPointer<IElanceJobsData> jobsData = ElanceDataReader::readJobsData(reply->readAll());
     reply->deleteLater();
+    if (error == QNetworkReply::NoError && jobsData->isValid())
+    {
+        emit jobsLoaded(jobsData);
+    }
 }
 
 void ElanceApiClient::post(const QString & url, const QUrlQuery & data)

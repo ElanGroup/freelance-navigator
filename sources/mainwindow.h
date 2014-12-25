@@ -11,6 +11,7 @@ class MainWindow;
 namespace FreelanceNavigator
 {
 class ElanceApiClient;
+class IElanceJobsData;
 
 class MainWindow : public QMainWindow
 {
@@ -20,7 +21,12 @@ public:
     explicit MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent = 0);
     ~MainWindow();
 
+private slots:
+    void showJobs(QSharedPointer<IElanceJobsData> jobsData);
+
 private:
+    void setupConnections();
+
     Ui::MainWindow * ui;
     ElanceApiClient * m_elanceApiClient;
 };

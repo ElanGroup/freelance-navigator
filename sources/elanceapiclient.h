@@ -10,6 +10,8 @@ class QUrlQuery;
 
 namespace FreelanceNavigator
 {
+class IElanceJobsData;
+
 class ElanceApiClient : public QObject
 {
     Q_OBJECT
@@ -19,9 +21,10 @@ public:
 
     bool readSettings();
     bool authorize();
-    void getJobs();
+    void loadJobs();
 
 signals:
+    void jobsLoaded(QSharedPointer<IElanceJobsData>) const;
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
