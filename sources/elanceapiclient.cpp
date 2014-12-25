@@ -104,22 +104,19 @@ void ElanceApiClient::processAuthorizeReply(QNetworkReply * reply)
 
 void ElanceApiClient::getTokens(const QString & authorizationCode)
 {
-    connect(m_networkManager, &QNetworkAccessManager::finished,
-            this, &ElanceApiClient::processTokensReply);
-
     QUrlQuery data;
     data.addQueryItem("code", authorizationCode);
     data.addQueryItem("client_id", m_clientId);
     data.addQueryItem("client_secret", m_clientSecret);
     data.addQueryItem("grant_type", "authorization_code");
-    post(m_tokenUrl, data);
+    QNetworkReply * reply = post(m_tokenUrl, data);
+    connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processTokensReply);
 }
 
-void ElanceApiClient::processTokensReply(QNetworkReply * reply)
+void ElanceApiClient::processTokensReply()
 {
-    disconnect(m_networkManager, &QNetworkAccessManager::finished,
-               this, &ElanceApiClient::processTokensReply);
-
+    QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
+    Q_ASSERT(reply);
     QNetworkReply::NetworkError error = reply->error();
     QSharedPointer<IElanceTokensData> tokensData =
         ElanceDataReader::readTokensData(reply->readAll());
@@ -143,22 +140,19 @@ void ElanceApiClient::processTokensReply(QNetworkReply * reply)
 
 void ElanceApiClient::loadJobs()
 {
-    connect(m_networkManager, &QNetworkAccessManager::finished,
-            this, &ElanceApiClient::processJobsReply);
-
     QUrl url(m_jobsUrl);
     QUrlQuery urlQuery;
     urlQuery.addQueryItem("access_token", m_accessToken);
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
-    m_networkManager->get(request);
+    QNetworkReply * reply = m_networkManager->get(request);
+    connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processJobsReply);
 }
 
-void ElanceApiClient::processJobsReply(QNetworkReply * reply)
+void ElanceApiClient::processJobsReply()
 {
-    disconnect(m_networkManager, &QNetworkAccessManager::finished,
-               this, &ElanceApiClient::processJobsReply);
-
+    QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
+    Q_ASSERT(reply);
     QNetworkReply::NetworkError error = reply->error();
     QSharedPointer<IElanceJobsData> jobsData = ElanceDataReader::readJobsData(reply->readAll());
     reply->deleteLater();
@@ -168,9 +162,9 @@ void ElanceApiClient::processJobsReply(QNetworkReply * reply)
     }
 }
 
-void ElanceApiClient::post(const QString & url, const QUrlQuery & data)
+QNetworkReply * ElanceApiClient::post(const QString & url, const QUrlQuery & data)
 {
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    m_networkManager->post(request, data.toString(QUrl::FullyEncoded).toUtf8());
+    return m_networkManager->post(request, data.toString(QUrl::FullyEncoded).toUtf8());
 }

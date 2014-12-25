@@ -28,12 +28,12 @@ signals:
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
-    void processTokensReply(QNetworkReply * reply);
-    void processJobsReply(QNetworkReply * reply);
+    void processTokensReply();
+    void processJobsReply();
 
 private:
     void getTokens(const QString & authorizationCode);
-    void post(const QString & url, const QUrlQuery & data);
+    QNetworkReply * post(const QString & url, const QUrlQuery & data);
 
     static const QString m_authorizeUrl;
     static const QString m_tokenUrl;
