@@ -7,6 +7,7 @@ namespace FreelanceNavigator
 {
 class IElanceTokensData;
 class IElanceJobsData;
+class ElanceJobData;
 
 class ElanceDataReader
 {
@@ -19,6 +20,7 @@ public:
 
 private:
     static QJsonObject getDataObject(const QJsonDocument & document);
+    static ElanceJobData * getJobData(const QJsonValue & jobValue);
 };
 }
 

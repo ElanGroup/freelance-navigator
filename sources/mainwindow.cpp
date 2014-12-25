@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 #include "elanceapiclient.h"
 #include "ielancejobsdata.h"
+#include "ielancejobdata.h"
 
 using namespace FreelanceNavigator;
 
@@ -12,6 +13,7 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     m_elanceApiClient(elanceApiClient)
 {
     ui->setupUi(this);
+    setWindowState(windowState() | Qt::WindowMaximized);
 
     setupConnections();
 
@@ -25,7 +27,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::showJobs(QSharedPointer<IElanceJobsData> jobsData)
 {
-    qDebug() << jobsData->jobsCount();
+
 }
 
 void MainWindow::setupConnections()

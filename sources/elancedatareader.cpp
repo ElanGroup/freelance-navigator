@@ -1,11 +1,13 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include "elancedatareader.h"
 #include "ielancetokensdata.h"
 #include "elancetokensdata.h"
 #include "ielancejobsdata.h"
 #include "elancejobsdata.h"
+#include "elancejobdata.h"
 
 using namespace FreelanceNavigator;
 
@@ -56,7 +58,17 @@ QSharedPointer<IElanceJobsData> ElanceDataReader::readJobsData(const QByteArray 
         QJsonValue totalResults = dataObject["totalResults"];
         if (!totalResults.isUndefined() && totalResults.isDouble())
         {
-            jobsData->setJobsCount(totalResults.toInt());
+            jobsData->setJobsTotal(totalResults.toInt());
+        }
+
+        QJsonValue pageResults = dataObject["pageResults"];
+        if (!pageResults.isUndefined() && pageResults.isArray())
+        {
+            QJsonArray jobsArray = pageResults.toArray();
+            foreach (const QJsonValue & jobValue, jobsArray)
+            {
+                jobsData->addJob(getJobData(jobValue));
+            }
         }
     }
 
@@ -74,4 +86,22 @@ QJsonObject ElanceDataReader::getDataObject(const QJsonDocument & document)
         }
     }
     return QJsonObject();
+}
+
+ElanceJobData * ElanceDataReader::getJobData(const QJsonValue & jobValue)
+{
+    ElanceJobData * jobData = new ElanceJobData();
+
+    if (jobValue.isObject())
+    {
+        QJsonObject jobObject = jobValue.toObject();
+
+        QJsonValue jobIdValue = jobObject["jobId"];
+        if (!jobIdValue.isUndefined() && jobIdValue.isString())
+        {
+            jobData->setJobId(jobIdValue.toString().toInt());
+        }
+    }
+
+    return jobData;
 }

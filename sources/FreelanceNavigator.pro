@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     elancedatareader.cpp \
     elancetokensdata.cpp \
     elancejobsdata.cpp \
-    ielancedata.cpp
+    ielancedata.cpp \
+    elancejobdata.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -29,7 +30,9 @@ HEADERS  += mainwindow.h \
     ielancetokensdata.h \
     ielancedata.h \
     ielancejobsdata.h \
-    elancejobsdata.h
+    elancejobsdata.h \
+    ielancejobdata.h \
+    elancejobdata.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui

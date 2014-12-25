@@ -11,11 +11,9 @@ public:
     ElanceTokensData();
     ~ElanceTokensData();
 
-    inline virtual QString accessToken() const { return m_accessToken; }
-
-    inline virtual QString refreshToken() const { return m_refreshToken; }
-
+    virtual QString accessToken() const;
     void setAccessToken(const QString & accessToken);
+    virtual QString refreshToken() const;
     void setRefreshToken(const QString & refreshToken);
 
 private:

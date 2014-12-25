@@ -1,15 +1,20 @@
 #ifndef IELANCEJOBSDATA_H
 #define IELANCEJOBSDATA_H
 
+#include <QList>
+#include <QSharedPointer>
 #include "ielancedata.h"
 
 namespace FreelanceNavigator
 {
+class IElanceJobData;
+
 class IElanceJobsData : public IElanceData
 {
 public:
     virtual ~IElanceJobsData() {}
-    virtual int jobsCount() const = 0;
+    virtual int jobsTotal() const = 0;
+    virtual const QList<QSharedPointer<IElanceJobData> > & jobs() const = 0;
 };
 }
 

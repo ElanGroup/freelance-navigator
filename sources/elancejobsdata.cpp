@@ -1,4 +1,6 @@
 #include "elancejobsdata.h"
+#include "ielancejobdata.h"
+#include "elancejobdata.h"
 
 using namespace FreelanceNavigator;
 
@@ -10,7 +12,22 @@ ElanceJobsData::~ElanceJobsData()
 {
 }
 
-void ElanceJobsData::setJobsCount(int jobsCount)
+int ElanceJobsData::jobsTotal() const
 {
-    m_jobsCount = jobsCount;
+    return m_jobsTotal;
+}
+
+void ElanceJobsData::setJobsTotal(int jobsTotal)
+{
+    m_jobsTotal = jobsTotal;
+}
+
+const QList<QSharedPointer<IElanceJobData> > & ElanceJobsData::jobs() const
+{
+    return m_jobs;
+}
+
+void ElanceJobsData::addJob(ElanceJobData * job)
+{
+    m_jobs.append(QSharedPointer<IElanceJobData>(job));
 }
