@@ -3,11 +3,10 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include "elancedatareader.h"
-#include "ielancetokensdata.h"
-#include "elancetokensdata.h"
-#include "ielancejobsdata.h"
-#include "elancejobsdata.h"
-#include "elancejobdata.h"
+#include "elancetokens.h"
+#include "elancecategory.h"
+#include "elancejobspage.h"
+#include "elancejob.h"
 
 using namespace FreelanceNavigator;
 
@@ -19,46 +18,63 @@ ElanceDataReader::~ElanceDataReader()
 {
 }
 
-QSharedPointer<IElanceTokensData> ElanceDataReader::readTokensData(const QByteArray & data)
+QSharedPointer<IElanceTokens> ElanceDataReader::readTokens(const QByteArray & data)
 {
-    ElanceTokensData * tokensData = new ElanceTokensData();
+    ElanceTokens * tokens = new ElanceTokens();
 
     QJsonDocument document = QJsonDocument::fromJson(data);
     QJsonObject dataObject = getDataObject(document);
     if (!dataObject.isEmpty())
     {
-        tokensData->setIsValid(true);
-
         QJsonValue accessToken = dataObject["access_token"];
         if (!accessToken.isUndefined() && accessToken.isString())
         {
-            tokensData->setAccessToken(accessToken.toString());
+            tokens->setAccessToken(accessToken.toString());
         }
 
         QJsonValue refreshToken = dataObject["refresh_token"];
         if (!refreshToken.isUndefined() && refreshToken.isString())
         {
-            tokensData->setRefreshToken(refreshToken.toString());
+            tokens->setRefreshToken(refreshToken.toString());
         }
     }
 
-    return QSharedPointer<IElanceTokensData>(tokensData);
+    return QSharedPointer<IElanceTokens>(tokens);
 }
 
-QSharedPointer<IElanceJobsData> ElanceDataReader::readJobsData(const QByteArray & data)
+QList<QSharedPointer<IElanceCategory> > ElanceDataReader::readCategories(const QByteArray & data)
 {
-    ElanceJobsData * jobsData = new ElanceJobsData();
+    QList<QSharedPointer<IElanceCategory> > categories;
 
     QJsonDocument document = QJsonDocument::fromJson(data);
     QJsonObject dataObject = getDataObject(document);
     if (!dataObject.isEmpty())
     {
-        jobsData->setIsValid(true);
+        foreach (const QJsonValue & categoryValue, dataObject)
+        {
+            QSharedPointer<IElanceCategory> category = getCategory(categoryValue);
+            if (category->isValid())
+            {
+                categories.append(category);
+            }
+        }
+    }
 
+    return categories;
+}
+
+QSharedPointer<IElanceJobsPage> ElanceDataReader::readJobsPage(const QByteArray & data)
+{
+    ElanceJobsPage * jobsPage = new ElanceJobsPage();
+
+    QJsonDocument document = QJsonDocument::fromJson(data);
+    QJsonObject dataObject = getDataObject(document);
+    if (!dataObject.isEmpty())
+    {
         QJsonValue totalResults = dataObject["totalResults"];
         if (!totalResults.isUndefined() && totalResults.isDouble())
         {
-            jobsData->setJobsTotal(totalResults.toInt());
+            jobsPage->setJobsTotal(totalResults.toInt());
         }
 
         QJsonValue pageResults = dataObject["pageResults"];
@@ -67,12 +83,16 @@ QSharedPointer<IElanceJobsData> ElanceDataReader::readJobsData(const QByteArray 
             QJsonArray jobsArray = pageResults.toArray();
             foreach (const QJsonValue & jobValue, jobsArray)
             {
-                jobsData->addJob(getJobData(jobValue));
+                QSharedPointer<IElanceJob> job = getJob(jobValue);
+                if (job->isValid())
+                {
+                    jobsPage->addJob(job);
+                }
             }
         }
     }
 
-    return QSharedPointer<IElanceJobsData>(jobsData);
+    return QSharedPointer<IElanceJobsPage>(jobsPage);
 }
 
 QJsonObject ElanceDataReader::getDataObject(const QJsonDocument & document)
@@ -88,9 +108,46 @@ QJsonObject ElanceDataReader::getDataObject(const QJsonDocument & document)
     return QJsonObject();
 }
 
-ElanceJobData * ElanceDataReader::getJobData(const QJsonValue & jobValue)
+QSharedPointer<IElanceCategory> ElanceDataReader::getCategory(const QJsonValue & categoryValue)
 {
-    ElanceJobData * jobData = new ElanceJobData();
+    ElanceCategory * category = new ElanceCategory();
+
+    if (categoryValue.isObject())
+    {
+        QJsonObject categoryObject = categoryValue.toObject();
+
+        QJsonValue categoryIdValue = categoryObject["catId"];
+        if (!categoryIdValue.isUndefined() && categoryIdValue.isDouble())
+        {
+            category->setCategoryId(categoryIdValue.toInt());
+        }
+
+        QJsonValue nameValue = categoryObject["catName"];
+        if (!nameValue.isUndefined() && nameValue.isString())
+        {
+            category->setName(nameValue.toString());
+        }
+
+        QJsonValue childrenValue = categoryObject["children"];
+        if (!childrenValue.isUndefined() && childrenValue.isObject())
+        {
+            foreach (const QJsonValue & subcategoryValue, childrenValue.toObject())
+            {
+                QSharedPointer<IElanceCategory> subcategory = getCategory(subcategoryValue);
+                if (subcategory->isValid())
+                {
+                    category->addSubcategory(subcategory);
+                }
+            }
+        }
+    }
+
+    return QSharedPointer<IElanceCategory>(category);
+}
+
+QSharedPointer<IElanceJob> ElanceDataReader::getJob(const QJsonValue & jobValue)
+{
+    ElanceJob * job = new ElanceJob();
 
     if (jobValue.isObject())
     {
@@ -99,9 +156,14 @@ ElanceJobData * ElanceDataReader::getJobData(const QJsonValue & jobValue)
         QJsonValue jobIdValue = jobObject["jobId"];
         if (!jobIdValue.isUndefined() && jobIdValue.isString())
         {
-            jobData->setJobId(jobIdValue.toString().toInt());
+            bool isOk;
+            int jobId = jobIdValue.toString().toInt(&isOk);
+            if (isOk)
+            {
+                job->setJobId(jobId);
+            }
         }
     }
 
-    return jobData;
+    return QSharedPointer<IElanceJob>(job);
 }

@@ -5,9 +5,10 @@
 
 namespace FreelanceNavigator
 {
-class IElanceTokensData;
-class IElanceJobsData;
-class ElanceJobData;
+class IElanceTokens;
+class IElanceCategory;
+class IElanceJobsPage;
+class IElanceJob;
 
 class ElanceDataReader
 {
@@ -15,12 +16,14 @@ public:
     ElanceDataReader();
     ~ElanceDataReader();
 
-    static QSharedPointer<IElanceTokensData> readTokensData(const QByteArray & data);
-    static QSharedPointer<IElanceJobsData> readJobsData(const QByteArray & data);
+    static QSharedPointer<IElanceTokens> readTokens(const QByteArray & data);
+    static QList<QSharedPointer<IElanceCategory> > readCategories(const QByteArray & data);
+    static QSharedPointer<IElanceJobsPage> readJobsPage(const QByteArray & data);
 
 private:
     static QJsonObject getDataObject(const QJsonDocument & document);
-    static ElanceJobData * getJobData(const QJsonValue & jobValue);
+    static QSharedPointer<IElanceCategory> getCategory(const QJsonValue & categoryValue);
+    static QSharedPointer<IElanceJob> getJob(const QJsonValue & jobValue);
 };
 }
 

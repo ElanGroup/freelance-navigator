@@ -7,13 +7,14 @@
 #include <QUrlQuery>
 #include "elanceapiclient.h"
 #include "elancedatareader.h"
-#include "ielancetokensdata.h"
-#include "ielancejobsdata.h"
+#include "ielancetokens.h"
+#include "ielancejobspage.h"
 
 using namespace FreelanceNavigator;
 
 const QString ElanceApiClient::m_authorizeUrl("https://api.elance.com/api2/oauth/authorize");
 const QString ElanceApiClient::m_tokenUrl("https://api.elance.com/api2/oauth/token");
+const QString ElanceApiClient::m_categoriesUrl("https://api.elance.com/api2/categories");
 const QString ElanceApiClient::m_jobsUrl("https://api.elance.com/api2/jobs");
 
 ElanceApiClient::ElanceApiClient(QObject * parent) :
@@ -118,13 +119,12 @@ void ElanceApiClient::processTokensReply()
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
     QNetworkReply::NetworkError error = reply->error();
-    QSharedPointer<IElanceTokensData> tokensData =
-        ElanceDataReader::readTokensData(reply->readAll());
+    QSharedPointer<IElanceTokens> tokens = ElanceDataReader::readTokens(reply->readAll());
     reply->deleteLater();
-    if (error == QNetworkReply::NoError && tokensData->isValid())
+    if (error == QNetworkReply::NoError && tokens->isValid())
     {
-        m_accessToken = tokensData->accessToken();
-        m_refreshToken = tokensData->refreshToken();
+        m_accessToken = tokens->accessToken();
+        m_refreshToken = tokens->refreshToken();
         if (m_authorizeDialog)
         {
             m_authorizeDialog->accept();
@@ -135,6 +135,31 @@ void ElanceApiClient::processTokensReply()
     if (m_authorizeDialog)
     {
         m_authorizeDialog->reject();
+    }
+}
+
+void ElanceApiClient::loadCategories()
+{
+    QUrl url(m_categoriesUrl);
+    QUrlQuery urlQuery;
+    urlQuery.addQueryItem("access_token", m_accessToken);
+    url.setQuery(urlQuery);
+    QNetworkRequest request(url);
+    QNetworkReply * reply = m_networkManager->get(request);
+    connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processCategoriesReply);
+}
+
+void ElanceApiClient::processCategoriesReply()
+{
+    QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
+    Q_ASSERT(reply);
+    QNetworkReply::NetworkError error = reply->error();
+    QList<QSharedPointer<IElanceCategory> > categories =
+        ElanceDataReader::readCategories(reply->readAll());
+    reply->deleteLater();
+    if (error == QNetworkReply::NoError)
+    {
+        emit categoriesLoaded(categories);
     }
 }
 
@@ -154,11 +179,11 @@ void ElanceApiClient::processJobsReply()
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
     QNetworkReply::NetworkError error = reply->error();
-    QSharedPointer<IElanceJobsData> jobsData = ElanceDataReader::readJobsData(reply->readAll());
+    QSharedPointer<IElanceJobsPage> jobsPage = ElanceDataReader::readJobsPage(reply->readAll());
     reply->deleteLater();
-    if (error == QNetworkReply::NoError && jobsData->isValid())
+    if (error == QNetworkReply::NoError && jobsPage->isValid())
     {
-        emit jobsLoaded(jobsData);
+        emit jobsLoaded(jobsPage);
     }
 }
 

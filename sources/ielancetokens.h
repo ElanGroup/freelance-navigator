@@ -1,18 +1,18 @@
-#ifndef IELANCETOKENSDATA_H
-#define IELANCETOKENSDATA_H
+#ifndef IELANCETOKENS_H
+#define IELANCETOKENS_H
 
 #include <QString>
 #include "ielancedata.h"
 
 namespace FreelanceNavigator
 {
-class IElanceTokensData : public IElanceData
+class IElanceTokens : public IElanceData
 {
 public:    
-    virtual ~IElanceTokensData() {}
+    virtual ~IElanceTokens() {}
     virtual QString accessToken() const = 0;
     virtual QString refreshToken() const = 0;
 };
 }
 
-#endif // IELANCETOKENSDATA_H
+#endif // IELANCETOKENS_H

@@ -17,22 +17,24 @@ SOURCES += main.cpp\
     elanceapiclient.cpp \
     elancesettingsdialog.cpp \
     elancedatareader.cpp \
-    elancetokensdata.cpp \
-    elancejobsdata.cpp \
-    ielancedata.cpp \
-    elancejobdata.cpp
+    elancetokens.cpp \
+    elancejobspage.cpp \
+    elancejob.cpp \
+    elancecategory.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
     elancesettingsdialog.h \
     elancedatareader.h \
-    elancetokensdata.h \
-    ielancetokensdata.h \
     ielancedata.h \
-    ielancejobsdata.h \
-    elancejobsdata.h \
-    ielancejobdata.h \
-    elancejobdata.h
+    ielancetokens.h \
+    elancetokens.h \
+    ielancejobspage.h \
+    elancejobspage.h \
+    ielancejob.h \
+    elancejob.h \
+    ielancecategory.h \
+    elancecategory.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui
