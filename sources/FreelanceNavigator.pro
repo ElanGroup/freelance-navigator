@@ -40,3 +40,7 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui
+
+win32 {
+    RC_ICONS = Resources/FreelanceNavigator.ico
+}
