@@ -9,6 +9,7 @@
 #include "elancedatareader.h"
 #include "ielancetokens.h"
 #include "ielancejobspage.h"
+#include "cookiejar.h"
 
 using namespace FreelanceNavigator;
 
@@ -68,6 +69,7 @@ bool ElanceApiClient::authorize()
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(webView);
     m_authorizeDialog->setLayout(layout);
+    webView->page()->networkAccessManager()->setCookieJar(new CookieJar());
     connect(webView->page()->networkAccessManager(), &QNetworkAccessManager::finished,
             this, &ElanceApiClient::processAuthorizeReply);
     QUrl url(m_authorizeUrl);

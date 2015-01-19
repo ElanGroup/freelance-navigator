@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     elancetokens.cpp \
     elancejobspage.cpp \
     elancejob.cpp \
-    elancecategory.cpp
+    elancecategory.cpp \
+    cookiejar.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     ielancejob.h \
     elancejob.h \
     ielancecategory.h \
-    elancecategory.h
+    elancecategory.h \
+    cookiejar.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui
