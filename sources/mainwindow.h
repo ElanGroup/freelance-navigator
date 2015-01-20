@@ -22,13 +22,18 @@ public:
     explicit MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent = 0);
     ~MainWindow();
 
+protected:
+    virtual void closeEvent(QCloseEvent * event);
+
 private slots:
-    void showCategories(const QList<QSharedPointer<IElanceCategory> > & categories);
+    void fillCategories(const QList<QSharedPointer<IElanceCategory> > & categories);
     void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
+    void fillSubcategories(int categoryIndex, bool loadSettings);
     void updateSubcategories(int categoryIndex);
 
 private:
     void setupConnections();
+    void saveSettings();
 
     Ui::MainWindow * ui;
     ElanceApiClient * m_elanceApiClient;
