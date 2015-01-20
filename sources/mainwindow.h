@@ -27,9 +27,12 @@ protected:
 
 private slots:
     void fillCategories(const QList<QSharedPointer<IElanceCategory> > & categories);
-    void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
     void fillSubcategories(int categoryIndex, bool loadSettings);
     void updateSubcategories(int categoryIndex);
+    void editElanceSettings();
+    void showAbout();
+    void loadJobs();
+    void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
 
 private:
     void setupConnections();

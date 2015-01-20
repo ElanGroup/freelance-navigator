@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     elancejobspage.cpp \
     elancejob.cpp \
     elancecategory.cpp \
-    cookiejar.cpp
+    cookiejar.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -36,10 +37,12 @@ HEADERS  += mainwindow.h \
     elancejob.h \
     ielancecategory.h \
     elancecategory.h \
-    cookiejar.h
+    cookiejar.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
-    elancesettingsdialog.ui
+    elancesettingsdialog.ui \
+    aboutdialog.ui
 
 win32 {
     RC_ICONS = Resources/FreelanceNavigator.ico

@@ -8,6 +8,8 @@
 #include "ielancecategory.h"
 #include "ielancejobspage.h"
 #include "ielancejob.h"
+#include "elancesettingsdialog.h"
+#include "aboutdialog.h"
 
 using namespace FreelanceNavigator;
 
@@ -22,7 +24,6 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     setupConnections();
 
     m_elanceApiClient->loadCategories();
-    m_elanceApiClient->loadJobs();
 }
 
 MainWindow::~MainWindow()
@@ -58,11 +59,8 @@ void MainWindow::fillCategories(const QList<QSharedPointer<IElanceCategory> > & 
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             &MainWindow::updateSubcategories);
-}
 
-void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
-{
-
+    ui->loadJobsButton->setEnabled(categories.count() > 0);
 }
 
 void MainWindow::fillSubcategories(int categoryIndex, bool loadSettings)
@@ -114,8 +112,35 @@ void MainWindow::updateSubcategories(int categoryIndex)
     fillSubcategories(categoryIndex, false);
 }
 
+void MainWindow::editElanceSettings()
+{
+    ElanceSettingsDialog dialog;
+    dialog.exec();
+}
+
+void MainWindow::showAbout()
+{
+    AboutDialog dialog;
+    dialog.exec();
+}
+
+void MainWindow::loadJobs()
+{
+    m_elanceApiClient->loadJobs();
+}
+
+void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
+{
+
+}
+
 void MainWindow::setupConnections()
 {
+    connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
+    connect(ui->actionElanceAPISettings, &QAction::triggered,
+            this, &MainWindow::editElanceSettings);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::loadJobs);
     connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
             this, &MainWindow::fillCategories);
     connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &MainWindow::showJobs);
