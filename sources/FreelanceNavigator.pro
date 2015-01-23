@@ -11,6 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 TARGET = FreelanceNavigator
 TEMPLATE = app
 
+VERSION = 1.0.0.0
+
+# Define the preprocessor macro to get the application version in our application.
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     elanceapiclient.cpp \

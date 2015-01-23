@@ -9,6 +9,13 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->qtLabel->setText(tr("Using Qt ") + QT_VERSION_STR);
+
+    QString applicationVersion = QApplication::applicationVersion();
+    ui->freelanceNavigatorLabel->setText("Freelance Navigator " + applicationVersion);
+
+    connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::reject);
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
