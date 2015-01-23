@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 TARGET = FreelanceNavigator
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     elanceapiclient.cpp \
@@ -22,7 +21,8 @@ SOURCES += main.cpp\
     elancejob.cpp \
     elancecategory.cpp \
     cookiejar.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    jobitemdelegate.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -38,7 +38,8 @@ HEADERS  += mainwindow.h \
     ielancecategory.h \
     elancecategory.h \
     cookiejar.h \
-    aboutdialog.h
+    aboutdialog.h \
+    jobitemdelegate.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \

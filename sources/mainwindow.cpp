@@ -2,6 +2,7 @@
 #include <QScrollBar>
 #include <QCloseEvent>
 #include <QSettings>
+#include <QStandardItemModel>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "elanceapiclient.h"
@@ -10,16 +11,20 @@
 #include "ielancejob.h"
 #include "elancesettingsdialog.h"
 #include "aboutdialog.h"
+#include "jobitemdelegate.h"
 
 using namespace FreelanceNavigator;
 
 MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_elanceApiClient(elanceApiClient)
+    m_elanceApiClient(elanceApiClient),
+    m_jobsModel(new QStandardItemModel(0, 1, this))
 {
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
+    ui->jobsListView->setModel(m_jobsModel);
+    ui->jobsListView->setItemDelegate(new JobItemDelegate(this));
 
     setupConnections();
 
@@ -126,12 +131,18 @@ void MainWindow::showAbout()
 
 void MainWindow::loadJobs()
 {
+    m_jobsModel->removeRows(0, m_jobsModel->rowCount());
     m_elanceApiClient->loadJobs();
 }
 
 void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
 {
-
+    foreach (const QSharedPointer<IElanceJob> & job, jobs->jobs())
+    {
+        QStandardItem * item = new QStandardItem();
+        item->setData(QVariant::fromValue(job), Qt::DisplayRole);
+        m_jobsModel->appendRow(item);
+    }
 }
 
 void MainWindow::setupConnections()

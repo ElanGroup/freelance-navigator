@@ -8,6 +8,8 @@ namespace Ui
 class MainWindow;
 }
 
+class QStandardItemModel;
+
 namespace FreelanceNavigator
 {
 class ElanceApiClient;
@@ -41,6 +43,7 @@ private:
     Ui::MainWindow * ui;
     ElanceApiClient * m_elanceApiClient;
     QHash<int, QList<QSharedPointer<IElanceCategory> > > m_subcategories;
+    QStandardItemModel * m_jobsModel;
 };
 }
 

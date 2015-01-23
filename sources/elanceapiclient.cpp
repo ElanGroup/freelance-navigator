@@ -170,6 +170,7 @@ void ElanceApiClient::loadJobs()
     QUrl url(m_jobsUrl);
     QUrlQuery urlQuery;
     urlQuery.addQueryItem("access_token", m_accessToken);
+    urlQuery.addQueryItem("rpp", QString::number(m_jobsNumberPerPage));
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
     QNetworkReply * reply = m_networkManager->get(request);

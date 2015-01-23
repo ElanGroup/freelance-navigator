@@ -163,6 +163,18 @@ QSharedPointer<IElanceJob> ElanceDataReader::getJob(const QJsonValue & jobValue)
                 job->setJobId(jobId);
             }
         }
+
+        QJsonValue nameValue = jobObject["name"];
+        if (!nameValue.isUndefined() && nameValue.isString())
+        {
+            job->setName(nameValue.toString());
+        }
+
+        QJsonValue descriptionValue = jobObject["description"];
+        if (!descriptionValue.isUndefined() && descriptionValue.isString())
+        {
+            job->setDescription(descriptionValue.toString());
+        }
     }
 
     return QSharedPointer<IElanceJob>(job);

@@ -53,6 +53,8 @@ private:
 
     QDialog * m_authorizeDialog;
     QNetworkAccessManager * m_networkManager;
+
+    static const int m_jobsNumberPerPage = 25;
 };
 }
 

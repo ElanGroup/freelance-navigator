@@ -14,12 +14,18 @@ public:
     virtual bool isValid() const;
     virtual int jobId() const;
     void setJobId(int jobId);
+    virtual QString name() const;
+    void setName(const QString & name);
+    virtual QString description() const;
+    void setDescription(const QString & description);
 
 private:
     ElanceJob(const ElanceJob &);
     ElanceJob & operator=(const ElanceJob &);
 
     int m_jobId;
+    QString m_name;
+    QString m_description;
 };
 }
 
