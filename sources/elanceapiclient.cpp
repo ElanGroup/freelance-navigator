@@ -169,12 +169,17 @@ void ElanceApiClient::processCategoriesReply()
     reply->deleteLater();
 }
 
-void ElanceApiClient::loadJobs()
+void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories)
 {
     QUrl url(m_jobsUrl);
     QUrlQuery urlQuery;
     urlQuery.addQueryItem("access_token", m_accessToken);
     urlQuery.addQueryItem("rpp", QString::number(m_jobsNumberPerPage));
+    urlQuery.addQueryItem("catFilter", QString::number(category));
+    for (int i = 0; i < subcategories.count(); ++i)
+    {
+        urlQuery.addQueryItem("subcatFilter", QString::number(subcategories[i]));
+    }
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
     QNetworkReply * reply = m_networkManager->get(request);

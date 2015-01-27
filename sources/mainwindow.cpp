@@ -133,7 +133,17 @@ void MainWindow::showAbout()
 void MainWindow::loadJobs()
 {
     m_jobsModel->removeRows(0, m_jobsModel->rowCount());
-    m_elanceApiClient->loadJobs();
+    int category = ui->categoriesComboBox->currentData().toInt();
+    QList<int> subcategories;
+    for (int i = 0; i < ui->subcategoriesListWidget->count(); ++i)
+    {
+        QListWidgetItem * item = ui->subcategoriesListWidget->item(i);
+        if (item->checkState() == Qt::Checked)
+        {
+            subcategories.append(item->data(Qt::UserRole).toInt());
+        }
+    }
+    m_elanceApiClient->loadJobs(category, subcategories);
 }
 
 void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)

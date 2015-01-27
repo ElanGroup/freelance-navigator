@@ -23,7 +23,7 @@ public:
     bool readSettings();
     bool authorize();
     void loadCategories();
-    void loadJobs();
+    void loadJobs(int category, const QList<int> & subcategories);
 
 signals:
     void categoriesLoaded(const QList<QSharedPointer<IElanceCategory> > & categories) const;
