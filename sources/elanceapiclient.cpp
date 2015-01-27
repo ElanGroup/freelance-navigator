@@ -176,9 +176,14 @@ void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories)
     urlQuery.addQueryItem("access_token", m_accessToken);
     urlQuery.addQueryItem("rpp", QString::number(m_jobsNumberPerPage));
     urlQuery.addQueryItem("catFilter", QString::number(category));
-    for (int i = 0; i < subcategories.count(); ++i)
+    if (!subcategories.isEmpty())
     {
-        urlQuery.addQueryItem("subcatFilter", QString::number(subcategories[i]));
+        QStringList subcategoriesList;
+        for (int i = 0; i < subcategories.count(); ++i)
+        {
+            subcategoriesList << QString::number(subcategories[i]);
+        }
+        urlQuery.addQueryItem("subcatFilter", subcategoriesList.join(','));
     }
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
