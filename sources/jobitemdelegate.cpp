@@ -26,6 +26,7 @@ void JobItemDelegate::paint(QPainter * painter,
 
     painter->setPen(option.palette.windowText().color());
     paintName(painter, option, job);
+    paintBudget(painter, option, job);
     paintDescription(painter, option, job);
 
     painter->restore();
@@ -38,7 +39,7 @@ QSize JobItemDelegate::sizeHint(const QStyleOptionViewItem & option,
     int minWidth = m_minDescriptionCharactersCount * descriptionFontMetrics.averageCharWidth();
     QSize defaultSize = QStyledItemDelegate::sizeHint(option, index);
     int width = qMax(minWidth, defaultSize.width());
-    int height = nameHeight(option);
+    int height = nameHeight(option) + budgetHeight(option);
     height += descriptionFontMetrics.height() * m_descriptionLinesCount;
     height += m_itemBottomMargin;
     return QSize(width, height);
@@ -47,13 +48,27 @@ QSize JobItemDelegate::sizeHint(const QStyleOptionViewItem & option,
 QFont JobItemDelegate::nameFont(const QStyleOptionViewItem & option)
 {
     QFont nameFont = option.font;
+    nameFont.setPointSizeF(QFontInfo(nameFont).pointSizeF() + 1);
     nameFont.setBold(true);
     return nameFont;
+}
+
+QFont JobItemDelegate::budgetFont(const QStyleOptionViewItem & option)
+{
+    QFont budgetFont = option.font;
+    budgetFont.setPointSizeF(QFontInfo(budgetFont).pointSizeF() - 1);
+    budgetFont.setWeight(QFont::DemiBold);
+    return budgetFont;
 }
 
 int JobItemDelegate::nameHeight(const QStyleOptionViewItem & option)
 {
     return QFontMetrics(nameFont(option)).height() + m_nameBottomMargin;
+}
+
+int JobItemDelegate::budgetHeight(const QStyleOptionViewItem & option)
+{
+    return QFontMetrics(budgetFont(option)).height() + m_budgetBottomMargin;
 }
 
 void JobItemDelegate::paintName(QPainter * painter,
@@ -69,12 +84,28 @@ void JobItemDelegate::paintName(QPainter * painter,
     painter->setFont(defaultFont);
 }
 
+void JobItemDelegate::paintBudget(QPainter * painter,
+                                  const QStyleOptionViewItem & option,
+                                  const QSharedPointer<IElanceJob> & job) const
+{
+    QFont defaultFont = painter->font();
+    QFont font = budgetFont(option);
+    QRectF rect = option.rect;
+    rect.translate(0, nameHeight(option));
+    rect.setHeight(QFontMetrics(font).height());
+    painter->setFont(font);
+    QString text = QString("%1: %2").arg(job->isHourly() ? tr("Hourly Rate") : tr("Fixed Price"),
+                                         job->budget());
+    painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, text);
+    painter->setFont(defaultFont);
+}
+
 void JobItemDelegate::paintDescription(QPainter * painter,
                                        const QStyleOptionViewItem & option,
                                        const QSharedPointer<IElanceJob> & job) const
 {
     QRectF rect = option.rect;
-    rect.translate(0, nameHeight(option));
+    rect.translate(0, nameHeight(option) + budgetHeight(option));
     rect.setHeight(option.fontMetrics.height() * m_descriptionLinesCount);
     painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, job->description());
 }

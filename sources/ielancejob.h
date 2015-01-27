@@ -14,6 +14,8 @@ public:
     virtual int jobId() const = 0;
     virtual QString name() const = 0;
     virtual QString description() const = 0;
+    virtual QString budget() const = 0;
+    virtual bool isHourly() const = 0;
 };
 }
 

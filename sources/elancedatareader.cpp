@@ -197,6 +197,18 @@ QSharedPointer<IElanceJob> ElanceDataReader::getJob(const QJsonValue & jobValue)
         {
             job->setDescription(descriptionValue.toString());
         }
+
+        QJsonValue budgetValue = jobObject["budget"];
+        if (!budgetValue.isUndefined() && budgetValue.isString())
+        {
+            job->setBudget(budgetValue.toString());
+        }
+
+        QJsonValue isHourlyValue = jobObject["isHourly"];
+        if (!isHourlyValue.isUndefined() && isHourlyValue.isDouble())
+        {
+            job->setIsHourly(isHourlyValue.toInt() == 1);
+        }
     }
 
     return QSharedPointer<IElanceJob>(job);
