@@ -35,6 +35,7 @@ private slots:
     void showAbout();
     void loadJobs();
     void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
+    void processError(const QString & message);
 
 private:
     void setupConnections();

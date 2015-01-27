@@ -9,6 +9,7 @@
 #include "elancedatareader.h"
 #include "ielancetokens.h"
 #include "ielancejobspage.h"
+#include "ielanceerror.h"
 #include "cookiejar.h"
 
 using namespace FreelanceNavigator;
@@ -155,14 +156,17 @@ void ElanceApiClient::processCategoriesReply()
 {
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
-    QNetworkReply::NetworkError error = reply->error();
-    QList<QSharedPointer<IElanceCategory> > categories =
-        ElanceDataReader::readCategories(reply->readAll());
-    reply->deleteLater();
-    if (error == QNetworkReply::NoError)
+    if (reply->error() == QNetworkReply::NoError)
     {
+        QList<QSharedPointer<IElanceCategory> > categories =
+            ElanceDataReader::readCategories(reply->readAll());
         emit categoriesLoaded(categories);
     }
+    else
+    {
+        processError(reply);
+    }
+    reply->deleteLater();
 }
 
 void ElanceApiClient::loadJobs()
@@ -181,13 +185,20 @@ void ElanceApiClient::processJobsReply()
 {
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
-    QNetworkReply::NetworkError error = reply->error();
-    QSharedPointer<IElanceJobsPage> jobsPage = ElanceDataReader::readJobsPage(reply->readAll());
-    reply->deleteLater();
-    if (error == QNetworkReply::NoError && jobsPage->isValid())
+    if (reply->error() == QNetworkReply::NoError)
     {
-        emit jobsLoaded(jobsPage);
+        QSharedPointer<IElanceJobsPage> jobsPage =
+            ElanceDataReader::readJobsPage(reply->readAll());
+        if (jobsPage->isValid())
+        {
+            emit jobsLoaded(jobsPage);
+        }
     }
+    else
+    {
+        processError(reply);
+    }
+    reply->deleteLater();
 }
 
 QNetworkReply * ElanceApiClient::post(const QString & url, const QUrlQuery & data)
@@ -195,4 +206,15 @@ QNetworkReply * ElanceApiClient::post(const QString & url, const QUrlQuery & dat
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     return m_networkManager->post(request, data.toString(QUrl::FullyEncoded).toUtf8());
+}
+
+void ElanceApiClient::processError(QNetworkReply * reply)
+{
+    QList<QSharedPointer<IElanceError> > errors = ElanceDataReader::readErrors(reply->readAll());
+    if (reply->error() == QNetworkReply::TimeoutError)
+    {
+        emit error(tr("Connection error. Please check your internet connection."));
+        return;
+    }
+    emit error(tr("Unknown error"));
 }

@@ -7,6 +7,7 @@
 #include "elancecategory.h"
 #include "elancejobspage.h"
 #include "elancejob.h"
+#include "elanceerror.h"
 
 using namespace FreelanceNavigator;
 
@@ -95,6 +96,27 @@ QSharedPointer<IElanceJobsPage> ElanceDataReader::readJobsPage(const QByteArray 
     return QSharedPointer<IElanceJobsPage>(jobsPage);
 }
 
+QList<QSharedPointer<IElanceError> > ElanceDataReader::readErrors(const QByteArray & data)
+{
+    QList<QSharedPointer<IElanceError> > errors;
+
+    QJsonDocument document = QJsonDocument::fromJson(data);
+    QJsonArray errorsArray = getErrorsArray(document);
+    if (!errorsArray.isEmpty())
+    {
+        foreach (const QJsonValue & errorValue, errorsArray)
+        {
+            QSharedPointer<IElanceError> error = getError(errorValue);
+            if (error->isValid())
+            {
+                errors.append(error);
+            }
+        }
+    }
+
+    return errors;
+}
+
 QJsonObject ElanceDataReader::getDataObject(const QJsonDocument & document)
 {
     if (!document.isNull() && document.isObject())
@@ -178,4 +200,47 @@ QSharedPointer<IElanceJob> ElanceDataReader::getJob(const QJsonValue & jobValue)
     }
 
     return QSharedPointer<IElanceJob>(job);
+}
+
+QJsonArray ElanceDataReader::getErrorsArray(const QJsonDocument & document)
+{
+    if (!document.isNull() && document.isObject())
+    {
+        QJsonValue dataValue = document.object()["errors"];
+        if (!dataValue.isUndefined() && dataValue.isArray())
+        {
+            return dataValue.toArray();
+        }
+    }
+    return QJsonArray();
+}
+
+QSharedPointer<IElanceError> ElanceDataReader::getError(const QJsonValue & errorValue)
+{
+    ElanceError * error = new ElanceError();
+
+    if (errorValue.isObject())
+    {
+        QJsonObject errorObject = errorValue.toObject();
+
+        QJsonValue typeValue = errorObject["type"];
+        if (!typeValue.isUndefined() && typeValue.isString())
+        {
+            error->setType(typeValue.toString());
+        }
+
+        QJsonValue codeValue = errorObject["code"];
+        if (!codeValue.isUndefined() && codeValue.isString())
+        {
+            error->setCode(codeValue.toString());
+        }
+
+        QJsonValue descriptionValue = errorObject["description"];
+        if (!descriptionValue.isUndefined() && descriptionValue.isString())
+        {
+            error->setDescription(descriptionValue.toString());
+        }
+    }
+
+    return QSharedPointer<IElanceError>(error);
 }

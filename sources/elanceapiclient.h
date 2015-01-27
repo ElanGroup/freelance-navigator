@@ -28,6 +28,7 @@ public:
 signals:
     void categoriesLoaded(const QList<QSharedPointer<IElanceCategory> > & categories) const;
     void jobsLoaded(const QSharedPointer<IElanceJobsPage> & jobsPage) const;
+    void error(const QString & message) const;
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
@@ -38,6 +39,7 @@ private slots:
 private:
     void getTokens(const QString & authorizationCode);
     QNetworkReply * post(const QString & url, const QUrlQuery & data);
+    void processError(QNetworkReply * reply);
 
     static const QString m_authorizeUrl;
     static const QString m_tokenUrl;

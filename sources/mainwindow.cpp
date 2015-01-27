@@ -3,6 +3,7 @@
 #include <QCloseEvent>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "elanceapiclient.h"
@@ -145,6 +146,11 @@ void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
     }
 }
 
+void MainWindow::processError(const QString & message)
+{
+    QMessageBox::critical(this, tr("Error"), message);
+}
+
 void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
@@ -155,6 +161,7 @@ void MainWindow::setupConnections()
     connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
             this, &MainWindow::fillCategories);
     connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &MainWindow::showJobs);
+    connect(m_elanceApiClient, &ElanceApiClient::error, this, &MainWindow::processError);
 }
 
 void MainWindow::saveSettings()

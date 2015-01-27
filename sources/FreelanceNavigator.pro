@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     elancecategory.cpp \
     cookiejar.cpp \
     aboutdialog.cpp \
-    jobitemdelegate.cpp
+    jobitemdelegate.cpp \
+    elanceerror.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -44,7 +45,9 @@ HEADERS  += mainwindow.h \
     elancecategory.h \
     cookiejar.h \
     aboutdialog.h \
-    jobitemdelegate.h
+    jobitemdelegate.h \
+    ielanceerror.h \
+    elanceerror.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \
