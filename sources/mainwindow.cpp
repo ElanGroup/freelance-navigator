@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "elanceapiclient.h"
 #include "ielancecategory.h"
 #include "ielancejobspage.h"
 #include "ielancejob.h"
@@ -132,6 +131,7 @@ void MainWindow::showAbout()
 
 void MainWindow::loadJobs()
 {
+    ui->loadJobsButton->setEnabled(false);
     m_jobsModel->removeRows(0, m_jobsModel->rowCount());
     int category = ui->categoriesComboBox->currentData().toInt();
     QList<int> subcategories;
@@ -154,11 +154,26 @@ void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
         item->setData(QVariant::fromValue(job), Qt::DisplayRole);
         m_jobsModel->appendRow(item);
     }
+    ui->loadJobsButton->setEnabled(true);
 }
 
-void MainWindow::processError(const QString & message)
+void MainWindow::processError(ElanceApiClient::ElanceApiError error)
 {
+    QString message;
+    switch (error)
+    {
+    case ElanceApiClient::ConnectionError:
+        message = tr("Connection error. Please check your internet connection.");
+        break;
+    case ElanceApiClient::ServiceError:
+        message = tr("Elance service is unavailable. Please try again later.");
+        break;
+    case ElanceApiClient::UnknownError:
+        message = tr("Unknown error");
+        break;
+    }
     QMessageBox::critical(this, tr("Error"), message);
+    ui->loadJobsButton->setEnabled(true);
 }
 
 void MainWindow::setupConnections()

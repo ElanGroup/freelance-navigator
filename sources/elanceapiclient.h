@@ -2,6 +2,7 @@
 #define ELANCEAPICLIENT_H
 
 #include <QObject>
+#include <QNetworkRequest>
 
 class QNetworkReply;
 class QDialog;
@@ -12,6 +13,7 @@ namespace FreelanceNavigator
 {
 class IElanceCategory;
 class IElanceJobsPage;
+class IElanceError;
 
 class ElanceApiClient : public QObject
 {
@@ -25,10 +27,17 @@ public:
     void loadCategories();
     void loadJobs(int category, const QList<int> & subcategories);
 
+    enum ElanceApiError
+    {
+        UnknownError,
+        ConnectionError,
+        ServiceError
+    };
+
 signals:
     void categoriesLoaded(const QList<QSharedPointer<IElanceCategory> > & categories) const;
     void jobsLoaded(const QSharedPointer<IElanceJobsPage> & jobsPage) const;
-    void error(const QString & message) const;
+    void error(ElanceApiError error) const;
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
@@ -38,8 +47,14 @@ private slots:
 
 private:
     void getTokens(const QString & authorizationCode);
+    void refreshTokens();
+    void loadCategories(const QNetworkRequest & request);
+    void loadJobs(const QNetworkRequest & request);
     QNetworkReply * post(const QString & url, const QUrlQuery & data);
+    void processPendingRequests();
     void processError(QNetworkReply * reply);
+    static bool checkErrorExists(const QList<QSharedPointer<IElanceError> > & errors,
+                                 const QString & errorCode);
 
     static const QString m_authorizeUrl;
     static const QString m_tokenUrl;
@@ -52,6 +67,8 @@ private:
 
     QString m_accessToken;
     QString m_refreshToken;
+    bool m_isTokensRefreshingActive;
+    QList<QNetworkRequest> m_pendingRequests;
 
     QDialog * m_authorizeDialog;
     QNetworkAccessManager * m_networkManager;

@@ -5,6 +5,8 @@
 #include <QSettings>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QNetworkDiskCache>
+#include <QStandardPaths>
 #include "elanceapiclient.h"
 #include "elancedatareader.h"
 #include "ielancetokens.h"
@@ -21,6 +23,7 @@ const QString ElanceApiClient::m_jobsUrl("https://api.elance.com/api2/jobs");
 
 ElanceApiClient::ElanceApiClient(QObject * parent) :
     QObject(parent),
+    m_isTokensRefreshingActive(false),
     m_authorizeDialog(0),
     m_networkManager(new QNetworkAccessManager(this))
 {
@@ -71,6 +74,9 @@ bool ElanceApiClient::authorize()
     layout->addWidget(webView);
     m_authorizeDialog->setLayout(layout);
     webView->page()->networkAccessManager()->setCookieJar(new CookieJar());
+    QNetworkDiskCache * diskCache = new QNetworkDiskCache();
+    diskCache->setCacheDirectory(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    webView->page()->networkAccessManager()->setCache(diskCache);
     connect(webView->page()->networkAccessManager(), &QNetworkAccessManager::finished,
             this, &ElanceApiClient::processAuthorizeReply);
     QUrl url(m_authorizeUrl);
@@ -117,6 +123,18 @@ void ElanceApiClient::getTokens(const QString & authorizationCode)
     connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processTokensReply);
 }
 
+void ElanceApiClient::refreshTokens()
+{
+    m_isTokensRefreshingActive = true;
+    QUrlQuery data;
+    data.addQueryItem("client_id", m_clientId);
+    data.addQueryItem("client_secret", m_clientSecret);
+    data.addQueryItem("refresh_token", m_refreshToken);
+    data.addQueryItem("grant_type", "refresh_token");
+    QNetworkReply * reply = post(m_tokenUrl, data);
+    connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processTokensReply);
+}
+
 void ElanceApiClient::processTokensReply()
 {
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
@@ -128,16 +146,25 @@ void ElanceApiClient::processTokensReply()
     {
         m_accessToken = tokens->accessToken();
         m_refreshToken = tokens->refreshToken();
-        if (m_authorizeDialog)
+        if (m_authorizeDialog) // get tokens success
         {
             m_authorizeDialog->accept();
-            return;
+        }
+        else // refresh tokens success
+        {
+            m_isTokensRefreshingActive = false;
+            processPendingRequests();
         }
     }
-
-    if (m_authorizeDialog)
+    else if (m_authorizeDialog) // get tokens error
     {
         m_authorizeDialog->reject();
+    }
+    else // refresh tokens error
+    {
+        m_isTokensRefreshingActive = false;
+        emit this->error(ServiceError);
+        m_pendingRequests.clear();
     }
 }
 
@@ -148,6 +175,16 @@ void ElanceApiClient::loadCategories()
     urlQuery.addQueryItem("access_token", m_accessToken);
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
+    loadCategories(request);
+}
+
+void ElanceApiClient::loadCategories(const QNetworkRequest & request)
+{
+    if (m_isTokensRefreshingActive)
+    {
+        m_pendingRequests.append(request);
+        return;
+    }
     QNetworkReply * reply = m_networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processCategoriesReply);
 }
@@ -187,6 +224,16 @@ void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories)
     }
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
+    loadJobs(request);
+}
+
+void ElanceApiClient::loadJobs(const QNetworkRequest & request)
+{
+    if (m_isTokensRefreshingActive)
+    {
+        m_pendingRequests.append(request);
+        return;
+    }
     QNetworkReply * reply = m_networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &ElanceApiClient::processJobsReply);
 }
@@ -218,13 +265,59 @@ QNetworkReply * ElanceApiClient::post(const QString & url, const QUrlQuery & dat
     return m_networkManager->post(request, data.toString(QUrl::FullyEncoded).toUtf8());
 }
 
+void ElanceApiClient::processPendingRequests()
+{
+    while (!m_pendingRequests.isEmpty())
+    {
+        QNetworkRequest request = m_pendingRequests.takeFirst();
+        QUrl url = request.url();
+        QUrlQuery urlQuery(url);
+        urlQuery.removeQueryItem("access_token");
+        urlQuery.addQueryItem("access_token", m_accessToken);
+        url.setQuery(urlQuery);
+        request.setUrl(url);
+        QString urlWithoutQuery = url.toString(QUrl::RemoveQuery);
+        if (urlWithoutQuery == m_categoriesUrl)
+        {
+            loadCategories(request);
+        }
+        else if (urlWithoutQuery == m_jobsUrl)
+        {
+            loadJobs(request);
+        }
+    }
+}
+
 void ElanceApiClient::processError(QNetworkReply * reply)
 {
-    QList<QSharedPointer<IElanceError> > errors = ElanceDataReader::readErrors(reply->readAll());
     if (reply->error() == QNetworkReply::TimeoutError)
     {
-        emit error(tr("Connection error. Please check your internet connection."));
+        emit error(ConnectionError);
         return;
     }
-    emit error(tr("Unknown error"));
+    QList<QSharedPointer<IElanceError> > errors = ElanceDataReader::readErrors(reply->readAll());
+    if (reply->error() == QNetworkReply::AuthenticationRequiredError &&
+        checkErrorExists(errors, "invalid_token"))
+    {
+        m_pendingRequests.append(reply->request());
+        if (!m_isTokensRefreshingActive)
+        {
+            refreshTokens();
+        }
+        return;
+    }
+    emit error(UnknownError);
+}
+
+bool ElanceApiClient::checkErrorExists(const QList<QSharedPointer<IElanceError> > & errors,
+                                       const QString & errorCode)
+{
+    for (int i = 0; i < errors.count(); ++i)
+    {
+        if (errors.at(i)->code().contains(errorCode))
+        {
+            return true;
+        }
+    }
+    return false;
 }

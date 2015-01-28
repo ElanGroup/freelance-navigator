@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "elanceapiclient.h"
 
 namespace Ui
 {
@@ -12,7 +13,6 @@ class QStandardItemModel;
 
 namespace FreelanceNavigator
 {
-class ElanceApiClient;
 class IElanceCategory;
 class IElanceJobsPage;
 
@@ -35,7 +35,7 @@ private slots:
     void showAbout();
     void loadJobs();
     void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
-    void processError(const QString & message);
+    void processError(ElanceApiClient::ElanceApiError error);
 
 private:
     void setupConnections();
