@@ -19,20 +19,20 @@ class ElanceApiClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit ElanceApiClient(QObject * parent = 0);
-    ~ElanceApiClient();
-
-    bool readSettings();
-    bool authorize();
-    void loadCategories();
-    void loadJobs(int category, const QList<int> & subcategories);
-
     enum ElanceApiError
     {
         UnknownError,
         ConnectionError,
         ServiceError
     };
+
+    explicit ElanceApiClient(QObject * parent = 0);
+    ~ElanceApiClient();
+
+    bool readSettings();
+    bool authorize();
+    void loadCategories();
+    void loadJobs(int category, const QList<int> & subcategories, int page);
 
 signals:
     void categoriesLoaded(const QList<QSharedPointer<IElanceCategory> > & categories) const;

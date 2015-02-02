@@ -78,6 +78,23 @@ QSharedPointer<IElanceJobsPage> ElanceDataReader::readJobsPage(const QByteArray 
             jobsPage->setJobsTotal(totalResults.toInt());
         }
 
+        QJsonValue totalPages = dataObject["totalPages"];
+        if (!totalPages.isUndefined() && totalPages.isDouble())
+        {
+            jobsPage->setPagesTotal(totalPages.toInt());
+        }
+
+        QJsonValue pageValue = dataObject["page"];
+        if (!pageValue.isUndefined() && pageValue.isString())
+        {
+            bool isOk;
+            int page = pageValue.toString().toInt(&isOk);
+            if (isOk)
+            {
+                jobsPage->setPage(page);
+            }
+        }
+
         QJsonValue pageResults = dataObject["pageResults"];
         if (!pageResults.isUndefined() && pageResults.isArray())
         {

@@ -12,6 +12,7 @@
 #include "elancesettingsdialog.h"
 #include "aboutdialog.h"
 #include "jobitemdelegate.h"
+#include "jobsloader.h"
 
 using namespace FreelanceNavigator;
 
@@ -19,7 +20,8 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_elanceApiClient(elanceApiClient),
-    m_jobsModel(new QStandardItemModel(0, 1, this))
+    m_jobsModel(new QStandardItemModel(0, 1, this)),
+    m_jobsLoader(new JobsLoader(m_elanceApiClient, this))
 {
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
@@ -27,6 +29,7 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     ui->jobsListView->setItemDelegate(new JobItemDelegate(this));
 
     setupConnections();
+    loadSettings();
 
     m_elanceApiClient->loadCategories();
 }
@@ -143,16 +146,32 @@ void MainWindow::loadJobs()
             subcategories.append(item->data(Qt::UserRole).toInt());
         }
     }
-    m_elanceApiClient->loadJobs(category, subcategories);
+    JobsLoader::JobType jobType;
+    switch (ui->jobTypesComboBox->currentIndex())
+    {
+    case 1:
+        jobType = JobsLoader::FixedPrice;
+        break;
+    case 2:
+        jobType = JobsLoader::Hourly;
+        break;
+    default:
+        jobType = JobsLoader::Any;
+        break;
+    }
+    m_jobsLoader->load(category, subcategories, jobType, 1);
 }
 
-void MainWindow::showJobs(const QSharedPointer<IElanceJobsPage> & jobs)
+void MainWindow::processLoadedJobs(bool isOk)
 {
-    foreach (const QSharedPointer<IElanceJob> & job, jobs->jobs())
+    if (isOk)
     {
-        QStandardItem * item = new QStandardItem();
-        item->setData(QVariant::fromValue(job), Qt::DisplayRole);
-        m_jobsModel->appendRow(item);
+        foreach (const QSharedPointer<IElanceJob> & job, m_jobsLoader->jobs())
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData(QVariant::fromValue(job), Qt::DisplayRole);
+            m_jobsModel->appendRow(item);
+        }
     }
     ui->loadJobsButton->setEnabled(true);
 }
@@ -173,7 +192,6 @@ void MainWindow::processError(ElanceApiClient::ElanceApiError error)
         break;
     }
     QMessageBox::critical(this, tr("Error"), message);
-    ui->loadJobsButton->setEnabled(true);
 }
 
 void MainWindow::setupConnections()
@@ -185,8 +203,20 @@ void MainWindow::setupConnections()
     connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::loadJobs);
     connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
             this, &MainWindow::fillCategories);
-    connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &MainWindow::showJobs);
     connect(m_elanceApiClient, &ElanceApiClient::error, this, &MainWindow::processError);
+    connect(m_jobsLoader, &JobsLoader::loaded, this, &MainWindow::processLoadedJobs);
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Settings");
+
+    QVariant jobTypeValue = settings.value("Job Type");
+    if (jobTypeValue.isValid())
+    {
+        ui->jobTypesComboBox->setCurrentIndex(jobTypeValue.toInt());
+    }
 }
 
 void MainWindow::saveSettings()
@@ -214,4 +244,6 @@ void MainWindow::saveSettings()
         }
     }
     settings.setValue("Subcategories", QVariant::fromValue(subcategories));
+
+    settings.setValue("Job Type", ui->jobTypesComboBox->currentIndex());
 }

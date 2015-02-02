@@ -15,6 +15,7 @@ namespace FreelanceNavigator
 {
 class IElanceCategory;
 class IElanceJobsPage;
+class JobsLoader;
 
 class MainWindow : public QMainWindow
 {
@@ -34,17 +35,19 @@ private slots:
     void editElanceSettings();
     void showAbout();
     void loadJobs();
-    void showJobs(const QSharedPointer<IElanceJobsPage> & jobs);
+    void processLoadedJobs(bool isOk);
     void processError(ElanceApiClient::ElanceApiError error);
 
 private:
     void setupConnections();
+    void loadSettings();
     void saveSettings();
 
     Ui::MainWindow * ui;
     ElanceApiClient * m_elanceApiClient;
     QHash<int, QList<QSharedPointer<IElanceCategory> > > m_subcategories;
     QStandardItemModel * m_jobsModel;
+    JobsLoader * m_jobsLoader;
 };
 }
 

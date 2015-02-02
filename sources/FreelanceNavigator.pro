@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     cookiejar.cpp \
     aboutdialog.cpp \
     jobitemdelegate.cpp \
-    elanceerror.cpp
+    elanceerror.cpp \
+    jobsloader.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -47,7 +48,8 @@ HEADERS  += mainwindow.h \
     aboutdialog.h \
     jobitemdelegate.h \
     ielanceerror.h \
-    elanceerror.h
+    elanceerror.h \
+    jobsloader.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \

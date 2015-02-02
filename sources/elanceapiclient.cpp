@@ -206,7 +206,7 @@ void ElanceApiClient::processCategoriesReply()
     reply->deleteLater();
 }
 
-void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories)
+void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories, int page)
 {
     QUrl url(m_jobsUrl);
     QUrlQuery urlQuery;
@@ -222,6 +222,7 @@ void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories)
         }
         urlQuery.addQueryItem("subcatFilter", subcategoriesList.join(','));
     }
+    urlQuery.addQueryItem("page", QString::number(page));
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
     loadJobs(request);
