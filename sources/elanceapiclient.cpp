@@ -59,11 +59,28 @@ bool ElanceApiClient::readSettings()
     }
     m_redirectUri = uri.toString();
 
+    QVariant accessToken = settings.value("Access Token");
+    if (accessToken.isValid())
+    {
+        m_accessToken = accessToken.toString();
+    }
+
+    QVariant refreshToken = settings.value("Refresh Token");
+    if (refreshToken.isValid())
+    {
+        m_refreshToken = refreshToken.toString();
+    }
+
     return true;
 }
 
 bool ElanceApiClient::authorize()
 {
+    if (!m_accessToken.isEmpty() && !m_refreshToken.isEmpty())
+    {
+        return true;
+    }
+
     m_authorizeDialog = new QDialog();
     m_authorizeDialog->setWindowFlags(m_authorizeDialog->windowFlags() &
                                       ~Qt::WindowContextHelpButtonHint);
@@ -146,6 +163,12 @@ void ElanceApiClient::processTokensReply()
     {
         m_accessToken = tokens->accessToken();
         m_refreshToken = tokens->refreshToken();
+
+        QSettings settings;
+        settings.beginGroup("Elance API");
+        settings.setValue("Access Token", m_accessToken);
+        settings.setValue("Refresh Token", m_refreshToken);
+
         if (m_authorizeDialog) // get tokens success
         {
             m_authorizeDialog->accept();
