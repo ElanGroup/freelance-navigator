@@ -29,7 +29,14 @@ SOURCES += main.cpp\
     aboutdialog.cpp \
     jobitemdelegate.cpp \
     elanceerror.cpp \
-    jobsloader.cpp
+    jobsloader.cpp \
+    elanceapirequest.cpp \
+    tokensrequest.cpp \
+    gettokensrequest.cpp \
+    refreshtokensrequest.cpp \
+    categoriesrequest.cpp \
+    datarequest.cpp \
+    jobsrequest.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -49,7 +56,14 @@ HEADERS  += mainwindow.h \
     jobitemdelegate.h \
     ielanceerror.h \
     elanceerror.h \
-    jobsloader.h
+    jobsloader.h \
+    elanceapirequest.h \
+    tokensrequest.h \
+    gettokensrequest.h \
+    refreshtokensrequest.h \
+    categoriesrequest.h \
+    datarequest.h \
+    jobsrequest.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \

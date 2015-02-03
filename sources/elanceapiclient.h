@@ -7,13 +7,14 @@
 class QNetworkReply;
 class QDialog;
 class QNetworkAccessManager;
-class QUrlQuery;
 
 namespace FreelanceNavigator
 {
 class IElanceCategory;
 class IElanceJobsPage;
 class IElanceError;
+class ElanceApiRequest;
+class DataRequest;
 
 class ElanceApiClient : public QObject
 {
@@ -41,25 +42,21 @@ signals:
 
 private slots:
     void processAuthorizeReply(QNetworkReply * reply);
-    void processTokensReply();
-    void processCategoriesReply();
-    void processJobsReply();
+    void processGetTokensResult(bool isOk);
+    void processRefreshTokensResult(bool isOk);
+    void processCategoriesResult(bool isOk);
+    void processJobsResult(bool isOk);
 
 private:
     void getTokens(const QString & authorizationCode);
     void refreshTokens();
-    void loadCategories(const QNetworkRequest & request);
-    void loadJobs(const QNetworkRequest & request);
-    QNetworkReply * post(const QString & url, const QUrlQuery & data);
+    void saveTokens() const;
     void processPendingRequests();
-    void processError(QNetworkReply * reply);
+    void processError(DataRequest * request);
     static bool checkErrorExists(const QList<QSharedPointer<IElanceError> > & errors,
                                  const QString & errorCode);
 
     static const QString m_authorizeUrl;
-    static const QString m_tokenUrl;
-    static const QString m_categoriesUrl;
-    static const QString m_jobsUrl;
 
     QString m_clientId;
     QString m_clientSecret;
@@ -68,12 +65,10 @@ private:
     QString m_accessToken;
     QString m_refreshToken;
     bool m_isTokensRefreshingActive;
-    QList<QNetworkRequest> m_pendingRequests;
+    QList<DataRequest *> m_pendingRequests;
 
     QDialog * m_authorizeDialog;
     QNetworkAccessManager * m_networkManager;
-
-    static const int m_jobsNumberPerPage = 25;
 };
 }
 
