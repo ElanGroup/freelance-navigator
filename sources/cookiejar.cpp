@@ -19,6 +19,11 @@ CookieJar::~CookieJar()
     save();
 }
 
+void CookieJar::clear()
+{
+    QFile::remove(cookiesFilePath());
+}
+
 void CookieJar::load()
 {
     QSettings cookieSettings(cookiesFilePath(), QSettings::IniFormat);

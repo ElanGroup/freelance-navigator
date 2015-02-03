@@ -11,6 +11,8 @@ public:
     CookieJar();
     ~CookieJar();
 
+    static void clear();
+
 private:
     void load();
     void save();

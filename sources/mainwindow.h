@@ -34,6 +34,7 @@ private slots:
     void updateSubcategories(int categoryIndex);
     void editElanceSettings();
     void showAbout();
+    void logout();
     void loadJobs();
     void processLoadedJobs(bool isOk);
     void processError(ElanceApiClient::ElanceApiError error);

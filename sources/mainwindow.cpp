@@ -132,6 +132,22 @@ void MainWindow::showAbout()
     dialog.exec();
 }
 
+void MainWindow::logout()
+{
+    hide();
+    m_elanceApiClient->logout();
+    bool isAuthorized = m_elanceApiClient->authorize();
+    if (isAuthorized)
+    {
+        m_jobsModel->removeRows(0, m_jobsModel->rowCount());
+        show();
+    }
+    else
+    {
+        close();
+    }
+}
+
 void MainWindow::loadJobs()
 {
     ui->loadJobsButton->setEnabled(false);
@@ -200,6 +216,7 @@ void MainWindow::setupConnections()
     connect(ui->actionElanceAPISettings, &QAction::triggered,
             this, &MainWindow::editElanceSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->actionLogout, &QAction::triggered, this, &MainWindow::logout);
     connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::loadJobs);
     connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
             this, &MainWindow::fillCategories);

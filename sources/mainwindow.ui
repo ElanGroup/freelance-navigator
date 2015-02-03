@@ -115,6 +115,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionLogout"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -147,6 +148,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About Freelance Navigator...</string>
+   </property>
+  </action>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout from Elance</string>
    </property>
   </action>
  </widget>

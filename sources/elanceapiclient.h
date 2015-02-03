@@ -32,6 +32,7 @@ public:
 
     bool readSettings();
     bool authorize();
+    void logout();
     void loadCategories();
     void loadJobs(int category, const QList<int> & subcategories, int page);
 

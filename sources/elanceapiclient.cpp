@@ -104,6 +104,19 @@ bool ElanceApiClient::authorize()
     return result == QDialog::Accepted;
 }
 
+void ElanceApiClient::logout()
+{
+    m_accessToken.clear();
+    m_refreshToken.clear();
+
+    QSettings settings;
+    settings.beginGroup("Elance API");
+    settings.remove("Access Token");
+    settings.remove("Refresh Token");
+
+    CookieJar::clear();
+}
+
 void ElanceApiClient::processAuthorizeReply(QNetworkReply * reply)
 {
     QString replyUrl = reply->url().toString();
