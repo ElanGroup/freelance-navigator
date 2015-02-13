@@ -23,9 +23,13 @@ public:
     explicit JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent);
     ~JobsLoader();
 
-    void load(int category, const QList<int> & subcategories, JobType jobType, int page);
+    void setCategory(int category);
+    void setSubcategories(const QList<int> & subcategories);
+    void setJobType(JobType jobType);
+    void load(int page);
     const QList<QSharedPointer<IElanceJob> > & jobs() const;
     int currentPage() const;
+    bool areMoreJobsAvailable() const;
 
 signals:
     void loaded(bool isOk) const;
@@ -46,6 +50,7 @@ private:
     int m_requestedPage;
     int m_currentPage;    
     QList<QSharedPointer<IElanceJob> > m_jobs;
+    bool m_areMoreJobsAvailable;
 
     static const int m_pageSize = 25;
 };

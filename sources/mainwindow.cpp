@@ -148,11 +148,9 @@ void MainWindow::logout()
     }
 }
 
-void MainWindow::loadJobs()
+void MainWindow::setFiltersAndLoadJobs()
 {
-    ui->loadJobsButton->setEnabled(false);
-    m_jobsModel->removeRows(0, m_jobsModel->rowCount());
-    int category = ui->categoriesComboBox->currentData().toInt();
+    m_jobsLoader->setCategory(ui->categoriesComboBox->currentData().toInt());
     QList<int> subcategories;
     for (int i = 0; i < ui->subcategoriesListWidget->count(); ++i)
     {
@@ -162,20 +160,46 @@ void MainWindow::loadJobs()
             subcategories.append(item->data(Qt::UserRole).toInt());
         }
     }
-    JobsLoader::JobType jobType;
+    m_jobsLoader->setSubcategories(subcategories);
     switch (ui->jobTypesComboBox->currentIndex())
     {
     case 1:
-        jobType = JobsLoader::FixedPrice;
+        m_jobsLoader->setJobType(JobsLoader::FixedPrice);
         break;
     case 2:
-        jobType = JobsLoader::Hourly;
+        m_jobsLoader->setJobType(JobsLoader::Hourly);
         break;
     default:
-        jobType = JobsLoader::Any;
+        m_jobsLoader->setJobType(JobsLoader::Any);
         break;
     }
-    m_jobsLoader->load(category, subcategories, jobType, 1);
+    loadJobs(1);
+}
+
+void MainWindow::loadFirstPageOfJobs()
+{
+    loadJobs(1);
+}
+
+void MainWindow::loadPreviousPageOfJobs()
+{
+    loadJobs(m_jobsLoader->currentPage() - 1);
+}
+
+void MainWindow::loadNextPageOfJobs()
+{
+    loadJobs(m_jobsLoader->currentPage() + 1);
+}
+
+void MainWindow::loadJobs(int page)
+{
+    ui->loadJobsButton->setEnabled(false);
+    ui->firstPageButton->setEnabled(false);
+    ui->previousPageButton->setEnabled(false);
+    ui->nextPageButton->setEnabled(false);
+    ui->pageLabel->setEnabled(false);
+    m_jobsModel->removeRows(0, m_jobsModel->rowCount());
+    m_jobsLoader->load(page);
 }
 
 void MainWindow::processLoadedJobs(bool isOk)
@@ -188,7 +212,18 @@ void MainWindow::processLoadedJobs(bool isOk)
             item->setData(QVariant::fromValue(job), Qt::DisplayRole);
             m_jobsModel->appendRow(item);
         }
+        if (m_jobsLoader->currentPage() > 1)
+        {
+            ui->firstPageButton->setEnabled(true);
+            ui->previousPageButton->setEnabled(true);
+        }
+        if (m_jobsLoader->areMoreJobsAvailable())
+        {
+            ui->nextPageButton->setEnabled(true);
+        }
     }
+    ui->pageLabel->setText(QString::number(m_jobsLoader->currentPage()));
+    ui->pageLabel->setEnabled(true);
     ui->loadJobsButton->setEnabled(true);
 }
 
@@ -217,7 +252,11 @@ void MainWindow::setupConnections()
             this, &MainWindow::editElanceSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->actionLogout, &QAction::triggered, this, &MainWindow::logout);
-    connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::loadJobs);
+    connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::setFiltersAndLoadJobs);
+    connect(ui->firstPageButton, &QPushButton::clicked, this, &MainWindow::loadFirstPageOfJobs);
+    connect(ui->previousPageButton, &QPushButton::clicked,
+            this, &MainWindow::loadPreviousPageOfJobs);
+    connect(ui->nextPageButton, &QPushButton::clicked, this, &MainWindow::loadNextPageOfJobs);
     connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
             this, &MainWindow::fillCategories);
     connect(m_elanceApiClient, &ElanceApiClient::error, this, &MainWindow::processError);

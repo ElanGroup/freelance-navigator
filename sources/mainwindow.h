@@ -35,11 +35,15 @@ private slots:
     void editElanceSettings();
     void showAbout();
     void logout();
-    void loadJobs();
+    void setFiltersAndLoadJobs();
+    void loadFirstPageOfJobs();
+    void loadPreviousPageOfJobs();
+    void loadNextPageOfJobs();
     void processLoadedJobs(bool isOk);
     void processError(ElanceApiClient::ElanceApiError error);
 
 private:
+    void loadJobs(int page);
     void setupConnections();
     void loadSettings();
     void saveSettings();

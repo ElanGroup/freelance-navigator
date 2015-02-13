@@ -72,3 +72,6 @@ FORMS    += mainwindow.ui \
 win32 {
     RC_ICONS = Resources/FreelanceNavigator.ico
 }
+
+RESOURCES += \
+    freelancenavigator.qrc
