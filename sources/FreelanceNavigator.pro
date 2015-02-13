@@ -63,7 +63,8 @@ HEADERS  += mainwindow.h \
     refreshtokensrequest.h \
     categoriesrequest.h \
     datarequest.h \
-    jobsrequest.h
+    jobsrequest.h \
+    enums.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \

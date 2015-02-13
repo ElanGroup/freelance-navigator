@@ -44,8 +44,11 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="labelAlignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -58,7 +61,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QComboBox" name="jobTypesComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -79,6 +82,57 @@
           <item>
            <property name="text">
             <string>Hourly</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Posted Date:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="postedDateComboBox">
+          <item>
+           <property name="text">
+            <string>Any</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within 24 hours</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within 3 days</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within 5 days</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within a week</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within 10 days</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within 2 weeks</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Within a month</string>
            </property>
           </item>
          </widget>

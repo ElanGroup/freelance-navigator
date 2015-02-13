@@ -12,7 +12,11 @@ ElanceJob::~ElanceJob()
 
 bool ElanceJob::isValid() const
 {
-    return m_jobId != -1 && !m_name.isEmpty() && !m_description.isEmpty() && !m_budget.isEmpty();
+    return m_jobId != -1 &&
+           !m_name.isEmpty() &&
+           !m_description.isEmpty() &&
+           !m_budget.isEmpty() &&
+           !m_postedDate.isNull();
 }
 
 int ElanceJob::jobId() const
@@ -53,6 +57,16 @@ QString ElanceJob::budget() const
 void ElanceJob::setBudget(const QString & budget)
 {
     m_budget = budget;
+}
+
+const QDateTime & ElanceJob::postedDate() const
+{
+    return m_postedDate;
+}
+
+void ElanceJob::setPostedDate(const QDateTime & postedDate)
+{
+    m_postedDate = postedDate;
 }
 
 bool ElanceJob::isHourly() const

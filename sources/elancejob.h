@@ -1,6 +1,7 @@
 #ifndef ELANCEJOB_H
 #define ELANCEJOB_H
 
+#include <QDateTime>
 #include "ielancejob.h"
 
 namespace FreelanceNavigator
@@ -20,6 +21,8 @@ public:
     void setDescription(const QString & description);
     virtual QString budget() const;
     void setBudget(const QString & budget);
+    virtual const QDateTime & postedDate() const;
+    void setPostedDate(const QDateTime & postedDate);
     virtual bool isHourly() const;
     void setIsHourly(bool isHourly);
 
@@ -31,6 +34,7 @@ private:
     QString m_name;
     QString m_description;
     QString m_budget;
+    QDateTime m_postedDate;
     bool m_isHourly;
 };
 }

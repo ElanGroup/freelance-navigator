@@ -43,6 +43,9 @@ private slots:
     void processError(ElanceApiClient::ElanceApiError error);
 
 private:
+    void setSubcategoriesFilter();
+    void setJobTypeFilter();
+    void setPostedDateFilter();
     void loadJobs(int page);
     void setupConnections();
     void loadSettings();

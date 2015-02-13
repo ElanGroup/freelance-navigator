@@ -151,28 +151,9 @@ void MainWindow::logout()
 void MainWindow::setFiltersAndLoadJobs()
 {
     m_jobsLoader->setCategory(ui->categoriesComboBox->currentData().toInt());
-    QList<int> subcategories;
-    for (int i = 0; i < ui->subcategoriesListWidget->count(); ++i)
-    {
-        QListWidgetItem * item = ui->subcategoriesListWidget->item(i);
-        if (item->checkState() == Qt::Checked)
-        {
-            subcategories.append(item->data(Qt::UserRole).toInt());
-        }
-    }
-    m_jobsLoader->setSubcategories(subcategories);
-    switch (ui->jobTypesComboBox->currentIndex())
-    {
-    case 1:
-        m_jobsLoader->setJobType(JobsLoader::FixedPrice);
-        break;
-    case 2:
-        m_jobsLoader->setJobType(JobsLoader::Hourly);
-        break;
-    default:
-        m_jobsLoader->setJobType(JobsLoader::Any);
-        break;
-    }
+    setSubcategoriesFilter();
+    setJobTypeFilter();
+    setPostedDateFilter();
     loadJobs(1);
 }
 
@@ -243,6 +224,67 @@ void MainWindow::processError(ElanceApiClient::ElanceApiError error)
         break;
     }
     QMessageBox::critical(this, tr("Error"), message);
+}
+
+void MainWindow::setSubcategoriesFilter()
+{
+    QList<int> subcategories;
+    for (int i = 0; i < ui->subcategoriesListWidget->count(); ++i)
+    {
+        QListWidgetItem * item = ui->subcategoriesListWidget->item(i);
+        if (item->checkState() == Qt::Checked)
+        {
+            subcategories.append(item->data(Qt::UserRole).toInt());
+        }
+    }
+    m_jobsLoader->setSubcategories(subcategories);
+}
+
+void MainWindow::setJobTypeFilter()
+{
+    switch (ui->jobTypesComboBox->currentIndex())
+    {
+    case 1:
+        m_jobsLoader->setJobType(JobType::FixedPrice);
+        break;
+    case 2:
+        m_jobsLoader->setJobType(JobType::Hourly);
+        break;
+    default:
+        m_jobsLoader->setJobType(JobType::Any);
+        break;
+    }
+}
+
+void MainWindow::setPostedDateFilter()
+{
+    switch (ui->postedDateComboBox->currentIndex())
+    {
+    case 1:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::Day);
+        break;
+    case 2:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::ThreeDays);
+        break;
+    case 3:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::FiveDays);
+        break;
+    case 4:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::Week);
+        break;
+    case 5:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::TenDays);
+        break;
+    case 6:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::TwoWeeks);
+        break;
+    case 7:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::Month);
+        break;
+    default:
+        m_jobsLoader->setPostedDateRange(PostedDateRange::Any);
+        break;
+    }
 }
 
 void MainWindow::setupConnections()

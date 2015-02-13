@@ -1,3 +1,4 @@
+#include <QDateTime>
 #include "jobsloader.h"
 #include "ielancejobspage.h"
 
@@ -7,7 +8,8 @@ JobsLoader::JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent)
     : QObject(parent),
       m_elanceApiClient(elanceApiClient),
       m_category(-1),
-      m_jobType(JobsLoader::Any),
+      m_jobType(JobType::Any),
+      m_postedDateRange(PostedDateRange::Any),
       m_areMoreJobsAvailable(false)
 {
     connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &processLoadedJobs);
@@ -28,9 +30,14 @@ void JobsLoader::setSubcategories(const QList<int> & subcategories)
     m_subcategories = subcategories;
 }
 
-void JobsLoader::setJobType(JobType jobType)
+void JobsLoader::setJobType(JobType::Enum jobType)
 {
     m_jobType = jobType;
+}
+
+void JobsLoader::setPostedDateRange(PostedDateRange::Enum postedDateRange)
+{
+    m_postedDateRange = postedDateRange;
 }
 
 void JobsLoader::load(int page)
@@ -96,13 +103,46 @@ void JobsLoader::processLoadError(ElanceApiClient::ElanceApiError) const
 
 bool JobsLoader::checkJob(const QSharedPointer<IElanceJob> & job) const
 {
-    if (m_jobType == JobsLoader::FixedPrice && job->isHourly())
+    return checkJobType(job) && checkPostedDate(job);
+}
+
+bool JobsLoader::checkJobType(const QSharedPointer<IElanceJob> & job) const
+{
+    switch (m_jobType)
     {
-        return false;
+    case JobType::FixedPrice:
+        return !job->isHourly();
+    case JobType::Hourly:
+        return job->isHourly();
+    default:
+        return true;
     }
-    if (m_jobType == JobsLoader::Hourly && !job->isHourly())
+}
+
+bool JobsLoader::checkPostedDate(const QSharedPointer<IElanceJob> & job) const
+{
+    switch (m_postedDateRange)
     {
-        return false;
+    case PostedDateRange::Day:
+        return checkIsInRange(job->postedDate(), 1);
+    case PostedDateRange::ThreeDays:
+        return checkIsInRange(job->postedDate(), 3);
+    case PostedDateRange::FiveDays:
+        return checkIsInRange(job->postedDate(), 5);
+    case PostedDateRange::Week:
+        return checkIsInRange(job->postedDate(), 7);
+    case PostedDateRange::TenDays:
+        return checkIsInRange(job->postedDate(), 10);
+    case PostedDateRange::TwoWeeks:
+        return checkIsInRange(job->postedDate(), 14);
+    case PostedDateRange::Month:
+        return job->postedDate().addMonths(1) >= QDateTime::currentDateTimeUtc();
+    default:
+        return true;
     }
-    return true;
+}
+
+bool JobsLoader::checkIsInRange(const QDateTime & dateTime, int days)
+{
+    return dateTime.secsTo(QDateTime::currentDateTimeUtc()) <= days * m_dayLength;
 }

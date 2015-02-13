@@ -4,6 +4,7 @@
 #include <QObject>
 #include "ielancejob.h"
 #include "elanceapiclient.h"
+#include "enums.h"
 
 namespace FreelanceNavigator
 {
@@ -13,19 +14,13 @@ class JobsLoader : public QObject
 {
     Q_OBJECT
 public:
-    enum JobType
-    {
-        Any,
-        FixedPrice,
-        Hourly
-    };
-
     explicit JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent);
     ~JobsLoader();
 
     void setCategory(int category);
     void setSubcategories(const QList<int> & subcategories);
-    void setJobType(JobType jobType);
+    void setJobType(JobType::Enum jobType);
+    void setPostedDateRange(PostedDateRange::Enum postedDateRange);
     void load(int page);
     const QList<QSharedPointer<IElanceJob> > & jobs() const;
     int currentPage() const;
@@ -42,17 +37,22 @@ private:
     Q_DISABLE_COPY(JobsLoader)
 
     bool checkJob(const QSharedPointer<IElanceJob> & job) const;
+    bool checkJobType(const QSharedPointer<IElanceJob> & job) const;
+    bool checkPostedDate(const QSharedPointer<IElanceJob> & job) const;
+    static bool checkIsInRange(const QDateTime & dateTime, int days);
 
     ElanceApiClient * m_elanceApiClient;
     int m_category;
     QList<int> m_subcategories;
-    JobType m_jobType;
+    JobType::Enum m_jobType;
+    PostedDateRange::Enum m_postedDateRange;
     int m_requestedPage;
     int m_currentPage;    
     QList<QSharedPointer<IElanceJob> > m_jobs;
     bool m_areMoreJobsAvailable;
 
     static const int m_pageSize = 25;
+    static const int m_dayLength = 24 * 60 * 60; // seconds
 };
 }
 
