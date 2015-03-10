@@ -13,6 +13,7 @@
 #include "aboutdialog.h"
 #include "jobitemdelegate.h"
 #include "jobsloader.h"
+#include "jobsmanager.h"
 
 using namespace FreelanceNavigator;
 
@@ -21,7 +22,9 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     ui(new Ui::MainWindow),
     m_elanceApiClient(elanceApiClient),
     m_jobsModel(new QStandardItemModel(0, 1, this)),
-    m_jobsLoader(new JobsLoader(m_elanceApiClient, this))
+    m_jobsLoader(new JobsLoader(m_elanceApiClient, this)),
+    m_jobsManager(new JobsManager(this)),
+    m_currentJobsPage(0)
 {
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
@@ -31,6 +34,7 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     setupConnections();
     loadSettings();
 
+    ui->statusBar->showMessage(tr("Load categories..."));
     m_elanceApiClient->loadCategories();
 }
 
@@ -47,6 +51,8 @@ void MainWindow::closeEvent(QCloseEvent * event)
 
 void MainWindow::fillCategories(const QList<QSharedPointer<IElanceCategory> > & categories)
 {
+    ui->statusBar->clearMessage();
+
     QSettings settings;
     settings.beginGroup("Settings");
     int savedCategoryId = settings.value("Category").toInt();
@@ -148,68 +154,83 @@ void MainWindow::logout()
     }
 }
 
-void MainWindow::setFiltersAndLoadJobs()
+void MainWindow::loadJobs()
 {
+    m_jobsManager->clear();
     m_jobsLoader->setCategory(ui->categoriesComboBox->currentData().toInt());
     setSubcategoriesFilter();
     setJobTypeFilter();
     setPostedDateFilter();
-    loadJobs(1);
-}
-
-void MainWindow::loadFirstPageOfJobs()
-{
-    loadJobs(1);
-}
-
-void MainWindow::loadPreviousPageOfJobs()
-{
-    loadJobs(m_jobsLoader->currentPage() - 1);
-}
-
-void MainWindow::loadNextPageOfJobs()
-{
-    loadJobs(m_jobsLoader->currentPage() + 1);
-}
-
-void MainWindow::loadJobs(int page)
-{
+    m_currentJobsPage = 0;
     ui->loadJobsButton->setEnabled(false);
     ui->firstPageButton->setEnabled(false);
     ui->previousPageButton->setEnabled(false);
     ui->nextPageButton->setEnabled(false);
-    ui->pageLabel->setEnabled(false);
+    ui->lastPageButton->setEnabled(false);
+    ui->pageLineEdit->setText(QString::number(m_currentJobsPage));
+    ui->pageLineEdit->setEnabled(false);
+    ui->pageTotalLabel->setText("/ 0");
+    ui->pageTotalLabel->setEnabled(false);
     m_jobsModel->removeRows(0, m_jobsModel->rowCount());
-    m_jobsLoader->load(page);
+    ui->statusBar->showMessage(tr("Load jobs..."));
+    m_jobsLoader->load();
 }
 
-void MainWindow::processLoadedJobs(bool isOk)
+void MainWindow::updateJobControls()
 {
+    if (m_currentJobsPage == 0)
+    {
+        showJobs(1);
+        ui->pageLineEdit->setEnabled(true);
+        ui->pageTotalLabel->setEnabled(true);
+    }
+    else
+    {
+        updatePageButtons();
+    }
+    ui->pageLineEdit->setValidator(new QIntValidator(1, m_jobsManager->pagesTotal(), this));
+    ui->pageTotalLabel->setText("/ " + QString::number(m_jobsManager->pagesTotal()));
+}
+
+void MainWindow::finishJobsLoad()
+{
+    ui->statusBar->clearMessage();
+    ui->loadJobsButton->setEnabled(true);
+}
+
+void MainWindow::showFirstPageOfJobs()
+{
+    showJobs(1);
+}
+
+void MainWindow::showPreviousPageOfJobs()
+{
+    showJobs(m_currentJobsPage - 1);
+}
+
+void MainWindow::showNextPageOfJobs()
+{
+    showJobs(m_currentJobsPage + 1);
+}
+
+void MainWindow::showLastPageOfJobs()
+{
+    showJobs(m_jobsManager->pagesTotal());
+}
+
+void MainWindow::showRequestedPageOfJobs()
+{
+    bool isOk;
+    int page = ui->pageLineEdit->text().toInt(&isOk);
     if (isOk)
     {
-        foreach (const QSharedPointer<IElanceJob> & job, m_jobsLoader->jobs())
-        {
-            QStandardItem * item = new QStandardItem();
-            item->setData(QVariant::fromValue(job), Qt::DisplayRole);
-            m_jobsModel->appendRow(item);
-        }
-        if (m_jobsLoader->currentPage() > 1)
-        {
-            ui->firstPageButton->setEnabled(true);
-            ui->previousPageButton->setEnabled(true);
-        }
-        if (m_jobsLoader->areMoreJobsAvailable())
-        {
-            ui->nextPageButton->setEnabled(true);
-        }
+        showJobs(page);
     }
-    ui->pageLabel->setText(QString::number(m_jobsLoader->currentPage()));
-    ui->pageLabel->setEnabled(true);
-    ui->loadJobsButton->setEnabled(true);
 }
 
 void MainWindow::processError(ElanceApiClient::ElanceApiError error)
 {
+    ui->statusBar->clearMessage();
     QString message;
     switch (error)
     {
@@ -287,22 +308,49 @@ void MainWindow::setPostedDateFilter()
     }
 }
 
+void MainWindow::showJobs(int page)
+{
+    Q_ASSERT(page > 0 && page <= m_jobsManager->pagesTotal());
+    m_currentJobsPage = page;
+    ui->pageLineEdit->setText(QString::number(m_currentJobsPage));
+    m_jobsModel->removeRows(0, m_jobsModel->rowCount());
+    ui->jobsListView->scrollToTop();
+    foreach (const QSharedPointer<IElanceJob> & job, m_jobsManager->getJobs(m_currentJobsPage))
+    {
+        QStandardItem * item = new QStandardItem();
+        item->setData(QVariant::fromValue(job), Qt::DisplayRole);
+        m_jobsModel->appendRow(item);
+    }
+    updatePageButtons();
+}
+
+void MainWindow::updatePageButtons()
+{
+    ui->firstPageButton->setEnabled(m_currentJobsPage > 1);
+    ui->previousPageButton->setEnabled(m_currentJobsPage > 1);
+    ui->nextPageButton->setEnabled(m_currentJobsPage < m_jobsManager->pagesTotal());
+    ui->lastPageButton->setEnabled(m_currentJobsPage < m_jobsManager->pagesTotal());
+}
+
 void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
-    connect(ui->actionElanceAPISettings, &QAction::triggered,
-            this, &MainWindow::editElanceSettings);
-    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
-    connect(ui->actionLogout, &QAction::triggered, this, &MainWindow::logout);
-    connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::setFiltersAndLoadJobs);
-    connect(ui->firstPageButton, &QPushButton::clicked, this, &MainWindow::loadFirstPageOfJobs);
-    connect(ui->previousPageButton, &QPushButton::clicked,
-            this, &MainWindow::loadPreviousPageOfJobs);
-    connect(ui->nextPageButton, &QPushButton::clicked, this, &MainWindow::loadNextPageOfJobs);
-    connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded,
-            this, &MainWindow::fillCategories);
-    connect(m_elanceApiClient, &ElanceApiClient::error, this, &MainWindow::processError);
-    connect(m_jobsLoader, &JobsLoader::loaded, this, &MainWindow::processLoadedJobs);
+    connect(ui->actionElanceAPISettings, &QAction::triggered, this, &editElanceSettings);
+    connect(ui->actionAbout, &QAction::triggered, this, &showAbout);
+    connect(ui->actionLogout, &QAction::triggered, this, &logout);
+    connect(ui->loadJobsButton, &QPushButton::clicked, this, &loadJobs);
+    connect(ui->firstPageButton, &QPushButton::clicked, this, &showFirstPageOfJobs);
+    connect(ui->previousPageButton, &QPushButton::clicked, this, &showPreviousPageOfJobs);
+    connect(ui->nextPageButton, &QPushButton::clicked, this, &showNextPageOfJobs);
+    connect(ui->lastPageButton, &QPushButton::clicked, this, &showLastPageOfJobs);
+    connect(ui->pageLineEdit, &QLineEdit::returnPressed, this, &showRequestedPageOfJobs);
+    connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded, this, &fillCategories);
+    connect(m_elanceApiClient, &ElanceApiClient::error, this, &processError);
+    connect(m_jobsLoader, &JobsLoader::loaded, m_jobsManager, &JobsManager::processLoadedJobs);
+    connect(m_jobsLoader, &JobsLoader::loadFinished,
+            m_jobsManager, &JobsManager::processLoadFinish);
+    connect(m_jobsLoader, &JobsLoader::loadFinished, this, &finishJobsLoad);
+    connect(m_jobsManager, &JobsManager::pageAdded, this, &updateJobControls);
 }
 
 void MainWindow::loadSettings()
@@ -314,6 +362,12 @@ void MainWindow::loadSettings()
     if (jobTypeValue.isValid())
     {
         ui->jobTypesComboBox->setCurrentIndex(jobTypeValue.toInt());
+    }
+
+    QVariant postedDateValue = settings.value("Posted Date");
+    if (postedDateValue.isValid())
+    {
+        ui->postedDateComboBox->setCurrentIndex(postedDateValue.toInt());
     }
 }
 
@@ -344,4 +398,5 @@ void MainWindow::saveSettings()
     settings.setValue("Subcategories", QVariant::fromValue(subcategories));
 
     settings.setValue("Job Type", ui->jobTypesComboBox->currentIndex());
+    settings.setValue("Posted Date", ui->postedDateComboBox->currentIndex());
 }

@@ -21,13 +21,11 @@ public:
     void setSubcategories(const QList<int> & subcategories);
     void setJobType(JobType::Enum jobType);
     void setPostedDateRange(PostedDateRange::Enum postedDateRange);
-    void load(int page);
-    const QList<QSharedPointer<IElanceJob> > & jobs() const;
-    int currentPage() const;
-    bool areMoreJobsAvailable() const;
+    void load();
 
 signals:
-    void loaded(bool isOk) const;
+    void loaded(QList<QSharedPointer<IElanceJob> > jobs) const;
+    void loadFinished() const;
 
 private slots:
     void processLoadedJobs(const QSharedPointer<IElanceJobsPage> & jobsPage);
@@ -46,12 +44,7 @@ private:
     QList<int> m_subcategories;
     JobType::Enum m_jobType;
     PostedDateRange::Enum m_postedDateRange;
-    int m_requestedPage;
-    int m_currentPage;    
-    QList<QSharedPointer<IElanceJob> > m_jobs;
-    bool m_areMoreJobsAvailable;
 
-    static const int m_pageSize = 25;
     static const int m_dayLength = 24 * 60 * 60; // seconds
 };
 }

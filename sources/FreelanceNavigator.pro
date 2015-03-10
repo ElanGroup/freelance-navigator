@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     refreshtokensrequest.cpp \
     categoriesrequest.cpp \
     datarequest.cpp \
-    jobsrequest.cpp
+    jobsrequest.cpp \
+    jobsmanager.cpp
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
@@ -64,7 +65,8 @@ HEADERS  += mainwindow.h \
     categoriesrequest.h \
     datarequest.h \
     jobsrequest.h \
-    enums.h
+    enums.h \
+    jobsmanager.h
 
 FORMS    += mainwindow.ui \
     elancesettingsdialog.ui \

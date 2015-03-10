@@ -3,5 +3,6 @@
         <file>Resources/go-first.png</file>
         <file>Resources/go-previous.png</file>
         <file>Resources/go-next.png</file>
+        <file>Resources/go-last.png</file>
     </qresource>
 </RCC>

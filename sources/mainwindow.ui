@@ -212,12 +212,49 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pageLabel">
+         <widget class="QLineEdit" name="pageLineEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Current page</string>
           </property>
           <property name="text">
            <string>0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="pageTotalLabel">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Total pages</string>
+          </property>
+          <property name="text">
+           <string>/ 0</string>
           </property>
          </widget>
         </item>
@@ -235,6 +272,23 @@
           <property name="icon">
            <iconset resource="freelancenavigator.qrc">
             <normaloff>:/Resources/go-next.png</normaloff>:/Resources/go-next.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="lastPageButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Last page</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="freelancenavigator.qrc">
+            <normaloff>:/Resources/go-last.png</normaloff>:/Resources/go-last.png</iconset>
           </property>
          </widget>
         </item>

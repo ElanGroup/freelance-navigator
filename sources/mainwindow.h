@@ -14,8 +14,9 @@ class QStandardItemModel;
 namespace FreelanceNavigator
 {
 class IElanceCategory;
-class IElanceJobsPage;
+class IElanceJob;
 class JobsLoader;
+class JobsManager;
 
 class MainWindow : public QMainWindow
 {
@@ -35,18 +36,22 @@ private slots:
     void editElanceSettings();
     void showAbout();
     void logout();
-    void setFiltersAndLoadJobs();
-    void loadFirstPageOfJobs();
-    void loadPreviousPageOfJobs();
-    void loadNextPageOfJobs();
-    void processLoadedJobs(bool isOk);
+    void loadJobs();
+    void updateJobControls();
+    void finishJobsLoad();
+    void showFirstPageOfJobs();
+    void showPreviousPageOfJobs();
+    void showNextPageOfJobs();
+    void showLastPageOfJobs();
+    void showRequestedPageOfJobs();
     void processError(ElanceApiClient::ElanceApiError error);
 
 private:
     void setSubcategoriesFilter();
     void setJobTypeFilter();
     void setPostedDateFilter();
-    void loadJobs(int page);
+    void showJobs(int page);
+    void updatePageButtons();
     void setupConnections();
     void loadSettings();
     void saveSettings();
@@ -56,6 +61,8 @@ private:
     QHash<int, QList<QSharedPointer<IElanceCategory> > > m_subcategories;
     QStandardItemModel * m_jobsModel;
     JobsLoader * m_jobsLoader;
+    JobsManager * m_jobsManager;
+    int m_currentJobsPage;
 };
 }
 

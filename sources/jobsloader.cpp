@@ -9,8 +9,7 @@ JobsLoader::JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent)
       m_elanceApiClient(elanceApiClient),
       m_category(-1),
       m_jobType(JobType::Any),
-      m_postedDateRange(PostedDateRange::Any),
-      m_areMoreJobsAvailable(false)
+      m_postedDateRange(PostedDateRange::Any)
 {
     connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &processLoadedJobs);
     connect(m_elanceApiClient, &ElanceApiClient::error, this, &processLoadError);
@@ -40,57 +39,29 @@ void JobsLoader::setPostedDateRange(PostedDateRange::Enum postedDateRange)
     m_postedDateRange = postedDateRange;
 }
 
-void JobsLoader::load(int page)
+void JobsLoader::load()
 {
-    m_areMoreJobsAvailable = false;
-    m_requestedPage = page;
-    m_currentPage = 1;
-    m_jobs.clear();
     m_elanceApiClient->loadJobs(m_category, m_subcategories, 1);
-}
-
-const QList<QSharedPointer<IElanceJob> > & JobsLoader::jobs() const
-{
-    return m_jobs;
-}
-
-int JobsLoader::currentPage() const
-{
-    return m_currentPage;
-}
-
-bool JobsLoader::areMoreJobsAvailable() const
-{
-    return m_areMoreJobsAvailable;
 }
 
 void JobsLoader::processLoadedJobs(const QSharedPointer<IElanceJobsPage> & jobsPage)
 {
+    QList<QSharedPointer<IElanceJob> > jobs;
     foreach (const QSharedPointer<IElanceJob> & job, jobsPage->jobs())
     {
         if (checkJob(job))
         {
-            if (m_jobs.count() == m_pageSize)
-            {
-                // Start to fill next page;
-                ++m_currentPage;
-                m_jobs.clear();
-            }
-            m_jobs.append(job);
-            if (m_jobs.count() == m_pageSize && m_currentPage == m_requestedPage)
-            {
-                // Requested page is fully loaded.
-                m_areMoreJobsAvailable = true;
-                emit loaded(true);
-                return;
-            }
+            jobs.append(job);
         }
+    }
+    if (!jobs.isEmpty())
+    {
+        emit loaded(jobs);
     }
     if (jobsPage->page() >= jobsPage->pagesTotal())
     {
         // There are no available pages in the service for current request.
-        m_areMoreJobsAvailable = false;
-        emit loaded(true);
+        emit loadFinished();
         return;
     }
     m_elanceApiClient->loadJobs(m_category, m_subcategories, jobsPage->page() + 1);
@@ -98,7 +69,7 @@ void JobsLoader::processLoadedJobs(const QSharedPointer<IElanceJobsPage> & jobsP
 
 void JobsLoader::processLoadError(ElanceApiClient::ElanceApiError) const
 {
-    emit loaded(false);
+    emit loadFinished();
 }
 
 bool JobsLoader::checkJob(const QSharedPointer<IElanceJob> & job) const
