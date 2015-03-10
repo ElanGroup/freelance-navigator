@@ -107,5 +107,5 @@ void JobItemDelegate::paintDescription(QPainter * painter,
     QRectF rect = option.rect;
     rect.translate(0, nameHeight(option) + budgetHeight(option));
     rect.setHeight(option.fontMetrics.height() * m_descriptionLinesCount);
-    painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, job->description());
+    painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, job->description().simplified());
 }
