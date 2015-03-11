@@ -21,6 +21,7 @@ public:
     void setSubcategories(const QList<int> & subcategories);
     void setJobType(JobType::Enum jobType);
     void setPostedDateRange(PostedDateRange::Enum postedDateRange);
+    void setBudget(int min, int max);
     void load();
 
 signals:
@@ -38,12 +39,19 @@ private:
     bool checkJobType(const QSharedPointer<IElanceJob> & job) const;
     bool checkPostedDate(const QSharedPointer<IElanceJob> & job) const;
     static bool checkIsInRange(const QDateTime & dateTime, int days);
+    bool checkBudget(const QSharedPointer<IElanceJob> & job) const;
+    static bool parseBudget(const QString & text, double & minBudget, double & maxBudget);
+    static double parseCost(QString & text);
 
     ElanceApiClient * m_elanceApiClient;
     int m_category;
     QList<int> m_subcategories;
     JobType::Enum m_jobType;
     PostedDateRange::Enum m_postedDateRange;
+    int m_minBudget;
+    int m_maxBudget;
+    int m_lastPage;
+    QHash<int, QList<QSharedPointer<IElanceJob> > > m_jobs;
 
     static const int m_dayLength = 24 * 60 * 60; // seconds
 };

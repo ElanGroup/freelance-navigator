@@ -36,6 +36,7 @@ private slots:
     void editElanceSettings();
     void showAbout();
     void logout();
+    void jobTypeChanged(int index);
     void loadJobs();
     void updateJobControls();
     void finishJobsLoad();
@@ -50,6 +51,7 @@ private:
     void setSubcategoriesFilter();
     void setJobTypeFilter();
     void setPostedDateFilter();
+    void setBudgetFilter();
     void showJobs(int page);
     void updatePageButtons();
     void setupConnections();
@@ -63,6 +65,10 @@ private:
     JobsLoader * m_jobsLoader;
     JobsManager * m_jobsManager;
     int m_currentJobsPage;
+    int m_minBudget;
+    int m_maxBudget;
+    int m_minHourlyRate;
+    int m_maxHourlyRate;
 };
 }
 

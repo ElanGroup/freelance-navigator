@@ -24,15 +24,24 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     m_jobsModel(new QStandardItemModel(0, 1, this)),
     m_jobsLoader(new JobsLoader(m_elanceApiClient, this)),
     m_jobsManager(new JobsManager(this)),
-    m_currentJobsPage(0)
+    m_currentJobsPage(0),
+    m_minBudget(-1),
+    m_maxBudget(-1),
+    m_minHourlyRate(-1),
+    m_maxHourlyRate(-1)
 {
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
     ui->jobsListView->setModel(m_jobsModel);
     ui->jobsListView->setItemDelegate(new JobItemDelegate(this));
 
+    ui->minLineEdit->setValidator(new QIntValidator(0, 99999, this));
+    ui->maxLineEdit->setValidator(new QIntValidator(0, 99999, this));
+
     setupConnections();
     loadSettings();
+
+    jobTypeChanged(ui->jobTypesComboBox->currentIndex());
 
     ui->statusBar->showMessage(tr("Load categories..."));
     m_elanceApiClient->loadCategories();
@@ -154,6 +163,28 @@ void MainWindow::logout()
     }
 }
 
+void MainWindow::jobTypeChanged(int index)
+{
+    switch (index)
+    {
+    case 1:
+        ui->budgetLabel->setText(tr("Budget:"));
+        ui->minLineEdit->setText(m_minBudget == -1 ? "" : QString::number(m_minBudget));
+        ui->maxLineEdit->setText(m_maxBudget == -1 ? "" : QString::number(m_maxBudget));
+        break;
+    case 2:
+        ui->budgetLabel->setText(tr("Hourly Rate:"));
+        ui->minLineEdit->setText(m_minHourlyRate == -1 ? "" : QString::number(m_minHourlyRate));
+        ui->maxLineEdit->setText(m_maxHourlyRate == -1 ? "" : QString::number(m_maxHourlyRate));
+        break;
+    }
+    ui->budgetLabel->setVisible(index == 1 || index == 2);
+    ui->minLabel->setVisible(index == 1 || index == 2);
+    ui->minLineEdit->setVisible(index == 1 || index == 2);
+    ui->maxLabel->setVisible(index == 1 || index == 2);
+    ui->maxLineEdit->setVisible(index == 1 || index == 2);
+}
+
 void MainWindow::loadJobs()
 {
     m_jobsManager->clear();
@@ -161,6 +192,7 @@ void MainWindow::loadJobs()
     setSubcategoriesFilter();
     setJobTypeFilter();
     setPostedDateFilter();
+    setBudgetFilter();
     m_currentJobsPage = 0;
     ui->loadJobsButton->setEnabled(false);
     ui->firstPageButton->setEnabled(false);
@@ -308,6 +340,48 @@ void MainWindow::setPostedDateFilter()
     }
 }
 
+void MainWindow::setBudgetFilter()
+{
+    if (ui->jobTypesComboBox->currentIndex() == 0)
+    {
+        m_minBudget = -1;
+        m_maxBudget = -1;
+        m_minHourlyRate = -1;
+        m_maxHourlyRate = -1;
+        m_jobsLoader->setBudget(-1, -1);
+        return;
+    }
+
+    bool isMinOk;
+    int min = ui->minLineEdit->text().toInt(&isMinOk);
+    bool isMaxOk;
+    int max = ui->maxLineEdit->text().toInt(&isMaxOk);
+
+    if (isMinOk && isMaxOk && min > max)
+    {
+        max = min + 1;
+        ui->maxLineEdit->setText(QString::number(max));
+    }
+
+    switch (ui->jobTypesComboBox->currentIndex())
+    {
+    case 1:
+        m_minBudget = isMinOk ? min : -1;
+        m_maxBudget = isMaxOk ? max : -1;
+        m_minHourlyRate = -1;
+        m_maxHourlyRate = -1;
+        m_jobsLoader->setBudget(m_minBudget, m_maxBudget);
+        break;
+    case 2:
+        m_minBudget = -1;
+        m_maxBudget = -1;
+        m_minHourlyRate = isMinOk ? min : -1;
+        m_maxHourlyRate = isMaxOk ? max : -1;
+        m_jobsLoader->setBudget(m_minHourlyRate, m_maxHourlyRate);
+        break;
+    }
+}
+
 void MainWindow::showJobs(int page)
 {
     Q_ASSERT(page > 0 && page <= m_jobsManager->pagesTotal());
@@ -338,6 +412,9 @@ void MainWindow::setupConnections()
     connect(ui->actionElanceAPISettings, &QAction::triggered, this, &editElanceSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &showAbout);
     connect(ui->actionLogout, &QAction::triggered, this, &logout);
+    connect(ui->jobTypesComboBox,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, &jobTypeChanged);
     connect(ui->loadJobsButton, &QPushButton::clicked, this, &loadJobs);
     connect(ui->firstPageButton, &QPushButton::clicked, this, &showFirstPageOfJobs);
     connect(ui->previousPageButton, &QPushButton::clicked, this, &showPreviousPageOfJobs);
@@ -369,6 +446,30 @@ void MainWindow::loadSettings()
     {
         ui->postedDateComboBox->setCurrentIndex(postedDateValue.toInt());
     }
+
+    QVariant minBudgetValue = settings.value("Min Budget");
+    if (minBudgetValue.isValid())
+    {
+        m_minBudget = minBudgetValue.toInt();
+    }
+
+    QVariant maxBudgetValue = settings.value("Max Budget");
+    if (maxBudgetValue.isValid())
+    {
+        m_maxBudget = maxBudgetValue.toInt();
+    }
+
+    QVariant minHourlyRateValue = settings.value("Min Hourly Rate");
+    if (minHourlyRateValue.isValid())
+    {
+        m_minHourlyRate = minHourlyRateValue.toInt();
+    }
+
+    QVariant maxHourlyRateValue = settings.value("Max Hourly Rate");
+    if (maxHourlyRateValue.isValid())
+    {
+        m_maxHourlyRate = maxHourlyRateValue.toInt();
+    }
 }
 
 void MainWindow::saveSettings()
@@ -399,4 +500,8 @@ void MainWindow::saveSettings()
 
     settings.setValue("Job Type", ui->jobTypesComboBox->currentIndex());
     settings.setValue("Posted Date", ui->postedDateComboBox->currentIndex());
+    settings.setValue("Min Budget", m_minBudget);
+    settings.setValue("Max Budget", m_maxBudget);
+    settings.setValue("Min Hourly Rate", m_minHourlyRate);
+    settings.setValue("Max Hourly Rate", m_maxHourlyRate);
 }
