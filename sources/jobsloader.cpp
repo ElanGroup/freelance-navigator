@@ -51,11 +51,16 @@ void JobsLoader::setBudget(int min, int max, bool includeNotSure)
     m_includeNotSure = includeNotSure;
 }
 
+void JobsLoader::setKeywords(const QString & keywords)
+{
+    m_keywords = keywords;
+}
+
 void JobsLoader::load()
 {
     m_lastPage = -1;
     m_jobs.clear();
-    m_elanceApiClient->loadJobs(m_category, m_subcategories, 1);
+    m_elanceApiClient->loadJobs(m_category, m_subcategories, m_keywords, 1);
 }
 
 void JobsLoader::processLoadedJobs(const QSharedPointer<IElanceJobsPage> & jobsPage)
@@ -64,7 +69,7 @@ void JobsLoader::processLoadedJobs(const QSharedPointer<IElanceJobsPage> & jobsP
     {
         for (int i = 2; i <= jobsPage->pagesTotal(); ++i)
         {
-            m_elanceApiClient->loadJobs(m_category, m_subcategories, i);
+            m_elanceApiClient->loadJobs(m_category, m_subcategories, m_keywords, i);
         }
     }
 

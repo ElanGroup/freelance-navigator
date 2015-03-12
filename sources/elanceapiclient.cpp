@@ -233,10 +233,14 @@ void ElanceApiClient::processCategoriesResult(bool isOk)
     }
 }
 
-void ElanceApiClient::loadJobs(int category, const QList<int> & subcategories, int page)
+void ElanceApiClient::loadJobs(int category,
+                               const QList<int> & subcategories,
+                               const QString & keywords,
+                               int page)
 {
     JobsRequest * request = new JobsRequest(category,
                                             subcategories,
+                                            keywords,
                                             page,
                                             m_accessToken,
                                             m_networkManager,

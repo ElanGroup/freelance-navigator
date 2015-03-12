@@ -34,7 +34,10 @@ public:
     bool authorize();
     void logout();
     void loadCategories();
-    void loadJobs(int category, const QList<int> & subcategories, int page);
+    void loadJobs(int category,
+                  const QList<int> & subcategories,
+                  const QString & keywords,
+                  int page);
 
 signals:
     void categoriesLoaded(const QList<QSharedPointer<IElanceCategory> > & categories) const;

@@ -8,6 +8,7 @@ const QString JobsRequest::m_jobsUrl("https://api.elance.com/api2/jobs");
 
 JobsRequest::JobsRequest(int category,
                          const QList<int> & subcategories,
+                         const QString & keywords,
                          int page,
                          const QString & accessToken,
                          QNetworkAccessManager * networkManager,
@@ -15,6 +16,7 @@ JobsRequest::JobsRequest(int category,
     : DataRequest(accessToken, networkManager, parent),
       m_category(category),
       m_subcategories(subcategories),
+      m_keywords(keywords),
       m_page(page)
 {
 }
@@ -43,6 +45,10 @@ void JobsRequest::doSubmit() const
             subcategoriesList << QString::number(m_subcategories[i]);
         }
         urlQuery.addQueryItem("subcatFilter", subcategoriesList.join(','));
+    }
+    if (!m_keywords.isEmpty())
+    {
+        urlQuery.addQueryItem("keywords", m_keywords);
     }
     urlQuery.addQueryItem("page", QString::number(m_page));
     url.setQuery(urlQuery);

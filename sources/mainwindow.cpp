@@ -194,6 +194,7 @@ void MainWindow::loadJobs()
     setJobTypeFilter();
     setPostedDateFilter();
     setBudgetFilter();
+    m_jobsLoader->setKeywords(ui->keywordsLineEdit->text());
     m_currentJobsPage = 0;
     ui->loadJobsButton->setEnabled(false);
     ui->firstPageButton->setEnabled(false);

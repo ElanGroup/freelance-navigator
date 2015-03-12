@@ -22,6 +22,7 @@ public:
     void setJobType(JobType::Enum jobType);
     void setPostedDateRange(PostedDateRange::Enum postedDateRange);
     void setBudget(int min, int max, bool includeNotSure);
+    void setKeywords(const QString & keywords);
     void load();
 
 signals:
@@ -51,6 +52,7 @@ private:
     int m_minBudget;
     int m_maxBudget;
     bool m_includeNotSure;
+    QString m_keywords;
     int m_lastPage;
     QHash<int, QList<QSharedPointer<IElanceJob> > > m_jobs;
 

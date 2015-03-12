@@ -13,6 +13,7 @@ class JobsRequest : public DataRequest
 public:
     explicit JobsRequest(int category,
                          const QList<int> & subcategories,
+                         const QString & keywords,
                          int page,
                          const QString & accessToken,
                          QNetworkAccessManager * networkManager,
@@ -30,6 +31,7 @@ private:
 
     int m_category;
     QList<int> m_subcategories;
+    QString m_keywords;
     int m_page;
     QSharedPointer<IElanceJobsPage> m_jobsPage;
 
