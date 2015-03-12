@@ -183,6 +183,7 @@ void MainWindow::jobTypeChanged(int index)
     ui->minLineEdit->setVisible(index == 1 || index == 2);
     ui->maxLabel->setVisible(index == 1 || index == 2);
     ui->maxLineEdit->setVisible(index == 1 || index == 2);
+    ui->notSuteCheckBox->setVisible(index == 1 || index == 2);
 }
 
 void MainWindow::loadJobs()
@@ -348,7 +349,7 @@ void MainWindow::setBudgetFilter()
         m_maxBudget = -1;
         m_minHourlyRate = -1;
         m_maxHourlyRate = -1;
-        m_jobsLoader->setBudget(-1, -1);
+        m_jobsLoader->setBudget(-1, -1, true);
         return;
     }
 
@@ -370,14 +371,16 @@ void MainWindow::setBudgetFilter()
         m_maxBudget = isMaxOk ? max : -1;
         m_minHourlyRate = -1;
         m_maxHourlyRate = -1;
-        m_jobsLoader->setBudget(m_minBudget, m_maxBudget);
+        m_jobsLoader->setBudget(m_minBudget, m_maxBudget, ui->notSuteCheckBox->isChecked());
         break;
     case 2:
         m_minBudget = -1;
         m_maxBudget = -1;
         m_minHourlyRate = isMinOk ? min : -1;
         m_maxHourlyRate = isMaxOk ? max : -1;
-        m_jobsLoader->setBudget(m_minHourlyRate, m_maxHourlyRate);
+        m_jobsLoader->setBudget(m_minHourlyRate,
+                                m_maxHourlyRate,
+                                ui->notSuteCheckBox->isChecked());
         break;
     }
 }
@@ -470,6 +473,12 @@ void MainWindow::loadSettings()
     {
         m_maxHourlyRate = maxHourlyRateValue.toInt();
     }
+
+    QVariant includeNotSureValue = settings.value("Include Not Sure");
+    if (includeNotSureValue.isValid())
+    {
+        ui->notSuteCheckBox->setChecked(includeNotSureValue.toBool());
+    }
 }
 
 void MainWindow::saveSettings()
@@ -504,4 +513,5 @@ void MainWindow::saveSettings()
     settings.setValue("Max Budget", m_maxBudget);
     settings.setValue("Min Hourly Rate", m_minHourlyRate);
     settings.setValue("Max Hourly Rate", m_maxHourlyRate);
+    settings.setValue("Include Not Sure", ui->notSuteCheckBox->isChecked());
 }

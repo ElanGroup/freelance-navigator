@@ -13,6 +13,7 @@ JobsLoader::JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent)
       m_postedDateRange(PostedDateRange::Any),
       m_minBudget(-1),
       m_maxBudget(-1),
+      m_includeNotSure(false),
       m_lastPage(-1)
 {
     connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &processLoadedJobs);
@@ -43,10 +44,11 @@ void JobsLoader::setPostedDateRange(PostedDateRange::Enum postedDateRange)
     m_postedDateRange = postedDateRange;
 }
 
-void JobsLoader::setBudget(int min, int max)
+void JobsLoader::setBudget(int min, int max, bool includeNotSure)
 {
     m_minBudget = min;
     m_maxBudget = max;
+    m_includeNotSure = includeNotSure;
 }
 
 void JobsLoader::load()
@@ -162,7 +164,7 @@ bool JobsLoader::checkBudget(const QSharedPointer<IElanceJob> & job) const
 
     if (job->budget().toLower() == "not sure")
     {
-        return true;
+        return m_includeNotSure;
     }
 
     double jobMinBudget;

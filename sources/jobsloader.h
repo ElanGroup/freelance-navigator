@@ -21,7 +21,7 @@ public:
     void setSubcategories(const QList<int> & subcategories);
     void setJobType(JobType::Enum jobType);
     void setPostedDateRange(PostedDateRange::Enum postedDateRange);
-    void setBudget(int min, int max);
+    void setBudget(int min, int max, bool includeNotSure);
     void load();
 
 signals:
@@ -50,6 +50,7 @@ private:
     PostedDateRange::Enum m_postedDateRange;
     int m_minBudget;
     int m_maxBudget;
+    bool m_includeNotSure;
     int m_lastPage;
     QHash<int, QList<QSharedPointer<IElanceJob> > > m_jobs;
 
