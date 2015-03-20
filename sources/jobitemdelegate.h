@@ -20,6 +20,12 @@ public:
                        const QModelIndex & index) const;
     virtual QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
+protected:
+    virtual bool editorEvent(QEvent * event,
+                             QAbstractItemModel * model,
+                             const QStyleOptionViewItem & option,
+                             const QModelIndex & index);
+
 private:
     qreal nameHeight() const;
     qreal budgetHeight() const;

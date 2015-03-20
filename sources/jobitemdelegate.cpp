@@ -1,6 +1,8 @@
 #include <QDebug>
 #include <QPainter>
 #include <QPalette>
+#include <QEvent>
+#include <QMouseEvent>
 #include "jobitemdelegate.h"
 #include "ielancejob.h"
 
@@ -15,6 +17,7 @@ JobItemDelegate::JobItemDelegate(QObject * parent)
       m_descriptionFont(new QFont("Times New Roman", 11)),
       m_descriptionFontMetrics(new QFontMetricsF(*m_descriptionFont))
 {
+    m_nameFont->setUnderline(true);
 }
 
 JobItemDelegate::~JobItemDelegate()
@@ -34,14 +37,9 @@ void JobItemDelegate::paint(QPainter * painter,
     QSharedPointer<IElanceJob> job = qvariant_cast<QSharedPointer<IElanceJob> >(index.data());
     Q_ASSERT(job);
 
-    painter->save();
-
-    painter->setPen(option.palette.windowText().color());
     paintName(painter, option, job);
     paintBudget(painter, option, job);
     paintDescription(painter, option, job);
-
-    painter->restore();
 }
 
 QSize JobItemDelegate::sizeHint(const QStyleOptionViewItem & option,
@@ -53,6 +51,18 @@ QSize JobItemDelegate::sizeHint(const QStyleOptionViewItem & option,
     int height = nameHeight() + budgetHeight() + descriptionHeight();
     height += m_itemBottomMargin;
     return QSize(width, height);
+}
+
+bool JobItemDelegate::editorEvent(QEvent * event,
+                                  QAbstractItemModel * model,
+                                  const QStyleOptionViewItem & option,
+                                  const QModelIndex & index)
+{
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+        QMouseEvent * mouseEvent = static_cast<QMouseEvent *>(event);
+    }
+    return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
 qreal JobItemDelegate::nameHeight() const
@@ -74,40 +84,50 @@ void JobItemDelegate::paintName(QPainter * painter,
                                 const QStyleOptionViewItem & option,
                                 const QSharedPointer<IElanceJob> & job) const
 {
-    QFont defaultFont = painter->font();
     QRectF rect = option.rect;
     rect.setHeight(m_nameFontMetrics->height());
+
+    QColor color = option.state & QStyle::State_MouseOver ? option.palette.link().color().lighter()
+                                                          : option.palette.link().color();
+
+    painter->save();
+    painter->setPen(color);
     painter->setFont(*m_nameFont);
     painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, job->name());
-    painter->setFont(defaultFont);
+    painter->restore();
 }
 
 void JobItemDelegate::paintBudget(QPainter * painter,
                                   const QStyleOptionViewItem & option,
                                   const QSharedPointer<IElanceJob> & job) const
 {
-    QFont defaultFont = painter->font();
     QRectF rect = option.rect;
     rect.translate(0, nameHeight());
     rect.setHeight(m_budgetFontMetrics->height());
-    painter->setFont(*m_budgetFont);
+
     QString text = QString("%1: %2").arg(job->isHourly() ? tr("Hourly Rate") : tr("Fixed Price"),
                                          job->budget());
+
+    painter->save();
+    painter->setPen(option.palette.windowText().color());
+    painter->setFont(*m_budgetFont);
     painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, text);
-    painter->setFont(defaultFont);
+    painter->restore();
 }
 
 void JobItemDelegate::paintDescription(QPainter * painter,
                                        const QStyleOptionViewItem & option,
                                        const QSharedPointer<IElanceJob> & job) const
 {
-    QFont defaultFont = painter->font();
     QRectF rect = option.rect;
     rect.translate(0, nameHeight() + budgetHeight());
     rect.setHeight(descriptionHeight());
+
+    painter->save();
+    painter->setPen(option.palette.windowText().color());
     painter->setFont(*m_descriptionFont);
     painter->drawText(rect,
                       Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
                       job->description().simplified());
-    painter->setFont(defaultFont);
+    painter->restore();
 }

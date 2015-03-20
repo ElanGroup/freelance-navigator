@@ -25,6 +25,8 @@ public:
     void setPostedDate(const QDateTime & postedDate);
     virtual bool isHourly() const;
     void setIsHourly(bool isHourly);
+    virtual QString url() const;
+    void setUrl(const QString & url);
 
 private:
     ElanceJob(const ElanceJob &);
@@ -36,6 +38,7 @@ private:
     QString m_budget;
     QDateTime m_postedDate;
     bool m_isHourly;
+    QString m_url;
 };
 }
 

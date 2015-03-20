@@ -16,7 +16,8 @@ bool ElanceJob::isValid() const
            !m_name.isEmpty() &&
            !m_description.isEmpty() &&
            !m_budget.isEmpty() &&
-           !m_postedDate.isNull();
+           !m_postedDate.isNull() &&
+           !m_url.isEmpty();
 }
 
 int ElanceJob::jobId() const
@@ -77,4 +78,14 @@ bool ElanceJob::isHourly() const
 void ElanceJob::setIsHourly(bool isHourly)
 {
     m_isHourly = isHourly;
+}
+
+QString ElanceJob::url() const
+{
+    return m_url;
+}
+
+void ElanceJob::setUrl(const QString & url)
+{
+    m_url = url;
 }

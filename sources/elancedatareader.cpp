@@ -232,6 +232,12 @@ QSharedPointer<IElanceJob> ElanceDataReader::getJob(const QJsonValue & jobValue)
         {
             job->setIsHourly(isHourlyValue.toInt() == 1);
         }
+
+        QJsonValue urlValue = jobObject["jobURL"];
+        if (!urlValue.isUndefined() && urlValue.isString())
+        {
+            job->setUrl(urlValue.toString());
+        }
     }
 
     return QSharedPointer<IElanceJob>(job);
