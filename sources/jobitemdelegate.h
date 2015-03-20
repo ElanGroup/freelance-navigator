@@ -21,10 +21,9 @@ public:
     virtual QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
 private:
-    static QFont nameFont(const QStyleOptionViewItem & option);
-    static QFont budgetFont(const QStyleOptionViewItem & option);
-    static int nameHeight(const QStyleOptionViewItem & option);
-    static int budgetHeight(const QStyleOptionViewItem & option);
+    qreal nameHeight() const;
+    qreal budgetHeight() const;
+    qreal descriptionHeight() const;
     void paintName(QPainter * painter,
                    const QStyleOptionViewItem & option,
                    const QSharedPointer<IElanceJob> & job) const;
@@ -34,6 +33,13 @@ private:
     void paintDescription(QPainter * painter,
                           const QStyleOptionViewItem & option,
                           const QSharedPointer<IElanceJob> & job) const;
+
+    QFont * m_nameFont;
+    QFontMetricsF * m_nameFontMetrics;
+    QFont * m_budgetFont;
+    QFontMetricsF * m_budgetFontMetrics;
+    QFont * m_descriptionFont;
+    QFontMetricsF * m_descriptionFontMetrics;
 
     static const int m_minDescriptionCharactersCount = 100;
     static const int m_nameBottomMargin = 2;
