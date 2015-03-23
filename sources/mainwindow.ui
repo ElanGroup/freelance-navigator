@@ -241,7 +241,11 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QListView" name="jobsListView"/>
+       <widget class="QListView" name="jobsListView">
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">

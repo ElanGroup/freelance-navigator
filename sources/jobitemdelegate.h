@@ -2,6 +2,7 @@
 #define JOBITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QSet>
 
 namespace FreelanceNavigator
 {
@@ -12,7 +13,7 @@ class JobItemDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    explicit JobItemDelegate(QObject * parent = 0);
+    explicit JobItemDelegate(QWidget * jobsWidget, QObject * parent);
     ~JobItemDelegate();
 
     virtual void paint(QPainter * painter,
@@ -40,12 +41,15 @@ private:
                           const QStyleOptionViewItem & option,
                           const QSharedPointer<IElanceJob> & job) const;
 
+    QWidget * m_jobsWidget;
     QFont * m_nameFont;
     QFontMetricsF * m_nameFontMetrics;
     QFont * m_budgetFont;
     QFontMetricsF * m_budgetFontMetrics;
     QFont * m_descriptionFont;
     QFontMetricsF * m_descriptionFontMetrics;
+    int m_mouseOverNameJobId;
+    QSet<int> m_visitedJobs;
 
     static const int m_minDescriptionCharactersCount = 100;
     static const int m_nameBottomMargin = 10;
