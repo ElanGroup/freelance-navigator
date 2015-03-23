@@ -10,11 +10,11 @@ using namespace FreelanceNavigator;
 
 JobItemDelegate::JobItemDelegate(QObject * parent)
     : QStyledItemDelegate(parent),
-      m_nameFont(new QFont("Times New Roman", 12, QFont::Bold)),
+      m_nameFont(new QFont("Helvetica", 12, QFont::Bold)),
       m_nameFontMetrics(new QFontMetricsF(*m_nameFont)),
-      m_budgetFont(new QFont("Times New Roman", 9, QFont::DemiBold, true)),
+      m_budgetFont(new QFont("Helvetica", 8, QFont::DemiBold)),
       m_budgetFontMetrics(new QFontMetricsF(*m_budgetFont)),
-      m_descriptionFont(new QFont("Times New Roman", 11)),
+      m_descriptionFont(new QFont("Helvetica", 9)),
       m_descriptionFontMetrics(new QFontMetricsF(*m_descriptionFont))
 {
     m_nameFont->setUnderline(true);

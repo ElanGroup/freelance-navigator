@@ -48,9 +48,9 @@ private:
     QFontMetricsF * m_descriptionFontMetrics;
 
     static const int m_minDescriptionCharactersCount = 100;
-    static const int m_nameBottomMargin = 2;
-    static const int m_budgetBottomMargin = 2;
-    static const int m_itemBottomMargin = 10;
+    static const int m_nameBottomMargin = 10;
+    static const int m_budgetBottomMargin = 10;
+    static const int m_itemBottomMargin = 20;
     static const int m_descriptionLinesCount = 2;
 };
 }
