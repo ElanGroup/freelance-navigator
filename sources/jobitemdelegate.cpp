@@ -81,7 +81,7 @@ bool JobItemDelegate::editorEvent(QEvent * event,
     if (event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent * mouseEvent = static_cast<QMouseEvent *>(event);
-        if (mouseEvent->button() == Qt::LeftButton)
+        if (m_mouseOverNameJobId != -1 && mouseEvent->button() == Qt::LeftButton)
         {
             QSharedPointer<IElanceJob> job =
                 qvariant_cast<QSharedPointer<IElanceJob> >(index.data());
