@@ -413,25 +413,29 @@ void MainWindow::updatePageButtons()
 void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
-    connect(ui->actionElanceAPISettings, &QAction::triggered, this, &editElanceSettings);
-    connect(ui->actionAbout, &QAction::triggered, this, &showAbout);
-    connect(ui->actionLogout, &QAction::triggered, this, &logout);
+    connect(ui->actionElanceAPISettings, &QAction::triggered, 
+            this, &MainWindow::editElanceSettings);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->actionLogout, &QAction::triggered, this, &MainWindow::logout);
     connect(ui->jobTypesComboBox,
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &jobTypeChanged);
-    connect(ui->loadJobsButton, &QPushButton::clicked, this, &loadJobs);
-    connect(ui->firstPageButton, &QPushButton::clicked, this, &showFirstPageOfJobs);
-    connect(ui->previousPageButton, &QPushButton::clicked, this, &showPreviousPageOfJobs);
-    connect(ui->nextPageButton, &QPushButton::clicked, this, &showNextPageOfJobs);
-    connect(ui->lastPageButton, &QPushButton::clicked, this, &showLastPageOfJobs);
-    connect(ui->pageLineEdit, &QLineEdit::returnPressed, this, &showRequestedPageOfJobs);
-    connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded, this, &fillCategories);
-    connect(m_elanceApiClient, &ElanceApiClient::error, this, &processError);
+            this, &MainWindow::jobTypeChanged);
+    connect(ui->loadJobsButton, &QPushButton::clicked, this, &MainWindow::loadJobs);
+    connect(ui->firstPageButton, &QPushButton::clicked, this, &MainWindow::showFirstPageOfJobs);
+    connect(ui->previousPageButton, &QPushButton::clicked, 
+            this, &MainWindow::showPreviousPageOfJobs);
+    connect(ui->nextPageButton, &QPushButton::clicked, this, &MainWindow::showNextPageOfJobs);
+    connect(ui->lastPageButton, &QPushButton::clicked, this, &MainWindow::showLastPageOfJobs);
+    connect(ui->pageLineEdit, &QLineEdit::returnPressed, 
+            this, &MainWindow::showRequestedPageOfJobs);
+    connect(m_elanceApiClient, &ElanceApiClient::categoriesLoaded, 
+            this, &MainWindow::fillCategories);
+    connect(m_elanceApiClient, &ElanceApiClient::error, this, &MainWindow::processError);
     connect(m_jobsLoader, &JobsLoader::loaded, m_jobsManager, &JobsManager::processLoadedJobs);
     connect(m_jobsLoader, &JobsLoader::loadFinished,
             m_jobsManager, &JobsManager::processLoadFinish);
-    connect(m_jobsLoader, &JobsLoader::loadFinished, this, &finishJobsLoad);
-    connect(m_jobsManager, &JobsManager::pageAdded, this, &updateJobControls);
+    connect(m_jobsLoader, &JobsLoader::loadFinished, this, &MainWindow::finishJobsLoad);
+    connect(m_jobsManager, &JobsManager::pageAdded, this, &MainWindow::updateJobControls);
 }
 
 void MainWindow::loadSettings()

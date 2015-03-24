@@ -16,8 +16,8 @@ JobsLoader::JobsLoader(ElanceApiClient * elanceApiClient, QObject * parent)
       m_includeNotSure(false),
       m_lastPage(-1)
 {
-    connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &processLoadedJobs);
-    connect(m_elanceApiClient, &ElanceApiClient::error, this, &processLoadError);
+    connect(m_elanceApiClient, &ElanceApiClient::jobsLoaded, this, &JobsLoader::processLoadedJobs);
+    connect(m_elanceApiClient, &ElanceApiClient::error, this, &JobsLoader::processLoadError);
 }
 
 JobsLoader::~JobsLoader()
