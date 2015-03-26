@@ -28,7 +28,8 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     m_minBudget(-1),
     m_maxBudget(-1),
     m_minHourlyRate(-1),
-    m_maxHourlyRate(-1)
+    m_maxHourlyRate(-1),
+    m_isErrorMessageShown(false)
 {
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
@@ -264,6 +265,10 @@ void MainWindow::showRequestedPageOfJobs()
 
 void MainWindow::processError(ElanceApiClient::ElanceApiError error)
 {
+    if (m_isErrorMessageShown)
+    {
+        return;
+    }
     ui->statusBar->clearMessage();
     QString message;
     switch (error)
@@ -278,7 +283,9 @@ void MainWindow::processError(ElanceApiClient::ElanceApiError error)
         message = tr("Unknown error");
         break;
     }
+    m_isErrorMessageShown = true;
     QMessageBox::critical(this, tr("Error"), message);
+    m_isErrorMessageShown = false;
 }
 
 void MainWindow::setSubcategoriesFilter()

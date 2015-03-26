@@ -69,6 +69,7 @@ private:
     int m_maxBudget;
     int m_minHourlyRate;
     int m_maxHourlyRate;
+    bool m_isErrorMessageShown;
 };
 }
 
