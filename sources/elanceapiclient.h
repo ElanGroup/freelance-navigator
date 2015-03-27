@@ -52,6 +52,8 @@ private slots:
     void processJobsResult(bool isOk);
 
 private:
+    bool readKeys();
+    void readTokens();
     void getTokens(const QString & authorizationCode);
     void refreshTokens();
     void saveTokens() const;

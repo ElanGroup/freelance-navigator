@@ -19,7 +19,6 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 SOURCES += main.cpp\
         mainwindow.cpp \
     elanceapiclient.cpp \
-    elancesettingsdialog.cpp \
     elancedatareader.cpp \
     elancetokens.cpp \
     elancejobspage.cpp \
@@ -41,7 +40,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     elanceapiclient.h \
-    elancesettingsdialog.h \
     elancedatareader.h \
     ielancedata.h \
     ielancetokens.h \
@@ -69,7 +67,6 @@ HEADERS  += mainwindow.h \
     jobsmanager.h
 
 FORMS    += mainwindow.ui \
-    elancesettingsdialog.ui \
     aboutdialog.ui
 
 win32 {

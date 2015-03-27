@@ -33,7 +33,6 @@ private slots:
     void fillCategories(const QList<QSharedPointer<IElanceCategory> > & categories);
     void fillSubcategories(int categoryIndex, bool loadSettings);
     void updateSubcategories(int categoryIndex);
-    void editElanceSettings();
     void showAbout();
     void logout();
     void jobTypeChanged(int index);

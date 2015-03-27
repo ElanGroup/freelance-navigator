@@ -9,7 +9,6 @@
 #include "ielancecategory.h"
 #include "ielancejobspage.h"
 #include "ielancejob.h"
-#include "elancesettingsdialog.h"
 #include "aboutdialog.h"
 #include "jobitemdelegate.h"
 #include "jobsloader.h"
@@ -134,12 +133,6 @@ void MainWindow::updateSubcategories(int categoryIndex)
     ui->subcategoriesListWidget->clear();
     ui->subcategoriesListWidget->verticalScrollBar()->setValue(0);
     fillSubcategories(categoryIndex, false);
-}
-
-void MainWindow::editElanceSettings()
-{
-    ElanceSettingsDialog dialog;
-    dialog.exec();
 }
 
 void MainWindow::showAbout()
@@ -420,8 +413,6 @@ void MainWindow::updatePageButtons()
 void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
-    connect(ui->actionElanceAPISettings, &QAction::triggered, 
-            this, &MainWindow::editElanceSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->actionLogout, &QAction::triggered, this, &MainWindow::logout);
     connect(ui->jobTypesComboBox,

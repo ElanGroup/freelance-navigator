@@ -1,5 +1,4 @@
 #include "elanceapiclient.h"
-#include "elancesettingsdialog.h"
 #include "mainwindow.h"
 #include <QApplication>
 
@@ -14,14 +13,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Freelance Navigator");
 
     FreelanceNavigator::ElanceApiClient elanceApiClient;
-    while (!elanceApiClient.readSettings())
+    if (!elanceApiClient.readSettings())
     {
-        FreelanceNavigator::ElanceSettingsDialog settingsDialog;
-        int result = settingsDialog.exec();
-        if (result == QDialog::Rejected)
-        {
-            return 0;
-        }
+        return 0;
     }
 
     if (elanceApiClient.authorize())

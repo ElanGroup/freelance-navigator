@@ -31,43 +31,12 @@ ElanceApiClient::~ElanceApiClient()
 
 bool ElanceApiClient::readSettings()
 {
-    QSettings settings;
-    settings.beginGroup("Elance API");
-
-    QVariant key = settings.value("API Key");
-    if (!key.isValid())
+    if (readKeys())
     {
-        return false;
+        readTokens();
+        return true;
     }
-    m_clientId = key.toString();
-
-    QVariant code = settings.value("Secret Code");
-    if (!code.isValid())
-    {
-        return false;
-    }
-    m_clientSecret = code.toString();
-
-    QVariant uri = settings.value("Redirect URI");
-    if (!uri.isValid())
-    {
-        return false;
-    }
-    m_redirectUri = uri.toString();
-
-    QVariant accessToken = settings.value("Access Token");
-    if (accessToken.isValid())
-    {
-        m_accessToken = accessToken.toString();
-    }
-
-    QVariant refreshToken = settings.value("Refresh Token");
-    if (refreshToken.isValid())
-    {
-        m_refreshToken = refreshToken.toString();
-    }
-
-    return true;
+    return false;
 }
 
 bool ElanceApiClient::authorize()
@@ -136,6 +105,52 @@ void ElanceApiClient::processAuthorizeReply(QNetworkReply * reply)
         }
     }
     reply->deleteLater();
+}
+
+bool ElanceApiClient::readKeys()
+{
+    QSettings settings(":/Resources/elance-api.ini", QSettings::IniFormat);
+
+    QVariant key = settings.value("API Key");
+    if (!key.isValid())
+    {
+        return false;
+    }
+    m_clientId = key.toString();
+
+    QVariant code = settings.value("Secret Code");
+    if (!code.isValid())
+    {
+        return false;
+    }
+    m_clientSecret = code.toString();
+
+    QVariant uri = settings.value("Redirect URI");
+    if (!uri.isValid())
+    {
+        return false;
+    }
+    m_redirectUri = uri.toString();
+
+    return true;
+}
+
+void ElanceApiClient::readTokens()
+{
+    QSettings settings;
+    settings.beginGroup("Elance API");
+
+    QVariant accessToken = settings.value("Access Token");
+    if (accessToken.isValid())
+    {
+        m_accessToken = accessToken.toString();
+    }
+
+    QVariant refreshToken = settings.value("Refresh Token");
+    if (refreshToken.isValid())
+    {
+        m_refreshToken = refreshToken.toString();
+    }
 }
 
 void ElanceApiClient::getTokens(const QString & authorizationCode)
