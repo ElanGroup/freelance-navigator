@@ -34,6 +34,7 @@ MainWindow::MainWindow(ElanceApiClient * elanceApiClient, QWidget * parent) :
     setWindowState(windowState() | Qt::WindowMaximized);
     ui->jobsListView->setModel(m_jobsModel);
     ui->jobsListView->setItemDelegate(new JobItemDelegate(ui->jobsListView, this));
+    ui->jobsListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->minLineEdit->setValidator(new QIntValidator(0, 99999, this));
     ui->maxLineEdit->setValidator(new QIntValidator(0, 99999, this));
