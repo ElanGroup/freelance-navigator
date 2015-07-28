@@ -13,6 +13,9 @@ TEMPLATE = app
 
 VERSION = 1.0.0.0
 
+# Enable C++14
+CONFIG += c++14
+
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
