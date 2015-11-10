@@ -21,53 +21,10 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    elanceapiclient.cpp \
-    elancedatareader.cpp \
-    elancetokens.cpp \
-    elancejobspage.cpp \
-    elancejob.cpp \
-    elancecategory.cpp \
-    cookiejar.cpp \
-    aboutdialog.cpp \
-    jobitemdelegate.cpp \
-    elanceerror.cpp \
-    jobsloader.cpp \
-    elanceapirequest.cpp \
-    tokensrequest.cpp \
-    gettokensrequest.cpp \
-    refreshtokensrequest.cpp \
-    categoriesrequest.cpp \
-    datarequest.cpp \
-    jobsrequest.cpp \
-    jobsmanager.cpp
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
-    elanceapiclient.h \
-    elancedatareader.h \
-    ielancedata.h \
-    ielancetokens.h \
-    elancetokens.h \
-    ielancejobspage.h \
-    elancejobspage.h \
-    ielancejob.h \
-    elancejob.h \
-    ielancecategory.h \
-    elancecategory.h \
-    cookiejar.h \
-    aboutdialog.h \
-    jobitemdelegate.h \
-    ielanceerror.h \
-    elanceerror.h \
-    jobsloader.h \
-    elanceapirequest.h \
-    tokensrequest.h \
-    gettokensrequest.h \
-    refreshtokensrequest.h \
-    categoriesrequest.h \
-    datarequest.h \
-    jobsrequest.h \
-    enums.h \
-    jobsmanager.h
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui
