@@ -19,6 +19,8 @@ CONFIG += c++14
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
+include(Widgets/Widgets.pri)
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     aboutdialog.cpp

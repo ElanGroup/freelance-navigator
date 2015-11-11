@@ -8,8 +8,6 @@ namespace Ui
 class MainWindow;
 }
 
-class QStandardItemModel;
-
 namespace FreelanceNavigator
 {
 class MainWindow : public QMainWindow
@@ -26,8 +24,10 @@ protected:
 private slots:
 
 private:
+    void setupConnections();
+    void showAbout();
+
     Ui::MainWindow * ui;
-    QStandardItemModel * m_jobsModel;
 };
 }
 
