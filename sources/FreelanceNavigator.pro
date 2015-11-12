@@ -20,6 +20,7 @@ CONFIG += c++14
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 include(Widgets/Widgets.pri)
+include(QtSingleApplication/QtSingleApplication.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp \

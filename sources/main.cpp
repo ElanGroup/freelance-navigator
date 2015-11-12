@@ -1,9 +1,15 @@
 #include "mainwindow.h"
-#include <QApplication>
+#include <QtSingleApplication/qtsingleapplication.h>
 
 int main(int argc, char *argv[])
 {
-    QApplication application(argc, argv);
+    QtSingleApplication application(argc, argv);
+
+    // Check if another instance of application is running.
+    if (application.isRunning())
+    {
+        return 0;
+    }
 
     // Setting the Application version
     application.setApplicationVersion(APP_VERSION);

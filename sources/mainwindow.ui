@@ -34,15 +34,15 @@
         <item>
          <layout class="QVBoxLayout" name="filtersLayout">
           <item>
-           <widget class="QComboBox" name="upworkCategoriesComboBox"/>
+           <widget class="QComboBox" name="upworkCategoryComboBox"/>
           </item>
           <item>
-           <widget class="QListWidget" name="upworkSubcategoriesListWidget"/>
+           <widget class="QListWidget" name="upworkSubcategoryListWidget"/>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="FreelanceNavigator::Widgets::JobListWidget" name="jobList" native="true"/>
+         <widget class="FreelanceNavigator::Widgets::JobListWidget" name="jobListWidget" native="true"/>
         </item>
        </layout>
       </widget>
