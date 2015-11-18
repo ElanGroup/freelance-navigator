@@ -20,6 +20,4 @@ int main(int argc, char *argv[])
     FreelanceNavigator::MainWindow mainWindow;
     mainWindow.show();
     return application.exec();
-
-    return 0;
 }

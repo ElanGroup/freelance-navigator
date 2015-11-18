@@ -21,13 +21,20 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 include(Widgets/Widgets.pri)
 include(QtSingleApplication/QtSingleApplication.pri)
+include(Upwork/Upwork.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    settings.cpp \
+    apirequest.cpp \
+    apiresponse.cpp
 
 HEADERS  += mainwindow.h \
-    aboutdialog.h
+    aboutdialog.h \
+    settings.h \
+    apirequest.h \
+    apiresponse.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

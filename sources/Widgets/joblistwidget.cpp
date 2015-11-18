@@ -3,10 +3,14 @@
 
 using namespace FreelanceNavigator::Widgets;
 
-JobListWidget::JobListWidget(QWidget *parent) :
+JobListWidget::JobListWidget(QWidget * parent) :
     QWidget(parent),
     ui(new Ui::JobListWidget)
 {
     ui->setupUi(this);
 }
 
+JobListWidget::~JobListWidget()
+{
+    delete ui;
+}

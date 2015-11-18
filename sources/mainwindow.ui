@@ -32,7 +32,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <layout class="QVBoxLayout" name="filtersLayout">
+         <layout class="QVBoxLayout" name="upworkFiltersLayout">
           <item>
            <widget class="QComboBox" name="upworkCategoryComboBox"/>
           </item>
@@ -42,7 +42,7 @@
          </layout>
         </item>
         <item>
-         <widget class="FreelanceNavigator::Widgets::JobListWidget" name="jobListWidget" native="true"/>
+         <widget class="FreelanceNavigator::Widgets::JobListWidget" name="upworkJobListWidget" native="true"/>
         </item>
        </layout>
       </widget>
