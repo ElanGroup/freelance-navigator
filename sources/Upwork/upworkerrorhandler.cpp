@@ -1,15 +1,14 @@
 #include <QDebug>
+#include <QNetworkReply>
 #include "upworkerrorhandler.h"
-#include "apiresponse.h"
 
 using namespace FreelanceNavigator::Upwork;
 
-UpworkErrorHandler::UpworkErrorHandler()
+UpworkErrorHandler::UpworkErrorHandler(QNetworkReply * reply) : m_reply(reply)
 {
-
 }
 
-void UpworkErrorHandler::handleError(const ApiResponse * const response)
+bool UpworkErrorHandler::hasErrors() const
 {
-    qDebug() << response->networkError() << response->data();
+    return m_reply->error() != QNetworkReply::NoError;
 }

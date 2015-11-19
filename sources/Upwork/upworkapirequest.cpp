@@ -1,8 +1,9 @@
+#include <QDebug>
 #include <QPair>
 #include <QUrlQuery>
 #include <QMessageAuthenticationCode>
+#include <QNetworkRequest>
 #include "upworkapirequest.h"
-#include "upworkapiresponse.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
@@ -33,10 +34,17 @@ UpworkApiRequest::~UpworkApiRequest()
 
 QUrl UpworkApiRequest::url() const
 {
-    return QUrl(m_baseUrl + relativeUrl());
+    QUrl url(basicUrl());
+    url.setQuery(query());
+    return url;
 }
 
 QUrlQuery UpworkApiRequest::postData() const
+{
+    return QUrlQuery();
+}
+
+QUrlQuery UpworkApiRequest::query() const
 {
     return QUrlQuery();
 }
@@ -57,9 +65,9 @@ void UpworkApiRequest::submit()
     }
 }
 
-QSharedPointer<ApiResponse> UpworkApiRequest::response() const
+QString UpworkApiRequest::basicUrl() const
 {
-    return QSharedPointer<ApiResponse>(new UpworkApiResponse(error(), replyData()));
+    return m_baseUrl + path();
 }
 
 void UpworkApiRequest::addAuthorizationHeader()
@@ -121,7 +129,7 @@ QByteArray UpworkApiRequest::getSignatureBaseString() const
 {
     QByteArray baseString;
     baseString.append(getOperationName(operation()).toUtf8() + "&");
-    baseString.append(QUrl::toPercentEncoding(url().toString(QUrl::RemoveQuery)) + "&");
+    baseString.append(QUrl::toPercentEncoding(basicUrl()) + "&");
     baseString.append(getOauthParametersForSignature());
     return baseString;
 }

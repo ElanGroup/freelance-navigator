@@ -1,9 +1,11 @@
 #include <QDebug>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include "upworkapiclient.h"
 #include "upworksettings.h"
+#include "upworkerrorhandler.h"
 #include "getrequesttokenrequest.h"
-#include "apiresponse.h"
+#include "upworktokenreader.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -31,16 +33,18 @@ void UpworkApiClient::processGetRequestTokenResult()
 {
     GetRequestTokenRequest * request = qobject_cast<GetRequestTokenRequest *>(sender());
     Q_ASSERT(request);
-    QSharedPointer<ApiResponse> response = request->response();
-    request->deleteLater();
-    if (response->isSuccess())
+    UpworkErrorHandler errorHandler(request->reply());
+    if (errorHandler.hasErrors())
     {
-
+        emit error(UpworkApiError::ServiceError);
     }
     else
     {
-
+        UpworkTokenReader tokenReader(request->reply());
+        m_requestToken = tokenReader.readRequestToken();
+        m_requestTokenSecret = tokenReader.readRequestTokenSecret();
     }
+    request->deleteLater();
 }
 
 void UpworkApiClient::loadCategories()

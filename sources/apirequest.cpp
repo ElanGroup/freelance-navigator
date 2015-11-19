@@ -1,7 +1,8 @@
+#include <QDebug>
 #include <QNetworkAccessManager>
 #include <QUrlQuery>
+#include <QNetworkReply>
 #include "apirequest.h"
-#include "apiresponse.h"
 
 using namespace FreelanceNavigator;
 
@@ -17,19 +18,14 @@ ApiRequest::~ApiRequest()
     delete m_request;
 }
 
+QNetworkReply * ApiRequest::reply() const
+{
+    return m_reply;
+}
+
 QNetworkRequest * ApiRequest::request() const
 {
     return m_request;
-}
-
-QNetworkReply::NetworkError ApiRequest::error() const
-{
-    return m_error;
-}
-
-QByteArray ApiRequest::replyData() const
-{
-    return m_replyData;
 }
 
 void ApiRequest::get() const
@@ -51,10 +47,8 @@ void ApiRequest::post(const QUrlQuery & data) const
 
 void ApiRequest::processReply()
 {
-    QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender());
-    Q_ASSERT(reply);
-    m_error = reply->error();
-    m_replyData = reply->readAll();
-    reply->deleteLater();
+    m_reply = qobject_cast<QNetworkReply *>(sender());
+    Q_ASSERT(m_reply);
+    m_reply->setParent(this);
     emit finished();
 }

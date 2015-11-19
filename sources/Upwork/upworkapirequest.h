@@ -2,6 +2,7 @@
 #define UPWORKAPIREQUEST_H
 
 #include "apirequest.h"
+#include <QNetworkAccessManager>
 
 namespace FreelanceNavigator
 {
@@ -19,17 +20,18 @@ public:
     virtual ~UpworkApiRequest();
 
     virtual void submit() override;
-    virtual QSharedPointer<ApiResponse> response() const override;
 
 protected:
     void setCallbackUrl(const QString & callbackUrl);
     void setTokenSecret(const QString & tokenSecret);
     virtual QUrl url() const override;
-    virtual QString relativeUrl() const = 0;
+    virtual QString path() const = 0;
     virtual QNetworkAccessManager::Operation operation() const = 0;
     virtual QUrlQuery postData() const;
+    virtual QUrlQuery query() const;
 
 private:
+    QString basicUrl() const;
     void addAuthorizationHeader();
     static QByteArray nonce();
     static QByteArray timestamp();

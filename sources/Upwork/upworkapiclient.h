@@ -2,6 +2,7 @@
 #define UPWORKAPICLIENT_H
 
 #include <QObject>
+#include "upworkenums.h"
 
 class QNetworkAccessManager;
 
@@ -27,6 +28,7 @@ public:
     void loadCategories();
 
 signals:
+    void error(UpworkApiError error) const;
     void initialized() const;
 
 private slots:
@@ -37,6 +39,8 @@ private:
 
     UpworkSettings * m_settings;
     QNetworkAccessManager * m_networkManager;
+    QString m_requestToken;
+    QString m_requestTokenSecret;
 };
 
 } // namespace Upwork

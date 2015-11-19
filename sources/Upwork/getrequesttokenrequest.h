@@ -21,7 +21,7 @@ public:
     GetRequestTokenRequest & operator=(const GetRequestTokenRequest &) = delete;
 
 protected:
-    virtual QString relativeUrl() const override;
+    virtual QString path() const override;
     virtual QNetworkAccessManager::Operation operation() const override;
 };
 

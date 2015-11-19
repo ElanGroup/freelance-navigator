@@ -13,6 +13,7 @@ namespace FreelanceNavigator
 namespace Upwork
 {
 class UpworkApiClient;
+enum class UpworkApiError;
 }
 
 class Settings;
@@ -29,6 +30,7 @@ protected:
     virtual void closeEvent(QCloseEvent * event);
 
 private slots:
+    void processUpworkError(FreelanceNavigator::Upwork::UpworkApiError error);
     void loadUpworkCategories();
 
 private:

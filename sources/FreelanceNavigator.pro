@@ -27,14 +27,12 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     aboutdialog.cpp \
     settings.cpp \
-    apirequest.cpp \
-    apiresponse.cpp
+    apirequest.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
     settings.h \
-    apirequest.h \
-    apiresponse.h
+    apirequest.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

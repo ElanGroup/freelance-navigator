@@ -13,7 +13,7 @@ GetRequestTokenRequest::GetRequestTokenRequest(const QString & applicationKey,
     setCallbackUrl(callbackUrl);
 }
 
-QString GetRequestTokenRequest::relativeUrl() const
+QString GetRequestTokenRequest::path() const
 {
     return QStringLiteral("auth/v1/oauth/token/request");
 }

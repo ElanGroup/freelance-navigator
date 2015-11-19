@@ -1,22 +1,24 @@
 #ifndef UPWORKERRORHANDLER_H
 #define UPWORKERRORHANDLER_H
 
+class QNetworkReply;
+
 namespace FreelanceNavigator
 {
-
-class ApiResponse;
-
 namespace Upwork
 {
 
 class UpworkErrorHandler
 {
 public:
-    UpworkErrorHandler();
+    UpworkErrorHandler(QNetworkReply * reply);
     UpworkErrorHandler(const UpworkErrorHandler &) = delete;
     UpworkErrorHandler & operator=(const UpworkErrorHandler &) = delete;
 
-    void handleError(const ApiResponse * const response);
+    bool hasErrors() const;
+
+private:
+    QNetworkReply * m_reply;
 };
 
 } // namespace Upwork
