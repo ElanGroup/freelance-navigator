@@ -11,9 +11,11 @@ const QString UpworkApiRequest::m_baseUrl("https://www.upwork.com/api/");
 const QByteArray UpworkApiRequest::m_callbackParameter("oauth_callback");
 const QByteArray UpworkApiRequest::m_consumerKeyParameter("oauth_consumer_key");
 const QByteArray UpworkApiRequest::m_nonceParameter("oauth_nonce");
+const QByteArray UpworkApiRequest::m_signatureMethodParameter("oauth_signature_method");
 const QByteArray UpworkApiRequest::m_timestampParameter("oauth_timestamp");
 const QByteArray UpworkApiRequest::m_signatureParameter("oauth_signature");
 const QByteArray UpworkApiRequest::m_authorizationHeader("Authorization");
+const QByteArray UpworkApiRequest::m_signatureMethod("HMAC-SHA1");
 
 UpworkApiRequest::UpworkApiRequest(const QString & applicationKey,
                                    const QString & applicationSecret,
@@ -68,6 +70,7 @@ void UpworkApiRequest::addAuthorizationHeader()
     }
     m_oauthParameters.append(qMakePair(m_consumerKeyParameter, m_applicationKey.toLatin1()));
     m_oauthParameters.append(qMakePair(m_nonceParameter, nonce()));
+    m_oauthParameters.append(qMakePair(m_signatureMethodParameter, m_signatureMethod));
     m_oauthParameters.append(qMakePair(m_timestampParameter, timestamp()));
     m_oauthParameters.append(qMakePair(m_signatureParameter, generateSignature()));
     request()->setRawHeader(m_authorizationHeader, createAuthorizationHeaderValue());
@@ -105,7 +108,10 @@ QByteArray UpworkApiRequest::generateSignature() const
 {
     QByteArray baseString = getSignatureBaseString();
     QByteArray secret = QUrl::toPercentEncoding(m_applicationSecret) + "&";
-    secret.append(QUrl::toPercentEncoding(m_tokenSecret));
+    if (!m_tokenSecret.isEmpty())
+    {
+        secret.append(QUrl::toPercentEncoding(m_tokenSecret));
+    }
     return QMessageAuthenticationCode::hash(baseString,
                                             secret,
                                             QCryptographicHash::Sha1).toBase64();
@@ -146,7 +152,9 @@ QByteArray UpworkApiRequest::getOauthParametersForSignature() const
         {
             parameters.append("&");
         }
-        parameters.append(it->first + "=" + it->second);
+        parameters.append(QUrl::toPercentEncoding(it->first));
+        parameters.append("=");
+        parameters.append(QUrl::toPercentEncoding(it->second));
     }
     return QUrl::toPercentEncoding(parameters);
 }

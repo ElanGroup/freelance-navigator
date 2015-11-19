@@ -40,12 +40,16 @@ private:
     QByteArray createAuthorizationHeaderValue() const;
 
     static const QString m_baseUrl;
+
     static const QByteArray m_callbackParameter;
     static const QByteArray m_consumerKeyParameter;
     static const QByteArray m_nonceParameter;
+    static const QByteArray m_signatureMethodParameter;
     static const QByteArray m_timestampParameter;
     static const QByteArray m_signatureParameter;
     static const QByteArray m_authorizationHeader;
+
+    static const QByteArray m_signatureMethod;
 
     QString m_applicationKey;
     QString m_applicationSecret;

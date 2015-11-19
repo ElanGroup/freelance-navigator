@@ -11,5 +11,5 @@ UpworkErrorHandler::UpworkErrorHandler()
 
 void UpworkErrorHandler::handleError(const ApiResponse * const response)
 {
-
+    qDebug() << response->networkError() << response->data();
 }
