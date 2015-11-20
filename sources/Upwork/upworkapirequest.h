@@ -22,7 +22,6 @@ public:
     virtual void submit() override;
 
 protected:
-    void setCallbackUrl(const QString & callbackUrl);
     void setTokenSecret(const QString & tokenSecret);
     virtual QUrl url() const override;
     virtual QString path() const = 0;
@@ -55,7 +54,6 @@ private:
 
     QString m_applicationKey;
     QString m_applicationSecret;
-    QString m_callbackUrl;
     QString m_tokenSecret;
     QList<QPair<QByteArray, QByteArray> > m_oauthParameters;
 };

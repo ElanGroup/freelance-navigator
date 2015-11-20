@@ -38,7 +38,6 @@ private slots:
 private:
     void authorize();
 
-    static const QString m_callbackUrl;
     static const QString m_authorizationUrl;
 
     UpworkSettings * m_settings;

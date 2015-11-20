@@ -11,7 +11,6 @@
 
 using namespace FreelanceNavigator::Upwork;
 
-const QString UpworkApiClient::m_callbackUrl("http://127.0.0.1:3000/");
 const QString UpworkApiClient::m_authorizationUrl("https://www.upwork.com/services/api/auth");
 
 UpworkApiClient::UpworkApiClient(UpworkSettings * settings, QWidget * parent) :
@@ -25,7 +24,6 @@ void UpworkApiClient::initialize()
 {
     GetRequestTokenRequest * request = new GetRequestTokenRequest(m_settings->upworkKey(),
                                                                   m_settings->upworkSecret(),
-                                                                  m_callbackUrl,
                                                                   m_networkManager,
                                                                   this);
     connect(request, &ApiRequest::finished, this, &UpworkApiClient::processGetRequestTokenResult);
