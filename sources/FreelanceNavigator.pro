@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
 
 TARGET = FreelanceNavigator
 TEMPLATE = app
@@ -27,12 +27,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     aboutdialog.cpp \
     settings.cpp \
-    apirequest.cpp
+    apirequest.cpp \
+    authorizationdialog.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
     settings.h \
-    apirequest.h
+    apirequest.h \
+    authorizationdialog.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

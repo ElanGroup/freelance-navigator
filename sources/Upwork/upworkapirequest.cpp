@@ -72,10 +72,10 @@ QString UpworkApiRequest::basicUrl() const
 
 void UpworkApiRequest::addAuthorizationHeader()
 {
-    if (!m_callbackUrl.isEmpty())
-    {
-        m_oauthParameters.append(qMakePair(m_callbackParameter, m_callbackUrl.toLatin1()));
-    }
+//    if (!m_callbackUrl.isEmpty())
+//    {
+//        m_oauthParameters.append(qMakePair(m_callbackParameter, m_callbackUrl.toLatin1()));
+//    }
     m_oauthParameters.append(qMakePair(m_consumerKeyParameter, m_applicationKey.toLatin1()));
     m_oauthParameters.append(qMakePair(m_nonceParameter, nonce()));
     m_oauthParameters.append(qMakePair(m_signatureMethodParameter, m_signatureMethod));
