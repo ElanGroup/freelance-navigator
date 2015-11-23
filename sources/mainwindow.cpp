@@ -81,5 +81,6 @@ void MainWindow::processUpworkWarning(FreelanceNavigator::Upwork::UpworkApiWarni
 
 void MainWindow::loadUpworkCategories()
 {
+    ui->statusBar->showMessage(tr("Load categories..."));
     m_upworkApiClient->loadCategories();
 }

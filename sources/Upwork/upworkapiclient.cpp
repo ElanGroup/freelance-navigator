@@ -29,6 +29,14 @@ UpworkApiClient::~UpworkApiClient()
 
 void UpworkApiClient::initialize()
 {
+    m_accessToken = m_settings->upworkAccessToken();
+    m_accessTokenSecret = m_settings->upworkAccessTokenSecret();
+    if (!m_accessToken.isEmpty() && !m_accessTokenSecret.isEmpty())
+    {
+        emit initialized();
+        return;
+    }
+
     auto request = m_requestFactory->createGetRequestTokenRequest();
     connect(request, &ApiRequest::finished, this, &UpworkApiClient::processGetRequestTokenResult);
     request->submit();
@@ -49,8 +57,8 @@ void UpworkApiClient::processGetRequestTokenResult()
     else
     {
         UpworkTokenReader tokenReader(request->reply());
-        m_requestToken = tokenReader.readRequestToken();
-        m_requestTokenSecret = tokenReader.readRequestTokenSecret();
+        m_requestToken = tokenReader.readToken();
+        m_requestTokenSecret = tokenReader.readTokenSecret();
         authorize();
     }
     request->deleteLater();
@@ -123,8 +131,9 @@ void UpworkApiClient::processGetAccessTokenResult()
     else
     {
         UpworkTokenReader tokenReader(request->reply());
-        m_accessToken = tokenReader.readAccessToken();
-        m_accessTokenSecret = tokenReader.readAccessTokenSecret();
+        m_accessToken = tokenReader.readToken();
+        m_accessTokenSecret = tokenReader.readTokenSecret();
+        m_settings->saveUpworkAccessToken(m_accessToken, m_accessTokenSecret);
         emit initialized();
     }
     request->deleteLater();

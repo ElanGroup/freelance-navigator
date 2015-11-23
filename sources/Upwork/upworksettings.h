@@ -14,6 +14,10 @@ public:
     virtual ~UpworkSettings() {}
     virtual QString upworkKey() = 0;
     virtual QString upworkSecret() = 0;
+    virtual QString upworkAccessToken() = 0;
+    virtual QString upworkAccessTokenSecret() = 0;
+    virtual void saveUpworkAccessToken(const QString & accessToken,
+                                       const QString & accessTokenSecret) = 0;
 };
 
 } // namespace Upwork

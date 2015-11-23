@@ -6,8 +6,6 @@ using namespace FreelanceNavigator::Upwork;
 
 const QString UpworkTokenReader::m_requestTokenName("oauth_token");
 const QString UpworkTokenReader::m_requestTokenSecretName("oauth_token_secret");
-const QString UpworkTokenReader::m_accessTokenName("oauth_access_token");
-const QString UpworkTokenReader::m_accessTokenSecretName("oauth_access_token_secret");
 
 UpworkTokenReader::UpworkTokenReader(QNetworkReply * reply) : m_reply(reply), m_data(nullptr)
 {
@@ -21,7 +19,7 @@ UpworkTokenReader::~UpworkTokenReader()
     }
 }
 
-QString UpworkTokenReader::readRequestToken()
+QString UpworkTokenReader::readToken()
 {
     if (!m_data)
     {
@@ -30,31 +28,13 @@ QString UpworkTokenReader::readRequestToken()
     return m_data->queryItemValue(m_requestTokenName);
 }
 
-QString UpworkTokenReader::readRequestTokenSecret()
+QString UpworkTokenReader::readTokenSecret()
 {
     if (!m_data)
     {
         readData();
     }
     return m_data->queryItemValue(m_requestTokenSecretName);
-}
-
-QString UpworkTokenReader::readAccessToken()
-{
-    if (!m_data)
-    {
-        readData();
-    }
-    return m_data->queryItemValue(m_accessTokenName);
-}
-
-QString UpworkTokenReader::readAccessTokenSecret()
-{
-    if (!m_data)
-    {
-        readData();
-    }
-    return m_data->queryItemValue(m_accessTokenSecretName);
 }
 
 void UpworkTokenReader::readData()

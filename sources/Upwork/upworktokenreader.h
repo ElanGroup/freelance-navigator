@@ -19,10 +19,8 @@ public:
     UpworkTokenReader(const UpworkTokenReader &) = delete;
     UpworkTokenReader & operator=(const UpworkTokenReader &) = delete;
 
-    QString readRequestToken();
-    QString readRequestTokenSecret();
-    QString readAccessToken();
-    QString readAccessTokenSecret();
+    QString readToken();
+    QString readTokenSecret();
 
 private:
     void readData();
@@ -32,8 +30,6 @@ private:
 
     static const QString m_requestTokenName;
     static const QString m_requestTokenSecretName;
-    static const QString m_accessTokenName;
-    static const QString m_accessTokenSecretName;
 };
 
 } // namespace Upwork
