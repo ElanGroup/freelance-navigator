@@ -18,6 +18,7 @@ public:
     virtual QString upworkAccessTokenSecret() = 0;
     virtual void saveUpworkAccessToken(const QString & accessToken,
                                        const QString & accessTokenSecret) = 0;
+    virtual void removeUpworkAccessToken() = 0;
 };
 
 } // namespace Upwork

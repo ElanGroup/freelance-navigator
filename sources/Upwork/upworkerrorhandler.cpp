@@ -1,6 +1,8 @@
 #include <QDebug>
 #include <QNetworkReply>
 #include "upworkerrorhandler.h"
+#include "upworkerrorreader.h"
+#include "upworkerror.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -30,4 +32,13 @@ bool UpworkErrorHandler::isConnectionError() const
            error == QNetworkReply::ProxyTimeoutError ||
            error == QNetworkReply::UnknownNetworkError ||
            error == QNetworkReply::UnknownProxyError;
+}
+
+bool UpworkErrorHandler::isAuthenticationError() const
+{
+    UpworkErrorReader errorReader;
+    QSharedPointer<UpworkError> error = errorReader.readError(m_reply->readAll());
+    return error->status() == 403 &&
+           error->code() == 403 &&
+           error->message() == QStringLiteral("The consumer_key and token combination does not exist or is not enabled");
 }

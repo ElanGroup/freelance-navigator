@@ -37,11 +37,12 @@ private slots:
     void processGetRequestTokenResult();
     void processAuthorizationRedirect(const QUrl & url);
     void processGetAccessTokenResult();
+    void processLoadCategoriesResult();
 
 private:
     void authorize() const;
     void getAccessToken() const;
-    bool processError(const UpworkErrorHandler & errorHandler);
+    void processError(const UpworkErrorHandler & errorHandler);
 
     static const QString m_authorizationUrl;
 

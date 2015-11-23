@@ -8,7 +8,10 @@ HEADERS += \
     $$PWD/upworktokenreader.h \
     $$PWD/getaccesstokenrequest.h \
     $$PWD/oauthparameters.h \
-    $$PWD/requestfactory.h
+    $$PWD/requestfactory.h \
+    $$PWD/loadcategoriesrequest.h \
+    $$PWD/upworkerrorreader.h \
+    $$PWD/upworkerror.h
 
 SOURCES += \
     $$PWD/upworkapiclient.cpp \
@@ -18,4 +21,7 @@ SOURCES += \
     $$PWD/upworktokenreader.cpp \
     $$PWD/getaccesstokenrequest.cpp \
     $$PWD/oauthparameters.cpp \
-    $$PWD/requestfactory.cpp
+    $$PWD/requestfactory.cpp \
+    $$PWD/loadcategoriesrequest.cpp \
+    $$PWD/upworkerrorreader.cpp \
+    $$PWD/upworkerror.cpp

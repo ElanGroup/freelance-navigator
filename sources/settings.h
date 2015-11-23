@@ -19,6 +19,7 @@ public:
     virtual QString upworkAccessTokenSecret() override;
     virtual void saveUpworkAccessToken(const QString & accessToken,
                                        const QString & accessTokenSecret) override;
+    virtual void removeUpworkAccessToken() override;
 
 private:
     void readUpworkKeys();

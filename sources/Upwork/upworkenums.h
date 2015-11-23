@@ -9,6 +9,7 @@ namespace Upwork
 enum class UpworkApiError
 {
     ConnectionError,
+    AuthenticationError,
     ServiceError
 };
 

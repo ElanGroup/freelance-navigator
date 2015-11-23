@@ -10,6 +10,7 @@
 #include "authorizationdialog.h"
 #include "requestfactory.h"
 #include "getaccesstokenrequest.h"
+#include "loadcategoriesrequest.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -49,10 +50,7 @@ void UpworkApiClient::processGetRequestTokenResult()
     UpworkErrorHandler errorHandler(request->reply());
     if (errorHandler.hasError())
     {
-        if (!processError(errorHandler))
-        {
-            emit error(UpworkApiError::ServiceError);
-        }
+        processError(errorHandler);
     }
     else
     {
@@ -62,11 +60,6 @@ void UpworkApiClient::processGetRequestTokenResult()
         authorize();
     }
     request->deleteLater();
-}
-
-void UpworkApiClient::loadCategories()
-{
-
 }
 
 void UpworkApiClient::authorize() const
@@ -123,10 +116,7 @@ void UpworkApiClient::processGetAccessTokenResult()
     UpworkErrorHandler errorHandler(request->reply());
     if (errorHandler.hasError())
     {
-        if (!processError(errorHandler))
-        {
-            emit error(UpworkApiError::ServiceError);
-        }
+        processError(errorHandler);
     }
     else
     {
@@ -139,12 +129,43 @@ void UpworkApiClient::processGetAccessTokenResult()
     request->deleteLater();
 }
 
-bool UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)
+void UpworkApiClient::loadCategories()
+{
+    auto request = m_requestFactory->createLoadCategoriesRequest(m_accessToken,
+                                                                 m_accessTokenSecret);
+    connect(request, &ApiRequest::finished, this, &UpworkApiClient::processLoadCategoriesResult);
+    request->submit();
+}
+
+void UpworkApiClient::processLoadCategoriesResult()
+{
+    LoadCategoriesRequest * request = qobject_cast<LoadCategoriesRequest *>(sender());
+    Q_ASSERT(request);
+    UpworkErrorHandler errorHandler(request->reply());
+    if (errorHandler.hasError())
+    {
+        processError(errorHandler);
+    }
+    else
+    {
+
+    }
+    request->deleteLater();
+}
+
+void UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)
 {
     if (errorHandler.isConnectionError())
     {
         emit error(UpworkApiError::ConnectionError);
-        return true;
     }
-    return false;
+    else if (errorHandler.isAuthenticationError())
+    {
+        m_settings->removeUpworkAccessToken();
+        emit error(UpworkApiError::AuthenticationError);
+    }
+    else
+    {
+        emit error(UpworkApiError::ServiceError);
+    }
 }

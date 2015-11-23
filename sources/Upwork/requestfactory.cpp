@@ -3,6 +3,7 @@
 #include "oauthparameters.h"
 #include "getrequesttokenrequest.h"
 #include "getaccesstokenrequest.h"
+#include "loadcategoriesrequest.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -28,4 +29,14 @@ GetAccessTokenRequest * RequestFactory::createGetAccessTokenRequest(const QStrin
                                requestTokenSecret,
                                verificationCode);
     return new GetAccessTokenRequest(parameters, m_networkManager, m_networkManager);
+}
+
+LoadCategoriesRequest * RequestFactory::createLoadCategoriesRequest(const QString & accessToken,
+                                                                    const QString & accessTokenSecret) const
+{
+    OAuthParameters parameters(m_settings->upworkKey(),
+                               m_settings->upworkSecret(),
+                               accessToken,
+                               accessTokenSecret);
+    return new LoadCategoriesRequest(parameters, m_networkManager, m_networkManager);
 }

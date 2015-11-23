@@ -82,3 +82,13 @@ void Settings::readUpworkAccessToken()
         m_upworkAccessTokenSecret = accessTokenSecret.toString();
     }
 }
+
+void Settings::removeUpworkAccessToken()
+{
+    QSettings settings;
+    settings.beginGroup(m_upworkApiGroupName);
+    settings.remove(m_upworkAccessTokenName);
+    settings.remove(m_upworkAccessTokenSecretName);
+    m_upworkAccessToken.clear();
+    m_upworkAccessTokenSecret.clear();
+}

@@ -17,6 +17,7 @@ public:
 
     bool hasError() const;
     bool isConnectionError() const;
+    bool isAuthenticationError() const;
 
 private:
     QNetworkReply * m_reply;

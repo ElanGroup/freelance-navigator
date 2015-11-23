@@ -54,11 +54,15 @@ void MainWindow::showAbout()
 
 void MainWindow::processUpworkError(UpworkApiError error)
 {
+    ui->statusBar->clearMessage();
     QString message;
     switch (error)
     {
     case UpworkApiError::ConnectionError:
         message = tr("Connection error. Please check your internet connection.");
+        break;
+    case UpworkApiError::AuthenticationError:
+        message = tr("Upwork authentication error. Could you please log in to Upwork service again?");
         break;
     case UpworkApiError::ServiceError:
         message = tr("Upwork service is unavailable. Please try again later.");

@@ -12,6 +12,7 @@ namespace Upwork
 class UpworkSettings;
 class GetRequestTokenRequest;
 class GetAccessTokenRequest;
+class LoadCategoriesRequest;
 
 class RequestFactory
 {
@@ -24,6 +25,8 @@ public:
     GetAccessTokenRequest * createGetAccessTokenRequest(const QString & requestToken,
                                                         const QString & requestTokenSecret,
                                                         const QString & verificationCode) const;
+    LoadCategoriesRequest * createLoadCategoriesRequest(const QString & accessToken,
+                                                        const QString & accessTokenSecret) const;
 
 private:
     UpworkSettings * m_settings;
