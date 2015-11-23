@@ -15,7 +15,8 @@ public:
     UpworkErrorHandler(const UpworkErrorHandler &) = delete;
     UpworkErrorHandler & operator=(const UpworkErrorHandler &) = delete;
 
-    bool hasErrors() const;
+    bool hasError() const;
+    bool isConnectionError() const;
 
 private:
     QNetworkReply * m_reply;

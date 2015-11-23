@@ -14,6 +14,7 @@ namespace Upwork
 {
 class UpworkApiClient;
 enum class UpworkApiError;
+enum class UpworkApiWarning;
 }
 
 class Settings;
@@ -31,6 +32,7 @@ protected:
 
 private slots:
     void processUpworkError(FreelanceNavigator::Upwork::UpworkApiError error);
+    void processUpworkWarning(FreelanceNavigator::Upwork::UpworkApiWarning warning);
     void loadUpworkCategories();
 
 private:

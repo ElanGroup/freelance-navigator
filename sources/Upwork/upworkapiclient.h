@@ -4,8 +4,6 @@
 #include <QObject>
 #include "upworkenums.h"
 
-class QNetworkAccessManager;
-
 namespace FreelanceNavigator
 {
 
@@ -15,12 +13,15 @@ namespace Upwork
 {
 
 class UpworkSettings;
+class RequestFactory;
+class UpworkErrorHandler;
 
 class UpworkApiClient : public QObject
 {
     Q_OBJECT
 public:
     explicit UpworkApiClient(UpworkSettings * settings, QWidget * parent);
+    ~UpworkApiClient();
     UpworkApiClient(const UpworkApiClient &) = delete;
     UpworkApiClient & operator=(const UpworkApiClient &) = delete;
 
@@ -29,23 +30,29 @@ public:
 
 signals:
     void error(UpworkApiError error) const;
+    void warning(UpworkApiWarning warning) const;
     void initialized() const;
 
 private slots:
     void processGetRequestTokenResult();
     void processAuthorizationRedirect(const QUrl & url);
+    void processGetAccessTokenResult();
 
 private:
-    void authorize();
+    void authorize() const;
+    void getAccessToken() const;
+    bool processError(const UpworkErrorHandler & errorHandler);
 
     static const QString m_authorizationUrl;
 
     UpworkSettings * m_settings;
-    QNetworkAccessManager * m_networkManager;
+    RequestFactory * m_requestFactory;
 
     QString m_requestToken;
     QString m_requestTokenSecret;
-    QString m_verifier;
+    QString m_verificationCode;
+    QString m_accessToken;
+    QString m_accessTokenSecret;
 };
 
 } // namespace Upwork

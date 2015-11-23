@@ -12,8 +12,7 @@ class GetRequestTokenRequest : public UpworkApiRequest
 {
     Q_OBJECT
 public:
-    explicit GetRequestTokenRequest(const QString & applicationKey,
-                                    const QString & applicationSecret,
+    explicit GetRequestTokenRequest(const OAuthParameters & parameters,
                                     QNetworkAccessManager * networkManager,
                                     QObject * parent = 0);
     GetRequestTokenRequest(const GetRequestTokenRequest &) = delete;

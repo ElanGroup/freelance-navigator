@@ -9,12 +9,13 @@ namespace FreelanceNavigator
 namespace Upwork
 {
 
+class OAuthParameters;
+
 class UpworkApiRequest : public ApiRequest
 {
     Q_OBJECT
 public:
-    explicit UpworkApiRequest(const QString & applicationKey,
-                              const QString & applicationSecret,
+    explicit UpworkApiRequest(const OAuthParameters & parameters,
                               QNetworkAccessManager * networkManager,
                               QObject * parent = 0);
     virtual ~UpworkApiRequest();
@@ -22,7 +23,6 @@ public:
     virtual void submit() override;
 
 protected:
-    void setTokenSecret(const QString & tokenSecret);
     virtual QUrl url() const override;
     virtual QString path() const = 0;
     virtual QNetworkAccessManager::Operation operation() const = 0;
@@ -42,11 +42,12 @@ private:
 
     static const QString m_baseUrl;
 
-    static const QByteArray m_callbackParameter;
     static const QByteArray m_consumerKeyParameter;
     static const QByteArray m_nonceParameter;
     static const QByteArray m_signatureMethodParameter;
     static const QByteArray m_timestampParameter;
+    static const QByteArray m_tokenParameter;
+    static const QByteArray m_verifierParameter;
     static const QByteArray m_signatureParameter;
     static const QByteArray m_authorizationHeader;
 
@@ -54,11 +55,13 @@ private:
 
     QString m_applicationKey;
     QString m_applicationSecret;
+    QString m_token;
     QString m_tokenSecret;
+    QString m_verificationCode;
     QList<QPair<QByteArray, QByteArray> > m_oauthParameters;
 };
 
-} // namespace FreelanceNavigator
 } // namespace Upwork
+} // namespace FreelanceNavigator
 
 #endif // UPWORKAPIREQUEST_H

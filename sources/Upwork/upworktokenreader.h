@@ -21,6 +21,8 @@ public:
 
     QString readRequestToken();
     QString readRequestTokenSecret();
+    QString readAccessToken();
+    QString readAccessTokenSecret();
 
 private:
     void readData();
@@ -30,6 +32,8 @@ private:
 
     static const QString m_requestTokenName;
     static const QString m_requestTokenSecretName;
+    static const QString m_accessTokenName;
+    static const QString m_accessTokenSecretName;
 };
 
 } // namespace Upwork

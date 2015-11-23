@@ -41,6 +41,7 @@ void MainWindow::setupConnections()
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_upworkApiClient, &UpworkApiClient::error, this, &MainWindow::processUpworkError);
+    connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
     connect(m_upworkApiClient, &UpworkApiClient::initialized,
             this, &MainWindow::loadUpworkCategories);
 }
@@ -62,11 +63,20 @@ void MainWindow::processUpworkError(UpworkApiError error)
     case UpworkApiError::ServiceError:
         message = tr("Upwork service is unavailable. Please try again later.");
         break;
-    case UpworkApiError::UnknownError:
-        message = tr("Unknown error");
-        break;
     }
     QMessageBox::critical(this, tr("Error"), message);
+}
+
+void MainWindow::processUpworkWarning(FreelanceNavigator::Upwork::UpworkApiWarning warning)
+{
+    QString message;
+    switch (warning)
+    {
+    case UpworkApiWarning::AuthorizationRequired:
+        message = tr("Upwork authorization was not finished. You should log in to Upwork service.");
+        break;
+    }
+    QMessageBox::warning(this, tr("Warning"), message);
 }
 
 void MainWindow::loadUpworkCategories()

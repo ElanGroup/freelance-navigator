@@ -4,27 +4,31 @@
 #include <QMessageAuthenticationCode>
 #include <QNetworkRequest>
 #include "upworkapirequest.h"
+#include "oauthparameters.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
 
 const QString UpworkApiRequest::m_baseUrl("https://www.upwork.com/api/");
-const QByteArray UpworkApiRequest::m_callbackParameter("oauth_callback");
 const QByteArray UpworkApiRequest::m_consumerKeyParameter("oauth_consumer_key");
 const QByteArray UpworkApiRequest::m_nonceParameter("oauth_nonce");
 const QByteArray UpworkApiRequest::m_signatureMethodParameter("oauth_signature_method");
 const QByteArray UpworkApiRequest::m_timestampParameter("oauth_timestamp");
+const QByteArray UpworkApiRequest::m_tokenParameter("oauth_token");
+const QByteArray UpworkApiRequest::m_verifierParameter("oauth_verifier");
 const QByteArray UpworkApiRequest::m_signatureParameter("oauth_signature");
 const QByteArray UpworkApiRequest::m_authorizationHeader("Authorization");
 const QByteArray UpworkApiRequest::m_signatureMethod("HMAC-SHA1");
 
-UpworkApiRequest::UpworkApiRequest(const QString & applicationKey,
-                                   const QString & applicationSecret,
+UpworkApiRequest::UpworkApiRequest(const OAuthParameters & parameters,
                                    QNetworkAccessManager * networkManager,
                                    QObject * parent) :
     ApiRequest(networkManager, parent),
-    m_applicationKey(applicationKey),
-    m_applicationSecret(applicationSecret)
+    m_applicationKey(parameters.applicationKey()),
+    m_applicationSecret(parameters.applicationSecret()),
+    m_token(parameters.token()),
+    m_tokenSecret(parameters.tokenSecret()),
+    m_verificationCode(parameters.verificationCode())
 {
 }
 
@@ -76,13 +80,16 @@ void UpworkApiRequest::addAuthorizationHeader()
     m_oauthParameters.append(qMakePair(m_nonceParameter, nonce()));
     m_oauthParameters.append(qMakePair(m_signatureMethodParameter, m_signatureMethod));
     m_oauthParameters.append(qMakePair(m_timestampParameter, timestamp()));
+    if (!m_token.isEmpty())
+    {
+        m_oauthParameters.append(qMakePair(m_tokenParameter, m_token.toLatin1()));
+    }
+    if (!m_verificationCode.isEmpty())
+    {
+        m_oauthParameters.append(qMakePair(m_verifierParameter, m_verificationCode.toLatin1()));
+    }
     m_oauthParameters.append(qMakePair(m_signatureParameter, generateSignature()));
     request()->setRawHeader(m_authorizationHeader, createAuthorizationHeaderValue());
-}
-
-void UpworkApiRequest::setTokenSecret(const QString & tokenSecret)
-{
-    m_tokenSecret = tokenSecret;
 }
 
 QByteArray UpworkApiRequest::nonce()

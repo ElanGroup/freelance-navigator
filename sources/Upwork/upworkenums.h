@@ -8,13 +8,17 @@ namespace Upwork
 
 enum class UpworkApiError
 {
-    UnknownError,
     ConnectionError,
     ServiceError
 };
 
-} // namespace FreelanceNavigator
+enum class UpworkApiWarning
+{
+    AuthorizationRequired
+};
+
 } // namespace Upwork
+} // namespace FreelanceNavigator
 
 #endif // UPWORKENUMS_H
 

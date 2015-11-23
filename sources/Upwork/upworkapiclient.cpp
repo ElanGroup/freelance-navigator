@@ -8,6 +8,8 @@
 #include "getrequesttokenrequest.h"
 #include "upworktokenreader.h"
 #include "authorizationdialog.h"
+#include "requestfactory.h"
+#include "getaccesstokenrequest.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -16,16 +18,18 @@ const QString UpworkApiClient::m_authorizationUrl("https://www.upwork.com/servic
 UpworkApiClient::UpworkApiClient(UpworkSettings * settings, QWidget * parent) :
     QObject(parent),
     m_settings(settings),
-    m_networkManager(new QNetworkAccessManager(this))
+    m_requestFactory(new RequestFactory(settings, new QNetworkAccessManager(this)))
 {
+}
+
+UpworkApiClient::~UpworkApiClient()
+{
+    delete m_requestFactory;
 }
 
 void UpworkApiClient::initialize()
 {
-    GetRequestTokenRequest * request = new GetRequestTokenRequest(m_settings->upworkKey(),
-                                                                  m_settings->upworkSecret(),
-                                                                  m_networkManager,
-                                                                  this);
+    auto request = m_requestFactory->createGetRequestTokenRequest();
     connect(request, &ApiRequest::finished, this, &UpworkApiClient::processGetRequestTokenResult);
     request->submit();
 }
@@ -35,9 +39,12 @@ void UpworkApiClient::processGetRequestTokenResult()
     GetRequestTokenRequest * request = qobject_cast<GetRequestTokenRequest *>(sender());
     Q_ASSERT(request);
     UpworkErrorHandler errorHandler(request->reply());
-    if (errorHandler.hasErrors())
+    if (errorHandler.hasError())
     {
-        emit error(UpworkApiError::ServiceError);
+        if (!processError(errorHandler))
+        {
+            emit error(UpworkApiError::ServiceError);
+        }
     }
     else
     {
@@ -54,7 +61,7 @@ void UpworkApiClient::loadCategories()
 
 }
 
-void UpworkApiClient::authorize()
+void UpworkApiClient::authorize() const
 {
     QUrl url(m_authorizationUrl);
     QUrlQuery urlQuery;
@@ -68,11 +75,11 @@ void UpworkApiClient::authorize()
     int result = authorizationDialog.exec();
     if (result == QDialog::Accepted)
     {
-
+        getAccessToken();
     }
     else
     {
-
+        emit warning(UpworkApiWarning::AuthorizationRequired);
     }
 }
 
@@ -85,9 +92,50 @@ void UpworkApiClient::processAuthorizationRedirect(const QUrl & url)
     }
 
     QUrlQuery urlQuery(query);
-    m_verifier = urlQuery.queryItemValue(QStringLiteral("oauth_verifier"));
+    m_verificationCode = urlQuery.queryItemValue(QStringLiteral("oauth_verifier"));
 
     AuthorizationDialog * authorizationDialog = qobject_cast<AuthorizationDialog *>(sender());
     Q_ASSERT(authorizationDialog);
     authorizationDialog->accept();
+}
+
+void UpworkApiClient::getAccessToken() const
+{
+    auto request = m_requestFactory->createGetAccessTokenRequest(m_requestToken,
+                                                                 m_requestTokenSecret,
+                                                                 m_verificationCode);
+    connect(request, &ApiRequest::finished, this, &UpworkApiClient::processGetAccessTokenResult);
+    request->submit();
+}
+
+void UpworkApiClient::processGetAccessTokenResult()
+{
+    GetAccessTokenRequest * request = qobject_cast<GetAccessTokenRequest *>(sender());
+    Q_ASSERT(request);
+    UpworkErrorHandler errorHandler(request->reply());
+    if (errorHandler.hasError())
+    {
+        if (!processError(errorHandler))
+        {
+            emit error(UpworkApiError::ServiceError);
+        }
+    }
+    else
+    {
+        UpworkTokenReader tokenReader(request->reply());
+        m_accessToken = tokenReader.readAccessToken();
+        m_accessTokenSecret = tokenReader.readAccessTokenSecret();
+        emit initialized();
+    }
+    request->deleteLater();
+}
+
+bool UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)
+{
+    if (errorHandler.isConnectionError())
+    {
+        emit error(UpworkApiError::ConnectionError);
+        return true;
+    }
+    return false;
 }

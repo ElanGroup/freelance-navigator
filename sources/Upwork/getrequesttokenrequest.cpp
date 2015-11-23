@@ -3,11 +3,10 @@
 
 using namespace FreelanceNavigator::Upwork;
 
-GetRequestTokenRequest::GetRequestTokenRequest(const QString & applicationKey,
-                                               const QString & applicationSecret,
+GetRequestTokenRequest::GetRequestTokenRequest(const OAuthParameters & parameters,
                                                QNetworkAccessManager * networkManager,
                                                QObject * parent) :
-    UpworkApiRequest(applicationKey, applicationSecret, networkManager, parent)
+    UpworkApiRequest(parameters, networkManager, parent)
 {
 }
 
