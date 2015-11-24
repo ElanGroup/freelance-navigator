@@ -39,6 +39,19 @@
           <item>
            <widget class="QListWidget" name="upworkSubcategoryListWidget"/>
           </item>
+          <item>
+           <widget class="QLineEdit" name="upworkSearchLineEdit"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="upworkSearchButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Search</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>

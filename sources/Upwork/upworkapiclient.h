@@ -8,6 +8,7 @@ namespace FreelanceNavigator
 {
 
 class ApiRequest;
+class Job;
 
 namespace Upwork
 {
@@ -16,6 +17,7 @@ class UpworkSettings;
 class RequestFactory;
 class UpworkErrorHandler;
 class UpworkCategory;
+class UpworkSearchJobParameters;
 
 class UpworkApiClient : public QObject
 {
@@ -28,18 +30,22 @@ public:
 
     void initialize();
     void loadCategories();
+    void searchJobs(const UpworkSearchJobParameters & parameters);
 
 signals:
     void error(UpworkApiError error) const;
     void warning(UpworkApiWarning warning) const;
     void initialized() const;
     void categoriesLoaded(const QList<QSharedPointer<UpworkCategory>> & categories) const;
+    void jobsLoaded(const QList<QSharedPointer<Job>> & jobs) const;
+    void jobsSearchingFinished() const;
 
 private slots:
     void processGetRequestTokenResult();
     void processAuthorizationRedirect(const QUrl & url);
     void processGetAccessTokenResult();
     void processLoadCategoriesResult();
+    void processSearchJobsResult();
 
 private:
     void authorize() const;

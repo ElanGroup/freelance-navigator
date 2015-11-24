@@ -12,6 +12,9 @@
 #include "getaccesstokenrequest.h"
 #include "loadcategoriesrequest.h"
 #include "upworkcategoryreader.h"
+#include "searchjobsrequest.h"
+#include "upworkjobreader.h"
+#include "upworkjobpage.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -151,6 +154,45 @@ void UpworkApiClient::processLoadCategoriesResult()
     {
         UpworkCategoryReader categoryReader;
         emit categoriesLoaded(categoryReader.readCategories(request->reply()));
+    }
+    request->deleteLater();
+}
+
+void UpworkApiClient::searchJobs(const UpworkSearchJobParameters & parameters)
+{
+    auto request = m_requestFactory->createSearchJobsRequest(parameters,
+                                                             m_accessToken,
+                                                             m_accessTokenSecret);
+    connect(request, &ApiRequest::finished, this, &UpworkApiClient::processSearchJobsResult);
+    request->submit();
+}
+
+void UpworkApiClient::processSearchJobsResult()
+{
+    SearchJobsRequest * request = qobject_cast<SearchJobsRequest *>(sender());
+    Q_ASSERT(request);
+    //qDebug() << request->reply()->readAll();
+    UpworkErrorHandler errorHandler(request->reply());
+    if (errorHandler.hasError())
+    {
+        processError(errorHandler);
+    }
+    else
+    {
+        UpworkJobReader jobReader;
+        std::unique_ptr<UpworkJobPage> jobPage = jobReader.readJobPage(request->reply());
+        emit jobsLoaded(jobPage->jobs());
+        if (jobPage->isValid())
+        {
+            if (jobPage->offset() + jobPage->count() >= jobPage->total())
+            {
+
+            }
+            else
+            {
+
+            }
+        }
     }
     request->deleteLater();
 }

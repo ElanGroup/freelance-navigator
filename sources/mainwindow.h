@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Upwork/upworksearchjobparameters.h"
 
 namespace Ui
 {
@@ -37,11 +38,14 @@ private slots:
     void loadUpworkCategories();
     void fillUpworkCategories(const QList<QSharedPointer<Upwork::UpworkCategory>> & categories);
     void updateUpworkSubcategories(int categoryIndex);
+    void searchUpworkJobs();
+    void updateUpworkSearchButtonState();
 
 private:
     void setupConnections();
     void showAbout();
     void fillUpworkSubcategories(int categoryIndex, bool loadSettings);
+    Upwork::UpworkSearchJobParameters upworkSearchJobParameters() const;
 
     Ui::MainWindow * ui;
     Settings * m_settings;

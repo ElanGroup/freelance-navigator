@@ -13,6 +13,8 @@ class UpworkSettings;
 class GetRequestTokenRequest;
 class GetAccessTokenRequest;
 class LoadCategoriesRequest;
+class SearchJobsRequest;
+class UpworkSearchJobParameters;
 
 class RequestFactory
 {
@@ -27,6 +29,9 @@ public:
                                                         const QString & verificationCode) const;
     LoadCategoriesRequest * createLoadCategoriesRequest(const QString & accessToken,
                                                         const QString & accessTokenSecret) const;
+    SearchJobsRequest * createSearchJobsRequest(const UpworkSearchJobParameters & parameters,
+                                                const QString & accessToken,
+                                                const QString & accessTokenSecret) const;
 
 private:
     UpworkSettings * m_settings;

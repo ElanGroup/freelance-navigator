@@ -13,7 +13,12 @@ HEADERS += \
     $$PWD/upworkerrorreader.h \
     $$PWD/upworkerror.h \
     $$PWD/upworkcategory.h \
-    $$PWD/upworkcategoryreader.h
+    $$PWD/upworkcategoryreader.h \
+    $$PWD/upworksearchjobparameters.h \
+    $$PWD/searchjobsrequest.h \
+    $$PWD/upworkjob.h \
+    $$PWD/upworkjobpage.h \
+    $$PWD/upworkjobreader.h
 
 SOURCES += \
     $$PWD/upworkapiclient.cpp \
@@ -28,4 +33,9 @@ SOURCES += \
     $$PWD/upworkerrorreader.cpp \
     $$PWD/upworkerror.cpp \
     $$PWD/upworkcategory.cpp \
-    $$PWD/upworkcategoryreader.cpp
+    $$PWD/upworkcategoryreader.cpp \
+    $$PWD/upworksearchjobparameters.cpp \
+    $$PWD/searchjobsrequest.cpp \
+    $$PWD/upworkjob.cpp \
+    $$PWD/upworkjobpage.cpp \
+    $$PWD/upworkjobreader.cpp

@@ -49,6 +49,9 @@ void MainWindow::setupConnections()
             this, &MainWindow::loadUpworkCategories);
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
+    connect(ui->upworkSearchButton, &QPushButton::clicked, this, &MainWindow::searchUpworkJobs);
+    connect(ui->upworkSearchLineEdit, &QLineEdit::textChanged,
+            this, &MainWindow::updateUpworkSearchButtonState);
 }
 
 void MainWindow::showAbout()
@@ -110,6 +113,8 @@ void MainWindow::fillUpworkCategories(const QList<QSharedPointer<UpworkCategory>
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             &MainWindow::updateUpworkSubcategories);
+
+    updateUpworkSearchButtonState();
 }
 
 void MainWindow::fillUpworkSubcategories(int categoryIndex, bool loadSettings)
@@ -134,4 +139,25 @@ void MainWindow::updateUpworkSubcategories(int categoryIndex)
     ui->upworkSubcategoryListWidget->clear();
     ui->upworkSubcategoryListWidget->verticalScrollBar()->setValue(0);
     fillUpworkSubcategories(categoryIndex, false);
+}
+
+void MainWindow::searchUpworkJobs()
+{
+    ui->upworkSearchButton->setEnabled(false);
+    ui->statusBar->showMessage(tr("Search for jobs..."));
+    m_upworkApiClient->searchJobs(upworkSearchJobParameters());
+}
+
+UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
+{
+    UpworkSearchJobParameters parameters(ui->upworkCategoryComboBox->currentText(),
+                                         ui->upworkSearchLineEdit->text());
+    return parameters;
+}
+
+void MainWindow::updateUpworkSearchButtonState()
+{
+    bool enable = ui->upworkCategoryComboBox->currentIndex() > -1 &&
+                  !ui->upworkSearchLineEdit->text().isEmpty();
+    ui->upworkSearchButton->setEnabled(enable);
 }

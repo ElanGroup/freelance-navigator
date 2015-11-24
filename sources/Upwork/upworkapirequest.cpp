@@ -128,7 +128,7 @@ QByteArray UpworkApiRequest::getSignatureBaseString() const
     QByteArray baseString;
     baseString.append(getOperationName(operation()).toUtf8() + "&");
     baseString.append(QUrl::toPercentEncoding(basicUrl()) + "&");
-    baseString.append(getOauthParametersForSignature());
+    baseString.append(getParametersForSignature());
     return baseString;
 }
 
@@ -149,18 +149,34 @@ QString UpworkApiRequest::getOperationName(QNetworkAccessManager::Operation oper
     }
 }
 
-QByteArray UpworkApiRequest::getOauthParametersForSignature() const
+QByteArray UpworkApiRequest::getParametersForSignature() const
 {
-    QByteArray parameters;
+    QMap<QByteArray, QByteArray> parametersMap;
     for (auto it = m_oauthParameters.constBegin(); it != m_oauthParameters.constEnd(); ++it)
     {
-        if (it != m_oauthParameters.constBegin())
+        parametersMap.insert(it->first, it->second);
+    }
+    auto queryItems = query().queryItems();
+    for (auto it = queryItems.constBegin(); it != queryItems.constEnd(); ++it)
+    {
+        parametersMap.insert(it->first.toUtf8(), it->second.toUtf8());
+    }
+    auto postItems = postData().queryItems();
+    for (auto it = postItems.constBegin(); it != postItems.constEnd(); ++it)
+    {
+        parametersMap.insert(it->first.toUtf8(), it->second.toUtf8());
+    }
+
+    QByteArray parameters;
+    for (auto it = parametersMap.constBegin(); it != parametersMap.constEnd(); ++it)
+    {
+        if (it != parametersMap.constBegin())
         {
             parameters.append("&");
         }
-        parameters.append(QUrl::toPercentEncoding(it->first));
+        parameters.append(QUrl::toPercentEncoding(it.key()));
         parameters.append("=");
-        parameters.append(QUrl::toPercentEncoding(it->second));
+        parameters.append(QUrl::toPercentEncoding(it.value()));
     }
     return QUrl::toPercentEncoding(parameters);
 }

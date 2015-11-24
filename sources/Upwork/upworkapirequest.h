@@ -37,7 +37,7 @@ private:
     QByteArray generateSignature() const;
     QByteArray getSignatureBaseString() const;
     static QString getOperationName(QNetworkAccessManager::Operation operation);
-    QByteArray getOauthParametersForSignature() const;
+    QByteArray getParametersForSignature() const;
     QByteArray createAuthorizationHeaderValue() const;
 
     static const QString m_baseUrl;

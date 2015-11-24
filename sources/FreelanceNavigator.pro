@@ -34,7 +34,8 @@ HEADERS  += mainwindow.h \
     aboutdialog.h \
     settings.h \
     apirequest.h \
-    authorizationdialog.h
+    authorizationdialog.h \
+    job.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

@@ -1,0 +1,37 @@
+#include "upworkjob.h"
+
+using namespace FreelanceNavigator::Upwork;
+
+UpworkJob::UpworkJob()
+{
+}
+
+QString UpworkJob::jobId() const
+{
+    return m_jobId;
+}
+
+void UpworkJob::setJobId(const QString & jobId)
+{
+    m_jobId = jobId;
+}
+
+QString UpworkJob::title() const
+{
+    return m_title;
+}
+
+void UpworkJob::setTitle(const QString & title)
+{
+    m_title = title;
+}
+
+QString UpworkJob::description() const
+{
+    return m_description;
+}
+
+void UpworkJob::setDescription(const QString & description)
+{
+    m_description = description;
+}
