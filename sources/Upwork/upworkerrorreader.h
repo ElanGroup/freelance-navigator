@@ -3,6 +3,8 @@
 
 #include <QSharedPointer>
 
+class QNetworkReply;
+
 namespace FreelanceNavigator
 {
 namespace Upwork
@@ -17,7 +19,7 @@ public:
     UpworkErrorReader(const UpworkErrorReader &) = delete;
     UpworkErrorReader & operator=(const UpworkErrorReader &) = delete;
 
-    QSharedPointer<UpworkError> readError(const QByteArray & data) const;
+    QSharedPointer<UpworkError> readError(QNetworkReply * reply) const;
 };
 
 } // namespace Upwork

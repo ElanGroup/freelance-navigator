@@ -30,7 +30,7 @@
        <attribute name="title">
         <string>Upwork</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
         <item>
          <layout class="QVBoxLayout" name="upworkFiltersLayout">
           <item>

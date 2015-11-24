@@ -1,11 +1,13 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QScrollBar>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "aboutdialog.h"
 #include "settings.h"
 #include "Upwork/upworkapiclient.h"
+#include "Upwork/upworkcategory.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
@@ -21,6 +23,7 @@ MainWindow::MainWindow(QWidget * parent) :
 
     setupConnections();
 
+    ui->statusBar->showMessage(tr("Connect to Upwork service..."));
     m_upworkApiClient->initialize();
 }
 
@@ -44,6 +47,8 @@ void MainWindow::setupConnections()
     connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
     connect(m_upworkApiClient, &UpworkApiClient::initialized,
             this, &MainWindow::loadUpworkCategories);
+    connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
+            this, &MainWindow::fillUpworkCategories);
 }
 
 void MainWindow::showAbout()
@@ -71,7 +76,7 @@ void MainWindow::processUpworkError(UpworkApiError error)
     QMessageBox::critical(this, tr("Error"), message);
 }
 
-void MainWindow::processUpworkWarning(FreelanceNavigator::Upwork::UpworkApiWarning warning)
+void MainWindow::processUpworkWarning(UpworkApiWarning warning)
 {
     QString message;
     switch (warning)
@@ -87,4 +92,46 @@ void MainWindow::loadUpworkCategories()
 {
     ui->statusBar->showMessage(tr("Load categories..."));
     m_upworkApiClient->loadCategories();
+}
+
+void MainWindow::fillUpworkCategories(const QList<QSharedPointer<UpworkCategory>> & categories)
+{
+    ui->statusBar->clearMessage();
+
+    foreach (const QSharedPointer<UpworkCategory> & category, categories)
+    {
+        m_upworkSubcategories.insert(category->categoryId(), category->subcategories());
+        ui->upworkCategoryComboBox->addItem(category->title(), category->categoryId());
+    }
+
+    fillUpworkSubcategories(ui->upworkCategoryComboBox->currentIndex(), true);
+
+    connect(ui->upworkCategoryComboBox,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            &MainWindow::updateUpworkSubcategories);
+}
+
+void MainWindow::fillUpworkSubcategories(int categoryIndex, bool loadSettings)
+{
+    QVariant category = ui->upworkCategoryComboBox->itemData(categoryIndex);
+    if (category.isValid())
+    {
+        QString categoryId = category.toString();
+        foreach (auto subcategory, m_upworkSubcategories.value(categoryId))
+        {
+            QListWidgetItem * item = new QListWidgetItem(subcategory->title());
+            item->setData(Qt::UserRole, subcategory->categoryId());
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(Qt::Unchecked);
+            ui->upworkSubcategoryListWidget->addItem(item);
+        }
+    }
+}
+
+void MainWindow::updateUpworkSubcategories(int categoryIndex)
+{
+    ui->upworkSubcategoryListWidget->clear();
+    ui->upworkSubcategoryListWidget->verticalScrollBar()->setValue(0);
+    fillUpworkSubcategories(categoryIndex, false);
 }

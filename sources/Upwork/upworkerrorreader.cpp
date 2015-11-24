@@ -1,3 +1,4 @@
+#include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include "upworkerrorreader.h"
@@ -9,10 +10,10 @@ UpworkErrorReader::UpworkErrorReader()
 {
 }
 
-QSharedPointer<UpworkError> UpworkErrorReader::readError(const QByteArray & data) const
+QSharedPointer<UpworkError> UpworkErrorReader::readError(QNetworkReply * reply) const
 {
     UpworkError * error = new UpworkError();
-    QJsonDocument document = QJsonDocument::fromJson(data);
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isNull() && document.isObject())
     {
         QJsonValue errorValue = document.object()["error"];

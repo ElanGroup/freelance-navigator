@@ -11,6 +11,7 @@
 #include "requestfactory.h"
 #include "getaccesstokenrequest.h"
 #include "loadcategoriesrequest.h"
+#include "upworkcategoryreader.h"
 
 using namespace FreelanceNavigator::Upwork;
 
@@ -148,7 +149,8 @@ void UpworkApiClient::processLoadCategoriesResult()
     }
     else
     {
-
+        UpworkCategoryReader categoryReader;
+        emit categoriesLoaded(categoryReader.readCategories(request->reply()));
     }
     request->deleteLater();
 }

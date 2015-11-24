@@ -58,7 +58,7 @@ private:
     QString m_token;
     QString m_tokenSecret;
     QString m_verificationCode;
-    QList<QPair<QByteArray, QByteArray> > m_oauthParameters;
+    QList<QPair<QByteArray, QByteArray>> m_oauthParameters;
 };
 
 } // namespace Upwork

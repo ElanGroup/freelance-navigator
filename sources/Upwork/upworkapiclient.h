@@ -15,6 +15,7 @@ namespace Upwork
 class UpworkSettings;
 class RequestFactory;
 class UpworkErrorHandler;
+class UpworkCategory;
 
 class UpworkApiClient : public QObject
 {
@@ -32,6 +33,7 @@ signals:
     void error(UpworkApiError error) const;
     void warning(UpworkApiWarning warning) const;
     void initialized() const;
+    void categoriesLoaded(const QList<QSharedPointer<UpworkCategory>> & categories) const;
 
 private slots:
     void processGetRequestTokenResult();

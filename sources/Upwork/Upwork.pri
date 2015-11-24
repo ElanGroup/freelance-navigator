@@ -11,7 +11,9 @@ HEADERS += \
     $$PWD/requestfactory.h \
     $$PWD/loadcategoriesrequest.h \
     $$PWD/upworkerrorreader.h \
-    $$PWD/upworkerror.h
+    $$PWD/upworkerror.h \
+    $$PWD/upworkcategory.h \
+    $$PWD/upworkcategoryreader.h
 
 SOURCES += \
     $$PWD/upworkapiclient.cpp \
@@ -24,4 +26,6 @@ SOURCES += \
     $$PWD/requestfactory.cpp \
     $$PWD/loadcategoriesrequest.cpp \
     $$PWD/upworkerrorreader.cpp \
-    $$PWD/upworkerror.cpp
+    $$PWD/upworkerror.cpp \
+    $$PWD/upworkcategory.cpp \
+    $$PWD/upworkcategoryreader.cpp
