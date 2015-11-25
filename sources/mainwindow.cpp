@@ -8,6 +8,7 @@
 #include "settings.h"
 #include "Upwork/upworkapiclient.h"
 #include "Upwork/upworkcategory.h"
+#include "upworkjobsearcher.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
@@ -43,15 +44,15 @@ void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->upworkSearchButton, &QPushButton::clicked, this, &MainWindow::searchUpworkJobs);
+    connect(ui->upworkSearchLineEdit, &QLineEdit::textChanged,
+            this, &MainWindow::updateUpworkSearchButtonState);
     connect(m_upworkApiClient, &UpworkApiClient::error, this, &MainWindow::processUpworkError);
     connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
     connect(m_upworkApiClient, &UpworkApiClient::initialized,
             this, &MainWindow::loadUpworkCategories);
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
-    connect(ui->upworkSearchButton, &QPushButton::clicked, this, &MainWindow::searchUpworkJobs);
-    connect(ui->upworkSearchLineEdit, &QLineEdit::textChanged,
-            this, &MainWindow::updateUpworkSearchButtonState);
 }
 
 void MainWindow::showAbout()
@@ -63,6 +64,8 @@ void MainWindow::showAbout()
 void MainWindow::processUpworkError(UpworkApiError error)
 {
     ui->statusBar->clearMessage();
+    updateUpworkSearchButtonState();
+
     QString message;
     switch (error)
     {
@@ -145,7 +148,12 @@ void MainWindow::searchUpworkJobs()
 {
     ui->upworkSearchButton->setEnabled(false);
     ui->statusBar->showMessage(tr("Search for jobs..."));
-    m_upworkApiClient->searchJobs(upworkSearchJobParameters());
+    UpworkJobSearcher * searcher = new UpworkJobSearcher(upworkSearchJobParameters(),
+                                                         m_upworkApiClient,
+                                                         ui->upworkJobListWidget,
+                                                         this);
+    connect(searcher, &JobSearcher::searchFinished, this, &MainWindow::finishUpworkJobSearch);
+    searcher->search();
 }
 
 UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
@@ -160,4 +168,14 @@ void MainWindow::updateUpworkSearchButtonState()
     bool enable = ui->upworkCategoryComboBox->currentIndex() > -1 &&
                   !ui->upworkSearchLineEdit->text().isEmpty();
     ui->upworkSearchButton->setEnabled(enable);
+}
+
+void MainWindow::finishUpworkJobSearch()
+{
+    UpworkJobSearcher * searcher = qobject_cast<UpworkJobSearcher *>(sender());
+    Q_ASSERT(searcher);
+    searcher->deleteLater();
+
+    ui->statusBar->clearMessage();
+    updateUpworkSearchButtonState();
 }

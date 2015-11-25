@@ -38,7 +38,7 @@ signals:
     void initialized() const;
     void categoriesLoaded(const QList<QSharedPointer<UpworkCategory>> & categories) const;
     void jobsLoaded(const QList<QSharedPointer<Job>> & jobs) const;
-    void jobsSearchingFinished() const;
+    void jobSearchingFinished() const;
 
 private slots:
     void processGetRequestTokenResult();

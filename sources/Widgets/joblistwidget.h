@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+class QStandardItemModel;
+
 namespace Ui
 {
 class JobListWidget;
@@ -10,6 +12,9 @@ class JobListWidget;
 
 namespace FreelanceNavigator
 {
+
+class Job;
+
 namespace Widgets
 {
 
@@ -19,11 +24,15 @@ class JobListWidget : public QWidget
 public:
     explicit JobListWidget(QWidget * parent = 0);
     ~JobListWidget();
+    JobListWidget(const JobListWidget &) = delete;
+    JobListWidget & operator=(const JobListWidget &) = delete;
 
-signals:
+    void addJobs(const QList<QSharedPointer<Job>> & jobs);
 
 private:
     Ui::JobListWidget * ui;
+    QList<QSharedPointer<Job>> m_jobs;
+    QStandardItemModel * m_jobModel;
 };
 
 } // namespace Widgets

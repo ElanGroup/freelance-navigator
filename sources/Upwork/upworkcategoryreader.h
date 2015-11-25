@@ -22,8 +22,8 @@ public:
     QList<QSharedPointer<UpworkCategory>> readCategories(QNetworkReply * reply) const;
 
 private:
-    QSharedPointer<UpworkCategory> getCategory(const QJsonValue & categoryValue) const;
-    bool checkIsValidCategory(const UpworkCategory & category) const;
+    UpworkCategory * getCategory(const QJsonValue & categoryValue) const;
+    bool checkIsValidCategory(const UpworkCategory * const category) const;
 };
 
 } // namespace Upwork

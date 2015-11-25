@@ -22,10 +22,10 @@ QList<QSharedPointer<UpworkCategory>> UpworkCategoryReader::readCategories(QNetw
         {
             foreach (const QJsonValue & categoryValue, categoriesValue.toArray())
             {
-                QSharedPointer<UpworkCategory> category = getCategory(categoryValue);
-                if (checkIsValidCategory(*category))
+                UpworkCategory * category = getCategory(categoryValue);
+                if (checkIsValidCategory(category))
                 {
-                    categories.append(category);
+                    categories.append(QSharedPointer<UpworkCategory>(category));
                 }
             }
         }
@@ -33,7 +33,7 @@ QList<QSharedPointer<UpworkCategory>> UpworkCategoryReader::readCategories(QNetw
     return categories;
 }
 
-QSharedPointer<UpworkCategory> UpworkCategoryReader::getCategory(const QJsonValue & categoryValue) const
+UpworkCategory * UpworkCategoryReader::getCategory(const QJsonValue & categoryValue) const
 {
     UpworkCategory * category = new UpworkCategory();
     if (categoryValue.isObject())
@@ -57,18 +57,18 @@ QSharedPointer<UpworkCategory> UpworkCategoryReader::getCategory(const QJsonValu
         {
             foreach (const QJsonValue & subcategoryValue, topicsValue.toArray())
             {
-                QSharedPointer<UpworkCategory> subcategory = getCategory(subcategoryValue);
-                if (checkIsValidCategory(*subcategory))
+                UpworkCategory * subcategory = getCategory(subcategoryValue);
+                if (checkIsValidCategory(subcategory))
                 {
-                    category->addSubcategory(subcategory);
+                    category->addSubcategory(QSharedPointer<UpworkCategory>(subcategory));
                 }
             }
         }
     }
-    return QSharedPointer<UpworkCategory>(category);
+    return category;
 }
 
-bool UpworkCategoryReader::checkIsValidCategory(const UpworkCategory & category) const
+bool UpworkCategoryReader::checkIsValidCategory(const UpworkCategory * const category) const
 {
-    return !category.categoryId().isEmpty() && !category.title().isEmpty();
+    return !category->categoryId().isEmpty() && !category->title().isEmpty();
 }

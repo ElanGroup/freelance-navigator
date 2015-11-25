@@ -30,5 +30,16 @@ QUrlQuery SearchJobsRequest::query() const
     urlQuery.addQueryItem(QStringLiteral("q"), m_searchQuery);
     urlQuery.addQueryItem(QStringLiteral("category2"), m_categoryId);
     urlQuery.addQueryItem(QStringLiteral("job_status"), QStringLiteral("open"));
+    urlQuery.addQueryItem(QStringLiteral("paging"), QString("%1;%2").arg(m_offset).arg(m_count));
     return urlQuery;
+}
+
+int SearchJobsRequest::offset() const
+{
+    return m_offset;
+}
+
+void SearchJobsRequest::setOffset(int offset)
+{
+    m_offset = offset;
 }

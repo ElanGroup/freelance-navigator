@@ -171,7 +171,6 @@ void UpworkApiClient::processSearchJobsResult()
 {
     SearchJobsRequest * request = qobject_cast<SearchJobsRequest *>(sender());
     Q_ASSERT(request);
-    //qDebug() << request->reply()->readAll();
     UpworkErrorHandler errorHandler(request->reply());
     if (errorHandler.hasError())
     {
@@ -186,12 +185,20 @@ void UpworkApiClient::processSearchJobsResult()
         {
             if (jobPage->offset() + jobPage->count() >= jobPage->total())
             {
-
+                emit jobSearchingFinished();
             }
             else
             {
-
+                request->setOffset(jobPage->offset() + jobPage->count());
+                request->submit();
+                // Return to prevent request deleting.
+                return;
             }
+        }
+        else
+        {
+            Q_ASSERT(true);
+            emit jobSearchingFinished();
         }
     }
     request->deleteLater();

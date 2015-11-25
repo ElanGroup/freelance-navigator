@@ -15,6 +15,7 @@ public:
     UpworkSearchJobParameters(const UpworkSearchJobParameters &) = delete;
     UpworkSearchJobParameters & operator=(const UpworkSearchJobParameters &) = delete;
     UpworkSearchJobParameters(UpworkSearchJobParameters && other);
+    UpworkSearchJobParameters & operator=(UpworkSearchJobParameters && other) = delete;
 
     QString categoryId() const;
     QString searchQuery() const;

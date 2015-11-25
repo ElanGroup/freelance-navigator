@@ -28,14 +28,18 @@ SOURCES += main.cpp\
     aboutdialog.cpp \
     settings.cpp \
     apirequest.cpp \
-    authorizationdialog.cpp
+    authorizationdialog.cpp \
+    jobsearcher.cpp \
+    upworkjobsearcher.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
     settings.h \
     apirequest.h \
     authorizationdialog.h \
-    job.h
+    job.h \
+    jobsearcher.h \
+    upworkjobsearcher.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

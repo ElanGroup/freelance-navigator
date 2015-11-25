@@ -14,53 +14,34 @@ UpworkJobReader::UpworkJobReader()
 
 std::unique_ptr<UpworkJobPage> UpworkJobReader::readJobPage(QNetworkReply * reply) const
 {
-    auto jobPage = std::make_unique<UpworkJobPage>();
+    UpworkJobPage * jobPage = new UpworkJobPage();
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isNull() && document.isObject())
     {
         QJsonObject jobPageObject = document.object();
+        getJobs(jobPage, jobPageObject);
+        getPagingData(jobPage, jobPageObject);
+    }
+    return std::unique_ptr<UpworkJobPage>(jobPage);
+}
 
-        QJsonValue jobsValue = jobPageObject["jobs"];
-        if (!jobsValue.isUndefined() && jobsValue.isArray())
+void UpworkJobReader::getJobs(UpworkJobPage * const jobPage, const QJsonObject & jobPageObject)
+{
+    QJsonValue jobsValue = jobPageObject["jobs"];
+    if (!jobsValue.isUndefined() && jobsValue.isArray())
+    {
+        foreach (const QJsonValue & jobValue, jobsValue.toArray())
         {
-            foreach (const QJsonValue & jobValue, jobsValue.toArray())
+            UpworkJob * job = getJob(jobValue);
+            if (checkIsValidJob(job))
             {
-                QSharedPointer<UpworkJob> job = getJob(jobValue);
-                if (checkIsValidJob(*job))
-                {
-                    jobPage->addJob(job);
-                }
-            }
-        }
-
-        QJsonValue pagingValue = jobPageObject["paging"];
-        if (!pagingValue.isUndefined() && pagingValue.isObject())
-        {
-            QJsonObject pagingObject = pagingValue.toObject();
-
-            QJsonValue offsetValue = pagingObject["offset"];
-            if (!offsetValue.isUndefined() && offsetValue.isDouble())
-            {
-                jobPage->setOffset(offsetValue.toInt());
-            }
-
-            QJsonValue countValue = pagingObject["count"];
-            if (!countValue.isUndefined() && countValue.isDouble())
-            {
-                jobPage->setCount(countValue.toInt());
-            }
-
-            QJsonValue totalValue = pagingObject["total"];
-            if (!totalValue.isUndefined() && totalValue.isDouble())
-            {
-                jobPage->setTotal(totalValue.toInt());
+                jobPage->addJob(QSharedPointer<UpworkJob>(job));
             }
         }
     }
-    return jobPage;
 }
 
-QSharedPointer<UpworkJob> UpworkJobReader::getJob(const QJsonValue & jobValue) const
+UpworkJob * UpworkJobReader::getJob(const QJsonValue & jobValue)
 {
     UpworkJob * job = new UpworkJob();
     if (jobValue.isObject())
@@ -85,10 +66,38 @@ QSharedPointer<UpworkJob> UpworkJobReader::getJob(const QJsonValue & jobValue) c
             job->setDescription(descriptionValue.toString());
         }
     }
-    return QSharedPointer<UpworkJob>(job);
+    return job;
 }
 
-bool UpworkJobReader::checkIsValidJob(const UpworkJob & job)
+bool UpworkJobReader::checkIsValidJob(const UpworkJob * const job)
 {
-    return !job.jobId().isEmpty() && !job.title().isEmpty() && !job.description().isEmpty();
+    return !job->jobId().isEmpty() && !job->title().isEmpty() && !job->description().isEmpty();
+}
+
+void UpworkJobReader::getPagingData(UpworkJobPage * const jobPage,
+                                    const QJsonObject & jobPageObject)
+{
+    QJsonValue pagingValue = jobPageObject["paging"];
+    if (!pagingValue.isUndefined() && pagingValue.isObject())
+    {
+        QJsonObject pagingObject = pagingValue.toObject();
+
+        QJsonValue offsetValue = pagingObject["offset"];
+        if (!offsetValue.isUndefined() && offsetValue.isDouble())
+        {
+            jobPage->setOffset(offsetValue.toInt());
+        }
+
+        QJsonValue countValue = pagingObject["count"];
+        if (!countValue.isUndefined() && countValue.isDouble())
+        {
+            jobPage->setCount(countValue.toInt());
+        }
+
+        QJsonValue totalValue = pagingObject["total"];
+        if (!totalValue.isUndefined() && totalValue.isDouble())
+        {
+            jobPage->setTotal(totalValue.toInt());
+        }
+    }
 }

@@ -88,7 +88,6 @@ void UpworkApiRequest::addAuthorizationHeader()
     {
         m_oauthParameters.append(qMakePair(m_verifierParameter, m_verificationCode.toLatin1()));
     }
-    m_oauthParameters.append(qMakePair(m_signatureParameter, generateSignature()));
     request()->setRawHeader(m_authorizationHeader, createAuthorizationHeaderValue());
 }
 
@@ -186,14 +185,12 @@ QByteArray UpworkApiRequest::createAuthorizationHeaderValue() const
     QByteArray result("OAuth ");
     for (auto it = m_oauthParameters.constBegin(); it != m_oauthParameters.constEnd(); ++it)
     {
-        if (it != m_oauthParameters.constBegin())
-        {
-            result.append(",");
-        }
         result.append(it->first);
         result.append("=\"");
         result.append(QUrl::toPercentEncoding(it->second));
-        result.append("\"");
+        result.append("\",");
     }
+    result.append(m_signatureParameter);
+    result.append("=\"" + QUrl::toPercentEncoding(generateSignature()) + "\"");
     return result;
 }

@@ -24,8 +24,10 @@ public:
     std::unique_ptr<UpworkJobPage> readJobPage(QNetworkReply * reply) const;
 
 private:
-    QSharedPointer<UpworkJob> getJob(const QJsonValue & jobValue) const;
-    static bool checkIsValidJob(const UpworkJob & job);
+    static void getJobs(UpworkJobPage * const jobPage, const QJsonObject & jobPageObject);
+    static UpworkJob * getJob(const QJsonValue & jobValue);
+    static bool checkIsValidJob(const UpworkJob * const job);
+    static void getPagingData(UpworkJobPage * const jobPage, const QJsonObject & jobPageObject);
 };
 
 } // namespace Upwork

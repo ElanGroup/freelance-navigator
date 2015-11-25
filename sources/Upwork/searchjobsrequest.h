@@ -18,6 +18,11 @@ public:
                                const OAuthParameters & authenticationParameters,
                                QNetworkAccessManager * networkManager,
                                QObject * parent = 0);
+    SearchJobsRequest(const SearchJobsRequest &) = delete;
+    SearchJobsRequest & operator=(const SearchJobsRequest &) = delete;
+
+    int offset() const;
+    void setOffset(int offset);
 
 protected:
     virtual QString path() const override;
@@ -27,6 +32,8 @@ protected:
 private:
     QString m_categoryId;
     QString m_searchQuery;
+    int m_offset = 0;
+    static const int m_count = 100;
 };
 
 } // namespace Upwork
