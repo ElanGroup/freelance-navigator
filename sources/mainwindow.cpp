@@ -161,6 +161,14 @@ UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
 {
     UpworkSearchJobParameters parameters(ui->upworkCategoryComboBox->currentText(),
                                          ui->upworkSearchLineEdit->text());
+    for (int i = 0; i < ui->upworkSubcategoryListWidget->count(); ++i)
+    {
+        QListWidgetItem * item = ui->upworkSubcategoryListWidget->item(i);
+        if (item->checkState() == Qt::Checked)
+        {
+            parameters.addSubcategory(item->text());
+        }
+    }
     return parameters;
 }
 

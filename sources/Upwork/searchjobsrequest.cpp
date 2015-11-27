@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QUrlQuery>
 #include "searchjobsrequest.h"
 #include "upworksearchjobparameters.h"
@@ -9,7 +10,8 @@ SearchJobsRequest::SearchJobsRequest(const UpworkSearchJobParameters & searchPar
                                      QNetworkAccessManager * networkManager,
                                      QObject * parent) :
     UpworkApiRequest(authenticationParameters, networkManager, parent),
-    m_categoryId(searchParameters.categoryId()),
+    m_category(searchParameters.category()),
+    m_subcategories(searchParameters.subcategories().join(',')),
     m_searchQuery(searchParameters.searchQuery())
 {
 }
@@ -28,7 +30,11 @@ QUrlQuery SearchJobsRequest::query() const
 {
     QUrlQuery urlQuery;
     urlQuery.addQueryItem(QStringLiteral("q"), m_searchQuery);
-    urlQuery.addQueryItem(QStringLiteral("category2"), m_categoryId);
+    urlQuery.addQueryItem(QStringLiteral("category2"), m_category);
+    if (!m_subcategories.isEmpty())
+    {
+        urlQuery.addQueryItem(QStringLiteral("subcategory2"), m_subcategories);
+    }
     urlQuery.addQueryItem(QStringLiteral("job_status"), QStringLiteral("open"));
     urlQuery.addQueryItem(QStringLiteral("paging"), QString("%1;%2").arg(m_offset).arg(m_count));
     return urlQuery;

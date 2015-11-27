@@ -30,7 +30,8 @@ protected:
     virtual QUrlQuery query() const override;
 
 private:
-    QString m_categoryId;
+    QString m_category;
+    QString m_subcategories;
     QString m_searchQuery;
     int m_offset = 0;
     static const int m_count = 100;
