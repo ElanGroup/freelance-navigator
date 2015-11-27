@@ -10,6 +10,10 @@ JobSearcher::JobSearcher(JobListWidget * jobListWidget, QObject * parent) :
 {
 }
 
+JobSearcher::~JobSearcher()
+{
+}
+
 void JobSearcher::addJobsToListWidget(const QList<QSharedPointer<Job>> & jobs)
 {
     m_jobListWidget->addJobs(jobs);

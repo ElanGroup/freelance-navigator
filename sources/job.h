@@ -2,6 +2,7 @@
 #define JOB_H
 
 #include <QString>
+#include <QSharedPointer>
 
 namespace FreelanceNavigator
 {
@@ -16,5 +17,7 @@ public:
 };
 
 } // namespace FreelanceNavigator
+
+Q_DECLARE_METATYPE(QSharedPointer<FreelanceNavigator::Job>)
 
 #endif // JOB_H

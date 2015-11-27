@@ -27,7 +27,11 @@ public:
     JobListWidget(const JobListWidget &) = delete;
     JobListWidget & operator=(const JobListWidget &) = delete;
 
+    void clear();
     void addJobs(const QList<QSharedPointer<Job>> & jobs);
+
+protected:
+    virtual void resizeEvent(QResizeEvent * event) override;
 
 private:
     Ui::JobListWidget * ui;

@@ -18,6 +18,7 @@ class JobSearcher : public QObject
     Q_OBJECT
 public:
     explicit JobSearcher(Widgets::JobListWidget * jobListWidget, QObject * parent = 0);
+    virtual ~JobSearcher();
 
     virtual void search() const = 0;
 

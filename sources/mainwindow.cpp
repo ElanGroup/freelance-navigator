@@ -148,6 +148,7 @@ void MainWindow::searchUpworkJobs()
 {
     ui->upworkSearchButton->setEnabled(false);
     ui->statusBar->showMessage(tr("Search for jobs..."));
+    ui->upworkJobListWidget->clear();
     UpworkJobSearcher * searcher = new UpworkJobSearcher(upworkSearchJobParameters(),
                                                          m_upworkApiClient,
                                                          ui->upworkJobListWidget,
