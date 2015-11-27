@@ -40,5 +40,5 @@ bool UpworkErrorHandler::isAuthenticationError() const
     QSharedPointer<UpworkError> error = errorReader.readError(m_reply);
     return error->status() == 403 &&
            error->code() == 403 &&
-           error->message() == QStringLiteral("The consumer_key and token combination does not exist or is not enabled");
+           error->message() == "The consumer_key and token combination does not exist or is not enabled";
 }

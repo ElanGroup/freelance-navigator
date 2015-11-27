@@ -108,6 +108,10 @@ void MainWindow::fillUpworkCategories(const QList<QSharedPointer<UpworkCategory>
     {
         m_upworkSubcategories.insert(category->categoryId(), category->subcategories());
         ui->upworkCategoryComboBox->addItem(category->title(), category->categoryId());
+        if (category->title() == m_settings->upworkCategory())
+        {
+            ui->upworkCategoryComboBox->setCurrentIndex(ui->upworkCategoryComboBox->count() - 1);
+        }
     }
 
     fillUpworkSubcategories(ui->upworkCategoryComboBox->currentIndex(), true);
@@ -125,13 +129,22 @@ void MainWindow::fillUpworkSubcategories(int categoryIndex, bool loadSettings)
     QVariant category = ui->upworkCategoryComboBox->itemData(categoryIndex);
     if (category.isValid())
     {
+        QStringList subcategories = loadSettings ? m_settings->upworkSubcategories()
+                                                 : QStringList();
         QString categoryId = category.toString();
         foreach (auto subcategory, m_upworkSubcategories.value(categoryId))
         {
             QListWidgetItem * item = new QListWidgetItem(subcategory->title());
             item->setData(Qt::UserRole, subcategory->categoryId());
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-            item->setCheckState(Qt::Unchecked);
+            if (loadSettings && subcategories.contains(subcategory->title()))
+            {
+                item->setCheckState(Qt::Checked);
+            }
+            else
+            {
+                item->setCheckState(Qt::Unchecked);
+            }
             ui->upworkSubcategoryListWidget->addItem(item);
         }
     }
@@ -169,6 +182,7 @@ UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
             parameters.addSubcategory(item->text());
         }
     }
+    m_settings->saveUpworkSettings(parameters);
     return parameters;
 }
 
