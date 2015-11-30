@@ -1,5 +1,6 @@
 #include "upworkjob.h"
 
+using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
 
 UpworkJob::UpworkJob()
@@ -34,4 +35,24 @@ QString UpworkJob::description() const
 void UpworkJob::setDescription(const QString & description)
 {
     m_description = description;
+}
+
+JobType UpworkJob::type() const
+{
+    return m_type;
+}
+
+void UpworkJob::setType(JobType type)
+{
+    m_type = type;
+}
+
+int UpworkJob::budget() const
+{
+    return m_budget;
+}
+
+void UpworkJob::setBudget(int budget)
+{
+    m_budget = budget;
 }

@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -64,6 +65,18 @@ UpworkJob * UpworkJobReader::getJob(const QJsonValue & jobValue)
         if (!descriptionValue.isUndefined() && descriptionValue.isString())
         {
             job->setDescription(descriptionValue.toString());
+        }
+
+        QJsonValue typeValue = jobObject["job_type"];
+        if (!typeValue.isUndefined() && typeValue.isString())
+        {
+            job->setType(typeValue.toString() == "Fixed" ? JobType::Fixed : JobType::Hourly);
+        }
+
+        QJsonValue budgetValue = jobObject["budget"];
+        if (!budgetValue.isUndefined() && budgetValue.isDouble())
+        {
+            job->setBudget(budgetValue.toInt());
         }
     }
     return job;

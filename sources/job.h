@@ -7,6 +7,12 @@
 namespace FreelanceNavigator
 {
 
+enum class JobType
+{
+    Fixed,
+    Hourly
+};
+
 class Job
 {
 public:
@@ -14,6 +20,8 @@ public:
     virtual QString jobId() const = 0;
     virtual QString title() const = 0;
     virtual QString description() const = 0;
+    virtual JobType type() const = 0;
+    virtual int budget() const = 0;
 };
 
 } // namespace FreelanceNavigator

@@ -48,6 +48,6 @@ void JobListWidget::resizeEvent(QResizeEvent * event)
 {
     Q_UNUSED(event)
 
-    // Force job items size recalculation on resize.
+    // Force job items size recalculation on widget resize.
     ui->jobListView->doItemsLayout();
 }
