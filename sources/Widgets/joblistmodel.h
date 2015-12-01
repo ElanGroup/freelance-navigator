@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 
+class QPaintDevice;
+
 namespace FreelanceNavigator
 {
 
@@ -11,11 +13,13 @@ class Job;
 namespace Widgets
 {
 
+class JobItem;
+
 class JobListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit JobListModel(QObject * parent = 0);
+    explicit JobListModel(QWidget * parent = 0);
     JobListModel(const JobListModel &) = delete;
     JobListModel & operator=(const JobListModel &) = delete;
 
@@ -25,13 +29,9 @@ public:
     void addJobs(const QList<QSharedPointer<Job>> & jobs);
     void clear();
 
-protected:
-    virtual bool canFetchMore(const QModelIndex & parent) const override;
-    virtual void fetchMore(const QModelIndex & parent) override;
-
 private:
-    QList<QSharedPointer<Job>> m_jobList;
-    int m_jobCount = 0;
+    QList<QSharedPointer<JobItem>> m_jobList;
+    QPaintDevice * m_paintDevice;
 };
 
 } // namespace Widgets

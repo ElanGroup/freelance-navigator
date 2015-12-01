@@ -40,6 +40,7 @@ private slots:
     void updateUpworkSubcategories(int categoryIndex);
     void searchUpworkJobs();
     void finishUpworkJobSearch();
+    void processMaxJobCount(int count);
 
 private:
     void setupConnections();

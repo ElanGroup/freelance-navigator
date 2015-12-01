@@ -29,3 +29,11 @@ void UpworkJobSearcher::processFoundJobs(const QList<QSharedPointer<Job>> & jobs
 {
     addJobsToListWidget(jobs);
 }
+
+void UpworkJobSearcher::stopSearch()
+{
+    disconnect(m_upworkApiClient, &UpworkApiClient::jobSearchingFinished,
+               this, &JobSearcher::searchFinished);
+    m_upworkApiClient->stopSearchJobs();
+
+}

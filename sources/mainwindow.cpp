@@ -165,6 +165,7 @@ void MainWindow::searchUpworkJobs()
                                                          ui->upworkJobListWidget,
                                                          this);
     connect(searcher, &JobSearcher::searchFinished, this, &MainWindow::finishUpworkJobSearch);
+    connect(searcher, &JobSearcher::maxJobCountReached, this, &MainWindow::processMaxJobCount);
     searcher->search();
 }
 
@@ -198,4 +199,11 @@ void MainWindow::finishUpworkJobSearch()
 
     ui->statusBar->clearMessage();
     updateUpworkSearchButtonState();
+}
+
+void MainWindow::processMaxJobCount(int count)
+{
+    QMessageBox::information(this,
+                             tr("Attention"),
+                             tr("Too many jobs were found. Searching was stopped after first %1 jobs loading.").arg(count));
 }

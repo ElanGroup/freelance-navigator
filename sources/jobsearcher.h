@@ -24,12 +24,16 @@ public:
 
 signals:
     void searchFinished() const;
+    void maxJobCountReached(int count) const;
 
 protected:
     void addJobsToListWidget(const QList<QSharedPointer<Job>> & jobs);
+    virtual void stopSearch() = 0;
 
 private:
     Widgets::JobListWidget * m_jobListWidget;
+    static const int m_maxJobCount = 1000;
+    int m_jobCount = 0;
 };
 
 } // namespace FreelanceNavigator

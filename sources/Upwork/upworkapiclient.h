@@ -31,6 +31,7 @@ public:
     void initialize();
     void loadCategories();
     void searchJobs(const UpworkSearchJobParameters & parameters);
+    void stopSearchJobs();
 
 signals:
     void error(UpworkApiError error) const;
@@ -62,6 +63,8 @@ private:
     QString m_verificationCode;
     QString m_accessToken;
     QString m_accessTokenSecret;
+
+    bool m_stopJobSearching = false;
 };
 
 } // namespace Upwork

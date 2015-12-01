@@ -1,17 +1,21 @@
+#include <QWidget>
 #include "joblistmodel.h"
 #include "job.h"
+#include "jobitem.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Widgets;
 
-JobListModel::JobListModel(QObject * parent) : QAbstractListModel(parent)
+JobListModel::JobListModel(QWidget * parent) :
+    QAbstractListModel(parent),
+    m_paintDevice(parent)
 {
 }
 
 int JobListModel::rowCount(const QModelIndex & parent) const
 {
     Q_UNUSED(parent)
-    return m_jobCount;
+    return m_jobList.count();
 }
 
 QVariant JobListModel::data(const QModelIndex & index, int role) const
@@ -34,33 +38,21 @@ QVariant JobListModel::data(const QModelIndex & index, int role) const
     return QVariant();
 }
 
-void JobListModel::addJobs(const QList<QSharedPointer<Job> > & jobs)
+void JobListModel::addJobs(const QList<QSharedPointer<Job>> & jobs)
 {
-    m_jobList.append(jobs);
+    int jobCount = m_jobList.count();
+    beginInsertRows(QModelIndex(), jobCount, jobCount + jobs.count() - 1);
+    foreach (const QSharedPointer<Job> & job, jobs)
+    {
+        m_jobList.append(QSharedPointer<JobItem>(new JobItem(job, m_paintDevice)));
+    }
+    endInsertRows();
+
 }
 
 void JobListModel::clear()
 {
     beginResetModel();
     m_jobList.clear();
-    m_jobCount = 0;
     endResetModel();
-}
-
-bool JobListModel::canFetchMore(const QModelIndex & parent) const
-{
-    Q_UNUSED(parent)
-    return m_jobCount < m_jobList.count();
-}
-
-void JobListModel::fetchMore(const QModelIndex & parent)
-{
-    Q_UNUSED(parent)
-
-    int remainder = m_jobList.count() - m_jobCount;
-    int itemsToFetch = qMin(10, remainder);
-
-    beginInsertRows(QModelIndex(), m_jobCount, m_jobCount + itemsToFetch - 1);
-    m_jobCount += itemsToFetch;
-    endInsertRows();
 }

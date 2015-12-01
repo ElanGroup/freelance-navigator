@@ -160,6 +160,7 @@ void UpworkApiClient::processLoadCategoriesResult()
 
 void UpworkApiClient::searchJobs(const UpworkSearchJobParameters & parameters)
 {
+    m_stopJobSearching = false;
     auto request = m_requestFactory->createSearchJobsRequest(parameters,
                                                              m_accessToken,
                                                              m_accessTokenSecret);
@@ -176,7 +177,7 @@ void UpworkApiClient::processSearchJobsResult()
     {
         processError(errorHandler);
     }
-    else
+    else if (!m_stopJobSearching)
     {
         UpworkJobReader jobReader;
         std::unique_ptr<UpworkJobPage> jobPage = jobReader.readJobPage(request->reply());
@@ -202,6 +203,11 @@ void UpworkApiClient::processSearchJobsResult()
         }
     }
     request->deleteLater();
+}
+
+void UpworkApiClient::stopSearchJobs()
+{
+    m_stopJobSearching = true;
 }
 
 void UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)

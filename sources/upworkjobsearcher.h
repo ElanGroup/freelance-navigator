@@ -26,6 +26,9 @@ public:
 
     virtual void search() const override;
 
+protected:
+    virtual void stopSearch() override;
+
 private slots:
     void processFoundJobs(const QList<QSharedPointer<Job>> & jobs);
 
