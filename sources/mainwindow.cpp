@@ -45,8 +45,6 @@ void MainWindow::setupConnections()
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->upworkSearchButton, &QPushButton::clicked, this, &MainWindow::searchUpworkJobs);
-    connect(ui->upworkSearchLineEdit, &QLineEdit::textChanged,
-            this, &MainWindow::updateUpworkSearchButtonState);
     connect(m_upworkApiClient, &UpworkApiClient::error, this, &MainWindow::processUpworkError);
     connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
     connect(m_upworkApiClient, &UpworkApiClient::initialized,
@@ -188,8 +186,7 @@ UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
 
 void MainWindow::updateUpworkSearchButtonState()
 {
-    bool enable = ui->upworkCategoryComboBox->currentIndex() > -1 &&
-                  !ui->upworkSearchLineEdit->text().isEmpty();
+    bool enable = ui->upworkCategoryComboBox->currentIndex() > -1;
     ui->upworkSearchButton->setEnabled(enable);
 }
 

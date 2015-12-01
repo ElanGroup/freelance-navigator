@@ -39,12 +39,12 @@ private slots:
     void fillUpworkCategories(const QList<QSharedPointer<Upwork::UpworkCategory>> & categories);
     void updateUpworkSubcategories(int categoryIndex);
     void searchUpworkJobs();
-    void updateUpworkSearchButtonState();
     void finishUpworkJobSearch();
 
 private:
     void setupConnections();
     void showAbout();
+    void updateUpworkSearchButtonState();
     void fillUpworkSubcategories(int categoryIndex, bool loadSettings);
     Upwork::UpworkSearchJobParameters upworkSearchJobParameters() const;
 

@@ -3,12 +3,7 @@
 
 #include <QWidget>
 
-class QStandardItemModel;
-
-namespace Ui
-{
-class JobListWidget;
-}
+class QListView;
 
 namespace FreelanceNavigator
 {
@@ -17,6 +12,8 @@ class Job;
 
 namespace Widgets
 {
+
+class JobListModel;
 
 class JobListWidget : public QWidget
 {
@@ -34,9 +31,8 @@ protected:
     virtual void resizeEvent(QResizeEvent * event) override;
 
 private:
-    Ui::JobListWidget * ui;
-    QList<QSharedPointer<Job>> m_jobs;
-    QStandardItemModel * m_jobModel;
+    QListView * m_jobListView;
+    JobListModel * m_jobListModel;
 };
 
 } // namespace Widgets
