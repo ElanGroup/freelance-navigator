@@ -1,14 +1,17 @@
 #include <QStringList>
 #include "upworksearchjobparameters.h"
 
+using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
 
 UpworkSearchJobParameters::UpworkSearchJobParameters(const QString & categoryId,
                                                      const QString & searchQuery,
-                                                     PostedDateRange postedDateRange) :
+                                                     PostedDateRange postedDateRange,
+                                                     JobType jobType) :
     m_category(categoryId),
     m_searchQuery(searchQuery),
-    m_postedDateRange(postedDateRange)
+    m_postedDateRange(postedDateRange),
+    m_jobType(jobType)
 {
 }
 
@@ -16,7 +19,8 @@ UpworkSearchJobParameters::UpworkSearchJobParameters(UpworkSearchJobParameters &
     m_category(std::move(other.m_category)),
     m_subcategories(std::move(other.m_subcategories)),
     m_searchQuery(std::move(other.m_searchQuery)),
-    m_postedDateRange(other.m_postedDateRange)
+    m_postedDateRange(other.m_postedDateRange),
+    m_jobType(other.m_jobType)
 {
 }
 
@@ -43,4 +47,9 @@ QString UpworkSearchJobParameters::searchQuery() const
 PostedDateRange UpworkSearchJobParameters::postedDateRange() const
 {
     return m_postedDateRange;
+}
+
+JobType UpworkSearchJobParameters::jobType() const
+{
+    return m_jobType;
 }

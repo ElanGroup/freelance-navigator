@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget * parent) :
     setWindowState(windowState() | Qt::WindowMaximized);
 
     setupConnections();
+    setupUpworkFilters();
 
     ui->statusBar->showMessage(tr("Connect to Upwork service..."));
     m_upworkApiClient->initialize();
@@ -32,12 +33,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete m_settings;
-}
-
-void MainWindow::closeEvent(QCloseEvent * event)
-{
-    //saveSettings();
-    event->accept();
 }
 
 void MainWindow::setupConnections()
@@ -51,6 +46,12 @@ void MainWindow::setupConnections()
             this, &MainWindow::loadUpworkCategories);
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
+}
+
+void MainWindow::setupUpworkFilters()
+{
+    ui->upworkPostedDateComboBox->setCurrentIndex(m_settings->upworkPostedDateRange());
+    ui->upworkJobTypeComboBox->setCurrentIndex(m_settings->upworkJobType());
 }
 
 void MainWindow::showAbout()
@@ -172,10 +173,12 @@ void MainWindow::searchUpworkJobs()
 UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
 {
     PostedDateRange postedDate =
-        static_cast<PostedDateRange>(ui->postedDateComboBox->currentIndex());
+        static_cast<PostedDateRange>(ui->upworkPostedDateComboBox->currentIndex());
+    JobType jobType = static_cast<JobType>(ui->upworkJobTypeComboBox->currentIndex());
     UpworkSearchJobParameters parameters(ui->upworkCategoryComboBox->currentText(),
                                          ui->upworkSearchLineEdit->text(),
-                                         postedDate);
+                                         postedDate,
+                                         jobType);
     for (int i = 0; i < ui->upworkSubcategoryListWidget->count(); ++i)
     {
         QListWidgetItem * item = ui->upworkSubcategoryListWidget->item(i);

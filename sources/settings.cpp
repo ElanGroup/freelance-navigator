@@ -11,6 +11,8 @@ const QString Settings::m_upworkAccessTokenSecretName("Access Token Secret");
 const QString Settings::m_upworkSettingsGroupName("Upwork");
 const QString Settings::m_upworkCategoryName("Category");
 const QString Settings::m_upworkSubcategoriesName("Subcategories");
+const QString Settings::m_upworkPostedDateRangeName("Posted Date");
+const QString Settings::m_upworkJobTypeName("Job Type");
 
 Settings::Settings()
 {
@@ -113,6 +115,18 @@ QStringList Settings::upworkSubcategories()
     return m_upworkSubcategories;
 }
 
+int Settings::upworkPostedDateRange()
+{
+    readUpworkSettings();
+    return m_upworkPostedDateRange;
+}
+
+int Settings::upworkJobType()
+{
+    readUpworkSettings();
+    return m_upworkJobType;
+}
+
 void Settings::readUpworkSettings()
 {
     if (m_upworkSettingsWereRead)
@@ -135,6 +149,18 @@ void Settings::readUpworkSettings()
         m_upworkSubcategories = subcategories.toStringList();
     }
 
+    QVariant postedDateRange = settings.value(m_upworkPostedDateRangeName);
+    if (postedDateRange.isValid())
+    {
+        m_upworkPostedDateRange = postedDateRange.toInt();
+    }
+
+    QVariant jobType = settings.value(m_upworkJobTypeName);
+    if (jobType.isValid())
+    {
+        m_upworkJobType = jobType.toInt();
+    }
+
     m_upworkSettingsWereRead = true;
 }
 
@@ -144,7 +170,11 @@ void Settings::saveUpworkSettings(const UpworkSearchJobParameters & parameters)
     settings.beginGroup(m_upworkSettingsGroupName);
     settings.setValue(m_upworkCategoryName, parameters.category());
     settings.setValue(m_upworkSubcategoriesName, parameters.subcategories());
+    settings.setValue(m_upworkPostedDateRangeName, static_cast<int>(parameters.postedDateRange()));
+    settings.setValue(m_upworkJobTypeName, static_cast<int>(parameters.jobType()));
 
     m_upworkCategory = parameters.category();
     m_upworkSubcategories = parameters.subcategories();
+    m_upworkPostedDateRange = static_cast<int>(parameters.postedDateRange());
+    m_upworkJobType = static_cast<int>(parameters.jobType());
 }

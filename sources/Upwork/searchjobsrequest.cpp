@@ -13,7 +13,8 @@ SearchJobsRequest::SearchJobsRequest(const UpworkSearchJobParameters & searchPar
     m_category(searchParameters.category()),
     m_subcategories(searchParameters.subcategories().join(',')),
     m_searchQuery(searchParameters.searchQuery()),
-    m_postedDateRange(searchParameters.postedDateRange())
+    m_postedDateRange(searchParameters.postedDateRange()),
+    m_jobType(searchParameters.jobType())
 {
 }
 
@@ -40,6 +41,12 @@ QUrlQuery SearchJobsRequest::query() const
     {
         urlQuery.addQueryItem(QStringLiteral("days_posted"),
                               QString::number(daysPosted(m_postedDateRange)));
+    }
+    if (m_jobType != JobType::Any)
+    {
+        urlQuery.addQueryItem(QStringLiteral("job_type"),
+                              m_jobType == JobType::Fixed ? QStringLiteral("fixed")
+                                                          : QStringLiteral("hourly"));
     }
     urlQuery.addQueryItem(QStringLiteral("job_status"), QStringLiteral("open"));
     urlQuery.addQueryItem(QStringLiteral("paging"), QString("%1;%2").arg(m_offset).arg(m_count));

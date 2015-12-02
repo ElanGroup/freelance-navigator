@@ -9,6 +9,7 @@ namespace FreelanceNavigator
 
 enum class JobType
 {
+    Any,
     Fixed,
     Hourly
 };

@@ -29,9 +29,6 @@ public:
     explicit MainWindow(QWidget * parent = 0);
     ~MainWindow();
 
-protected:
-    virtual void closeEvent(QCloseEvent * event);
-
 private slots:
     void processUpworkError(Upwork::UpworkApiError error);
     void processUpworkWarning(Upwork::UpworkApiWarning warning);
@@ -44,6 +41,7 @@ private slots:
 
 private:
     void setupConnections();
+    void setupUpworkFilters();
     void showAbout();
     void updateUpworkSearchButtonState();
     void fillUpworkSubcategories(int categoryIndex, bool loadSettings);

@@ -3,6 +3,7 @@
 
 #include "upworkapirequest.h"
 #include "upworkenums.h"
+#include "job.h"
 
 namespace FreelanceNavigator
 {
@@ -37,6 +38,7 @@ private:
     QString m_subcategories;
     QString m_searchQuery;
     PostedDateRange m_postedDateRange;
+    JobType m_jobType;
     int m_offset = 0;
     static const int m_count = 100;
 };
