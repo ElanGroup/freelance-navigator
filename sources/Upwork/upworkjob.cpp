@@ -56,3 +56,13 @@ void UpworkJob::setBudget(int budget)
 {
     m_budget = budget;
 }
+
+const QDateTime & UpworkJob::postedDate() const
+{
+    return m_postedDate;
+}
+
+void UpworkJob::setPostedDate(const QDateTime & postedDate)
+{
+    m_postedDate = postedDate;
+}

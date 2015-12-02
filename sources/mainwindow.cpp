@@ -171,8 +171,11 @@ void MainWindow::searchUpworkJobs()
 
 UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
 {
+    PostedDateRange postedDate =
+        static_cast<PostedDateRange>(ui->postedDateComboBox->currentIndex());
     UpworkSearchJobParameters parameters(ui->upworkCategoryComboBox->currentText(),
-                                         ui->upworkSearchLineEdit->text());
+                                         ui->upworkSearchLineEdit->text(),
+                                         postedDate);
     for (int i = 0; i < ui->upworkSubcategoryListWidget->count(); ++i)
     {
         QListWidgetItem * item = ui->upworkSubcategoryListWidget->item(i);

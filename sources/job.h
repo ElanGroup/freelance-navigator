@@ -22,6 +22,7 @@ public:
     virtual QString description() const = 0;
     virtual JobType type() const = 0;
     virtual int budget() const = 0;
+    virtual const QDateTime & postedDate() const = 0;
 };
 
 } // namespace FreelanceNavigator

@@ -1,6 +1,7 @@
 #ifndef UPWORKJOB_H
 #define UPWORKJOB_H
 
+#include <QDateTime>
 #include "job.h"
 
 namespace FreelanceNavigator
@@ -25,6 +26,8 @@ public:
     void setType(JobType type);
     virtual int budget() const override;
     void setBudget(int budget);
+    virtual const QDateTime & postedDate() const override;
+    void setPostedDate(const QDateTime & postedDate);
 
 private:
     QString m_jobId;
@@ -32,6 +35,7 @@ private:
     QString m_description;
     JobType m_type;
     int m_budget = -1;
+    QDateTime m_postedDate;
 };
 
 } // namespace Upwork

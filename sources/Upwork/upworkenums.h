@@ -18,6 +18,18 @@ enum class UpworkApiWarning
     AuthorizationRequired
 };
 
+enum class PostedDateRange
+{
+    Any,
+    Day,
+    ThreeDays,
+    FiveDays,
+    Week,
+    TenDays,
+    TwoWeeks,
+    Month
+};
+
 } // namespace Upwork
 } // namespace FreelanceNavigator
 

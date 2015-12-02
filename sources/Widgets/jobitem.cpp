@@ -2,6 +2,7 @@
 #include <QTextLayout>
 #include <QPainter>
 #include <QPaintDevice>
+#include <QDateTime>
 #include "jobitem.h"
 #include "job.h"
 
@@ -152,12 +153,19 @@ QString JobItem::infoRowText()
 {
     if (m_infoRowText.isEmpty())
     {
-        m_infoRowText = m_job->type() == JobType::Fixed ? QObject::tr("Fixed Price") :
-                                                          QObject::tr("Hourly Rated");
+        QByteArray text;
+        text.append(m_job->type() == JobType::Fixed ? QObject::tr("Fixed Price")
+                                                    : QObject::tr("Hourly Rated"));
         if (m_job->budget() > 0)
         {
-            m_infoRowText += "    " + QObject::tr("Budget: $%1").arg(m_job->budget());
+            text.append("    ");
+            text.append(QObject::tr("Budget: $%1").arg(m_job->budget()));
         }
+        text.append("    ");
+        QDateTime localPostedDate(m_job->postedDate().toLocalTime());
+        QString localPostedDateString = localPostedDate.toString(Qt::DefaultLocaleShortDate);
+        text.append(QObject::tr("Posted at: %1").arg(localPostedDateString));
+        m_infoRowText = text;
     }
     return m_infoRowText;
 }

@@ -78,6 +78,12 @@ UpworkJob * UpworkJobReader::getJob(const QJsonValue & jobValue)
         {
             job->setBudget(budgetValue.toInt());
         }
+
+        QJsonValue dateCreatedValue = jobObject["date_created"];
+        if (!dateCreatedValue.isUndefined() && dateCreatedValue.isString())
+        {
+            job->setPostedDate(QDateTime::fromString(dateCreatedValue.toString(), Qt::ISODate));
+        }
     }
     return job;
 }
