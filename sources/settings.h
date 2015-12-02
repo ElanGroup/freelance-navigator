@@ -30,6 +30,8 @@ public:
     QStringList upworkSubcategories();
     int upworkPostedDateRange();
     int upworkJobType();
+    int upworkMinBudget();
+    int upworkMaxBudget();
     void saveUpworkSettings(const Upwork::UpworkSearchJobParameters & parameters);
 
 private:
@@ -49,6 +51,8 @@ private:
     QStringList m_upworkSubcategories;
     int m_upworkPostedDateRange = 0;
     int m_upworkJobType = 0;
+    int m_upworkMinBudget = -1;
+    int m_upworkMaxBudget = -1;
 
     static const QString m_upworkApiGroupName;
     static const QString m_upworkAccessTokenName;
@@ -58,6 +62,8 @@ private:
     static const QString m_upworkSubcategoriesName;
     static const QString m_upworkPostedDateRangeName;
     static const QString m_upworkJobTypeName;
+    static const QString m_upworkMinBudgetName;
+    static const QString m_upworkMaxBudgetName;
 };
 
 } // namespace FreelanceNavigator

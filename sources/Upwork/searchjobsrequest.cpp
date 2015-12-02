@@ -14,7 +14,9 @@ SearchJobsRequest::SearchJobsRequest(const UpworkSearchJobParameters & searchPar
     m_subcategories(searchParameters.subcategories().join(',')),
     m_searchQuery(searchParameters.searchQuery()),
     m_postedDateRange(searchParameters.postedDateRange()),
-    m_jobType(searchParameters.jobType())
+    m_jobType(searchParameters.jobType()),
+    m_minBudget(searchParameters.minBudget()),
+    m_maxBudget(searchParameters.maxBudget())
 {
 }
 
@@ -47,6 +49,23 @@ QUrlQuery SearchJobsRequest::query() const
         urlQuery.addQueryItem(QStringLiteral("job_type"),
                               m_jobType == JobType::Fixed ? QStringLiteral("fixed")
                                                           : QStringLiteral("hourly"));
+    }
+    if (m_minBudget != -1 || m_maxBudget != -1)
+    {
+        QString budget;
+        if (m_maxBudget == -1)
+        {
+            budget = QString("%1-").arg(m_minBudget);
+        }
+        else if (m_minBudget == -1)
+        {
+            budget = QString("-%1").arg(m_maxBudget);
+        }
+        else
+        {
+            budget = QString("%1-%2").arg(m_minBudget).arg(m_maxBudget);
+        }
+        urlQuery.addQueryItem(QStringLiteral("budget"), budget);
     }
     urlQuery.addQueryItem(QStringLiteral("job_status"), QStringLiteral("open"));
     urlQuery.addQueryItem(QStringLiteral("paging"), QString("%1;%2").arg(m_offset).arg(m_count));

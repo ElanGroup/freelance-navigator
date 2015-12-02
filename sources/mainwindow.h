@@ -30,6 +30,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void upworkJobTypeChanged(int index);
     void processUpworkError(Upwork::UpworkApiError error);
     void processUpworkWarning(Upwork::UpworkApiWarning warning);
     void loadUpworkCategories();

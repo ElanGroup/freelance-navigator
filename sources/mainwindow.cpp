@@ -39,6 +39,9 @@ void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->upworkJobTypeComboBox,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, &MainWindow::upworkJobTypeChanged);
     connect(ui->upworkSearchButton, &QPushButton::clicked, this, &MainWindow::searchUpworkJobs);
     connect(m_upworkApiClient, &UpworkApiClient::error, this, &MainWindow::processUpworkError);
     connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
@@ -51,13 +54,40 @@ void MainWindow::setupConnections()
 void MainWindow::setupUpworkFilters()
 {
     ui->upworkPostedDateComboBox->setCurrentIndex(m_settings->upworkPostedDateRange());
+
+    ui->upworkBudgetLabel->setVisible(false);
+    ui->upworkMinBudgetLabel->setVisible(false);
+    ui->upworkMinBudgetLineEdit->setVisible(false);
+    ui->upworkMaxBudgetLabel->setVisible(false);
+    ui->upworkMaxBudgetLineEdit->setVisible(false);
     ui->upworkJobTypeComboBox->setCurrentIndex(m_settings->upworkJobType());
+
+    ui->upworkMinBudgetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
+    ui->upworkMaxBudgetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
+    if (m_settings->upworkMinBudget() != -1)
+    {
+        ui->upworkMinBudgetLineEdit->setText(QString::number(m_settings->upworkMinBudget()));
+    }
+    if (m_settings->upworkMaxBudget() != -1)
+    {
+        ui->upworkMaxBudgetLineEdit->setText(QString::number(m_settings->upworkMaxBudget()));
+    }
 }
 
 void MainWindow::showAbout()
 {
     AboutDialog dialog;
     dialog.exec();
+}
+
+void MainWindow::upworkJobTypeChanged(int index)
+{
+    JobType jobType = static_cast<JobType>(index);
+    ui->upworkBudgetLabel->setVisible(jobType == JobType::Fixed);
+    ui->upworkMinBudgetLabel->setVisible(jobType == JobType::Fixed);
+    ui->upworkMaxBudgetLabel->setVisible(jobType == JobType::Fixed);
+    ui->upworkMinBudgetLineEdit->setVisible(jobType == JobType::Fixed);
+    ui->upworkMaxBudgetLineEdit->setVisible(jobType == JobType::Fixed);
 }
 
 void MainWindow::processUpworkError(UpworkApiError error)
@@ -187,7 +217,28 @@ UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
             parameters.addSubcategory(item->text());
         }
     }
+    if (jobType == JobType::Fixed)
+    {
+        bool isOk;
+        int minBudget = ui->upworkMinBudgetLineEdit->text().toInt(&isOk);
+        if (isOk)
+        {
+            parameters.setMinBudget(minBudget);
+        }
+        int maxBudget = ui->upworkMaxBudgetLineEdit->text().toInt(&isOk);
+        if (isOk)
+        {
+            if (parameters.minBudget() > maxBudget)
+            {
+                maxBudget = parameters.minBudget() + 1;
+                ui->upworkMaxBudgetLineEdit->setText(QString::number(maxBudget));
+            }
+            parameters.setMaxBudget(maxBudget);
+        }
+    }
+
     m_settings->saveUpworkSettings(parameters);
+
     return parameters;
 }
 

@@ -28,6 +28,10 @@ public:
     QString searchQuery() const;
     PostedDateRange postedDateRange() const;
     JobType jobType() const;
+    int minBudget() const;
+    void setMinBudget(int minBudget);
+    int maxBudget() const;
+    void setMaxBudget(int maxBudget);
 
 private:
     QString m_category;
@@ -35,6 +39,8 @@ private:
     QString m_searchQuery;
     PostedDateRange m_postedDateRange;
     JobType m_jobType;
+    int m_minBudget;
+    int m_maxBudget;
 };
 
 } // namespace Upwork

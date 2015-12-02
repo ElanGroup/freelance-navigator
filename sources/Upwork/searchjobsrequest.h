@@ -39,6 +39,8 @@ private:
     QString m_searchQuery;
     PostedDateRange m_postedDateRange;
     JobType m_jobType;
+    int m_minBudget;
+    int m_maxBudget;
     int m_offset = 0;
     static const int m_count = 100;
 };

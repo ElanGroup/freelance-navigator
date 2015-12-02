@@ -13,6 +13,8 @@ const QString Settings::m_upworkCategoryName("Category");
 const QString Settings::m_upworkSubcategoriesName("Subcategories");
 const QString Settings::m_upworkPostedDateRangeName("Posted Date");
 const QString Settings::m_upworkJobTypeName("Job Type");
+const QString Settings::m_upworkMinBudgetName("Min Budget");
+const QString Settings::m_upworkMaxBudgetName("Max Budget");
 
 Settings::Settings()
 {
@@ -127,6 +129,18 @@ int Settings::upworkJobType()
     return m_upworkJobType;
 }
 
+int Settings::upworkMinBudget()
+{
+    readUpworkSettings();
+    return m_upworkMinBudget;
+}
+
+int Settings::upworkMaxBudget()
+{
+    readUpworkSettings();
+    return m_upworkMaxBudget;
+}
+
 void Settings::readUpworkSettings()
 {
     if (m_upworkSettingsWereRead)
@@ -161,6 +175,18 @@ void Settings::readUpworkSettings()
         m_upworkJobType = jobType.toInt();
     }
 
+    QVariant minBudget = settings.value(m_upworkMinBudgetName);
+    if (minBudget.isValid())
+    {
+        m_upworkMinBudget = minBudget.toInt();
+    }
+
+    QVariant maxBudget = settings.value(m_upworkMaxBudgetName);
+    if (maxBudget.isValid())
+    {
+        m_upworkMaxBudget = maxBudget.toInt();
+    }
+
     m_upworkSettingsWereRead = true;
 }
 
@@ -172,9 +198,27 @@ void Settings::saveUpworkSettings(const UpworkSearchJobParameters & parameters)
     settings.setValue(m_upworkSubcategoriesName, parameters.subcategories());
     settings.setValue(m_upworkPostedDateRangeName, static_cast<int>(parameters.postedDateRange()));
     settings.setValue(m_upworkJobTypeName, static_cast<int>(parameters.jobType()));
+    if (parameters.minBudget() == -1)
+    {
+        settings.remove(m_upworkMinBudgetName);
+    }
+    else
+    {
+        settings.setValue(m_upworkMinBudgetName, parameters.minBudget());
+    }
+    if (parameters.maxBudget() == -1)
+    {
+        settings.remove(m_upworkMaxBudgetName);
+    }
+    else
+    {
+        settings.setValue(m_upworkMaxBudgetName, parameters.maxBudget());
+    }
 
     m_upworkCategory = parameters.category();
     m_upworkSubcategories = parameters.subcategories();
     m_upworkPostedDateRange = static_cast<int>(parameters.postedDateRange());
     m_upworkJobType = static_cast<int>(parameters.jobType());
+    m_upworkMinBudget = parameters.minBudget();
+    m_upworkMaxBudget = parameters.maxBudget();
 }
