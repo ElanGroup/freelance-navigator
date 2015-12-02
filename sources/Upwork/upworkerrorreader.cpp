@@ -17,24 +17,24 @@ QSharedPointer<UpworkError> UpworkErrorReader::readError(QNetworkReply * reply) 
     if (!document.isNull() && document.isObject())
     {
         QJsonValue errorValue = document.object()["error"];
-        if (!errorValue.isUndefined() && errorValue.isObject())
+        if (errorValue.isObject())
         {
             QJsonObject errorObject = errorValue.toObject();
 
             QJsonValue statusValue = errorObject["status"];
-            if (!statusValue.isUndefined() && statusValue.isDouble())
+            if (statusValue.isDouble())
             {
                 error->setStatus(statusValue.toInt());
             }
 
             QJsonValue codeValue = errorObject["code"];
-            if (!codeValue.isUndefined() && codeValue.isDouble())
+            if (codeValue.isDouble())
             {
                 error->setCode(codeValue.toInt());
             }
 
             QJsonValue messageValue = errorObject["message"];
-            if (!messageValue.isUndefined() && messageValue.isString())
+            if (messageValue.isString())
             {
                 error->setMessage(messageValue.toString());
             }

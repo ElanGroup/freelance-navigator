@@ -95,7 +95,11 @@
            </layout>
           </item>
           <item>
-           <widget class="QLineEdit" name="upworkSearchLineEdit"/>
+           <widget class="QLineEdit" name="upworkSearchLineEdit">
+            <property name="placeholderText">
+             <string>Search query</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="upworkSearchButton">

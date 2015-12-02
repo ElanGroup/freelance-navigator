@@ -18,7 +18,7 @@ QList<QSharedPointer<UpworkCategory>> UpworkCategoryReader::readCategories(QNetw
     if (!document.isNull() && document.isObject())
     {
         QJsonValue categoriesValue = document.object()["categories"];
-        if (!categoriesValue.isUndefined() && categoriesValue.isArray())
+        if (categoriesValue.isArray())
         {
             foreach (const QJsonValue & categoryValue, categoriesValue.toArray())
             {
@@ -41,19 +41,19 @@ UpworkCategory * UpworkCategoryReader::getCategory(const QJsonValue & categoryVa
         QJsonObject categoryObject = categoryValue.toObject();
 
         QJsonValue idValue = categoryObject["id"];
-        if (!idValue.isUndefined() && idValue.isString())
+        if (idValue.isString())
         {
             category->setCategoryId(idValue.toString());
         }
 
         QJsonValue titleValue = categoryObject["title"];
-        if (!titleValue.isUndefined() && titleValue.isString())
+        if (titleValue.isString())
         {
             category->setTitle(titleValue.toString());
         }
 
         QJsonValue topicsValue = categoryObject["topics"];
-        if (!topicsValue.isUndefined() && topicsValue.isArray())
+        if (topicsValue.isArray())
         {
             foreach (const QJsonValue & subcategoryValue, topicsValue.toArray())
             {

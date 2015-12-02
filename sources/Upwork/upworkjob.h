@@ -28,6 +28,8 @@ public:
     void setBudget(int budget);
     virtual const QDateTime & postedDate() const override;
     void setPostedDate(const QDateTime & postedDate);
+    virtual QStringList skills() const override;
+    void addSkill(const QString & skill);
 
 private:
     QString m_jobId;
@@ -36,6 +38,7 @@ private:
     JobType m_type;
     int m_budget = -1;
     QDateTime m_postedDate;
+    QStringList m_skills;
 };
 
 } // namespace Upwork

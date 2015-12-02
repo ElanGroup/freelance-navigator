@@ -66,3 +66,13 @@ void UpworkJob::setPostedDate(const QDateTime & postedDate)
 {
     m_postedDate = postedDate;
 }
+
+QStringList UpworkJob::skills() const
+{
+    return m_skills;
+}
+
+void UpworkJob::addSkill(const QString & skill)
+{
+    m_skills.append(skill);
+}

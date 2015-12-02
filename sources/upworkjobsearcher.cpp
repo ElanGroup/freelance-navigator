@@ -44,7 +44,7 @@ QList<QSharedPointer<Job>> UpworkJobSearcher::filterJobs(const QList<QSharedPoin
     QList<QSharedPointer<Job>> filteredJobs;
     foreach (const QSharedPointer<Job> & job, jobs)
     {
-        if (checkPostedDate(job))
+        if (checkPostedDate(job) && checkSearchQuery(job))
         {
             filteredJobs.append(job);
         }
@@ -78,4 +78,12 @@ bool UpworkJobSearcher::checkPostedDate(const QSharedPointer<Job> & job) const
 bool UpworkJobSearcher::checkDateRange(const QDateTime & date, int days)
 {
     return date.addDays(days) >= QDateTime::currentDateTimeUtc();
+}
+
+bool UpworkJobSearcher::checkSearchQuery(const QSharedPointer<Job> & job) const
+{
+    return m_searchParameters.searchQuery().isEmpty() ||
+           job->title().contains(m_searchParameters.searchQuery(), Qt::CaseInsensitive) ||
+           job->description().contains(m_searchParameters.searchQuery(), Qt::CaseInsensitive) ||
+           job->skills().contains(m_searchParameters.searchQuery(), Qt::CaseInsensitive);
 }

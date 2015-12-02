@@ -36,6 +36,7 @@ private:
     QList<QSharedPointer<Job>> filterJobs(const QList<QSharedPointer<Job>> & jobs) const;
     bool checkPostedDate(const QSharedPointer<Job> & job) const;
     static bool checkDateRange(const QDateTime & date, int days);
+    bool checkSearchQuery(const QSharedPointer<Job> & job) const;
 
     Upwork::UpworkApiClient * m_upworkApiClient;
     Upwork::UpworkSearchJobParameters m_searchParameters;

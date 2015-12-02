@@ -29,7 +29,7 @@ std::unique_ptr<UpworkJobPage> UpworkJobReader::readJobPage(QNetworkReply * repl
 void UpworkJobReader::getJobs(UpworkJobPage * const jobPage, const QJsonObject & jobPageObject)
 {
     QJsonValue jobsValue = jobPageObject["jobs"];
-    if (!jobsValue.isUndefined() && jobsValue.isArray())
+    if (jobsValue.isArray())
     {
         foreach (const QJsonValue & jobValue, jobsValue.toArray())
         {
@@ -50,39 +50,51 @@ UpworkJob * UpworkJobReader::getJob(const QJsonValue & jobValue)
         QJsonObject jobObject = jobValue.toObject();
 
         QJsonValue idValue = jobObject["id"];
-        if (!idValue.isUndefined() && idValue.isString())
+        if (idValue.isString())
         {
             job->setJobId(idValue.toString());
         }
 
         QJsonValue titleValue = jobObject["title"];
-        if (!titleValue.isUndefined() && titleValue.isString())
+        if (titleValue.isString())
         {
             job->setTitle(titleValue.toString());
         }
 
         QJsonValue descriptionValue = jobObject["snippet"];
-        if (!descriptionValue.isUndefined() && descriptionValue.isString())
+        if (descriptionValue.isString())
         {
             job->setDescription(descriptionValue.toString());
         }
 
         QJsonValue typeValue = jobObject["job_type"];
-        if (!typeValue.isUndefined() && typeValue.isString())
+        if (typeValue.isString())
         {
             job->setType(typeValue.toString() == "Fixed" ? JobType::Fixed : JobType::Hourly);
         }
 
         QJsonValue budgetValue = jobObject["budget"];
-        if (!budgetValue.isUndefined() && budgetValue.isDouble())
+        if (budgetValue.isDouble())
         {
             job->setBudget(budgetValue.toInt());
         }
 
         QJsonValue dateCreatedValue = jobObject["date_created"];
-        if (!dateCreatedValue.isUndefined() && dateCreatedValue.isString())
+        if (dateCreatedValue.isString())
         {
             job->setPostedDate(QDateTime::fromString(dateCreatedValue.toString(), Qt::ISODate));
+        }
+
+        QJsonValue skillsValue = jobObject["skills"];
+        if (skillsValue.isArray())
+        {
+            foreach (const QJsonValue & skillValue, skillsValue.toArray())
+            {
+                if (skillValue.isString())
+                {
+                    job->addSkill(skillValue.toString());
+                }
+            }
         }
     }
     return job;
@@ -97,24 +109,24 @@ void UpworkJobReader::getPagingData(UpworkJobPage * const jobPage,
                                     const QJsonObject & jobPageObject)
 {
     QJsonValue pagingValue = jobPageObject["paging"];
-    if (!pagingValue.isUndefined() && pagingValue.isObject())
+    if (pagingValue.isObject())
     {
         QJsonObject pagingObject = pagingValue.toObject();
 
         QJsonValue offsetValue = pagingObject["offset"];
-        if (!offsetValue.isUndefined() && offsetValue.isDouble())
+        if (offsetValue.isDouble())
         {
             jobPage->setOffset(offsetValue.toInt());
         }
 
         QJsonValue countValue = pagingObject["count"];
-        if (!countValue.isUndefined() && countValue.isDouble())
+        if (countValue.isDouble())
         {
             jobPage->setCount(countValue.toInt());
         }
 
         QJsonValue totalValue = pagingObject["total"];
-        if (!totalValue.isUndefined() && totalValue.isDouble())
+        if (totalValue.isDouble())
         {
             jobPage->setTotal(totalValue.toInt());
         }
