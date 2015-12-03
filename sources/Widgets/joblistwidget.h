@@ -27,8 +27,14 @@ public:
     void clear();
     void addJobs(const QList<QSharedPointer<Job>> & jobs);
 
+signals:
+    void jobOpenned(const QSharedPointer<Job> & job);
+
 protected:
     virtual void resizeEvent(QResizeEvent * event) override;
+
+private slots:
+    void onDoubleClick(const QModelIndex & index);
 
 private:
     QListView * m_jobListView;

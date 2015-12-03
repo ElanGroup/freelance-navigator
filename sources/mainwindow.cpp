@@ -2,6 +2,7 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QDesktopServices>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "aboutdialog.h"
@@ -12,6 +13,7 @@
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Upwork;
+using namespace FreelanceNavigator::Widgets;
 
 MainWindow::MainWindow(QWidget * parent) :
     QMainWindow(parent),
@@ -49,6 +51,7 @@ void MainWindow::setupConnections()
             this, &MainWindow::loadUpworkCategories);
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
+    connect(ui->upworkJobListWidget, &JobListWidget::jobOpenned, this, &MainWindow::openUpworkJob);
 }
 
 void MainWindow::setupUpworkFilters()
@@ -196,7 +199,8 @@ void MainWindow::searchUpworkJobs()
                                                          ui->upworkJobListWidget,
                                                          this);
     connect(searcher, &JobSearcher::searchFinished, this, &MainWindow::finishUpworkJobSearch);
-    connect(searcher, &JobSearcher::maxJobCountReached, this, &MainWindow::processMaxJobCount);
+    connect(searcher, &JobSearcher::maxJobCountReached,
+            this, &MainWindow::processUpworkMaxJobCount);
     searcher->search();
 }
 
@@ -258,9 +262,14 @@ void MainWindow::finishUpworkJobSearch()
     updateUpworkSearchButtonState();
 }
 
-void MainWindow::processMaxJobCount(int count)
+void MainWindow::processUpworkMaxJobCount(int count)
 {
     QMessageBox::information(this,
                              tr("Attention"),
                              tr("Too many jobs were found. Searching was stopped after first %1 jobs loading.").arg(count));
+}
+
+void MainWindow::openUpworkJob(const QSharedPointer<Job> & job) const
+{
+    QDesktopServices::openUrl(job->url());
 }

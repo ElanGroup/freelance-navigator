@@ -76,3 +76,13 @@ void UpworkJob::addSkill(const QString & skill)
 {
     m_skills.append(skill);
 }
+
+QString UpworkJob::url() const
+{
+    return m_url;
+}
+
+void UpworkJob::setUrl(const QString & url)
+{
+    m_url = url;
+}

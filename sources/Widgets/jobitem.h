@@ -25,6 +25,7 @@ public:
     JobItem(const JobItem &) = delete;
     JobItem & operator=(const JobItem &) = delete;
 
+    QSharedPointer<Job> job() const;
     QSize sizeHint(const QStyleOptionViewItem & option);
     void paint(QPainter * painter, const QStyleOptionViewItem & option);
 

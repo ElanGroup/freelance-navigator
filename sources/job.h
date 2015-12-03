@@ -25,6 +25,7 @@ public:
     virtual int budget() const = 0;
     virtual const QDateTime & postedDate() const = 0;
     virtual QStringList skills() const = 0;
+    virtual QString url() const = 0;
 };
 
 } // namespace FreelanceNavigator

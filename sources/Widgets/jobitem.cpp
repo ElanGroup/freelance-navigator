@@ -24,6 +24,11 @@ JobItem::JobItem(const QSharedPointer<Job> job, QPaintDevice * paintDevice) :
 {
 }
 
+QSharedPointer<Job> JobItem::job() const
+{
+    return m_job;
+}
+
 QSize JobItem::sizeHint(const QStyleOptionViewItem & option)
 {
     if (m_size.width() == option.rect.width())

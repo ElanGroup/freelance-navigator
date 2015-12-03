@@ -96,13 +96,22 @@ UpworkJob * UpworkJobReader::getJob(const QJsonValue & jobValue)
                 }
             }
         }
+
+        QJsonValue urlValue = jobObject["url"];
+        if (urlValue.isString())
+        {
+            job->setUrl(urlValue.toString());
+        }
     }
     return job;
 }
 
 bool UpworkJobReader::checkIsValidJob(const UpworkJob * const job)
 {
-    return !job->jobId().isEmpty() && !job->title().isEmpty() && !job->description().isEmpty();
+    return !job->jobId().isEmpty() &&
+           !job->title().isEmpty() &&
+           !job->description().isEmpty() &&
+           !job->url().isEmpty();
 }
 
 void UpworkJobReader::getPagingData(UpworkJobPage * const jobPage,

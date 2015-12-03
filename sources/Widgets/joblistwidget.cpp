@@ -6,6 +6,7 @@
 #include "job.h"
 #include "jobitemdelegate.h"
 #include "joblistmodel.h"
+#include "jobitem.h"
 
 using namespace FreelanceNavigator;
 using namespace FreelanceNavigator::Widgets;
@@ -24,6 +25,8 @@ JobListWidget::JobListWidget(QWidget * parent) :
     layout->setMargin(0);
     layout->addWidget(m_jobListView);
     setLayout(layout);
+
+    connect(m_jobListView, &QListView::doubleClicked, this, &JobListWidget::onDoubleClick);
 }
 
 JobListWidget::~JobListWidget()
@@ -46,4 +49,12 @@ void JobListWidget::resizeEvent(QResizeEvent * event)
 
     // Force job items size recalculation on widget resize.
     m_jobListView->doItemsLayout();
+}
+
+void JobListWidget::onDoubleClick(const QModelIndex & index)
+{
+    QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem>>(index.data());
+    Q_ASSERT(jobItem);
+
+    emit jobOpenned(jobItem->job());
 }

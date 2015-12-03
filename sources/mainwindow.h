@@ -38,7 +38,8 @@ private slots:
     void updateUpworkSubcategories(int categoryIndex);
     void searchUpworkJobs();
     void finishUpworkJobSearch();
-    void processMaxJobCount(int count);
+    void processUpworkMaxJobCount(int count);
+    void openUpworkJob(const QSharedPointer<Job> & job) const;
 
 private:
     void setupConnections();

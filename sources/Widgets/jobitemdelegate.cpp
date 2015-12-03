@@ -16,7 +16,7 @@ void JobItemDelegate::paint(QPainter * painter,
     // Paint background.
     QStyledItemDelegate::paint(painter, option, index);
 
-    QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem> >(index.data());
+    QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem>>(index.data());
     Q_ASSERT(jobItem);
 
     jobItem->paint(painter, option);
@@ -25,7 +25,7 @@ void JobItemDelegate::paint(QPainter * painter,
 QSize JobItemDelegate::sizeHint(const QStyleOptionViewItem & option,
                                 const QModelIndex & index) const
 {
-    QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem> >(index.data());
+    QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem>>(index.data());
     Q_ASSERT(jobItem);
 
     return jobItem->sizeHint(option);
