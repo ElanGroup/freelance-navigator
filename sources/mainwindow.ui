@@ -195,6 +195,19 @@
            </layout>
           </item>
           <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QLineEdit" name="upworkSearchLineEdit">
             <property name="placeholderText">
              <string>Search query</string>
@@ -235,6 +248,8 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionUpworkLogIn"/>
+    <addaction name="actionUpworkLogOut"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -255,6 +270,19 @@
   <action name="actionAbout">
    <property name="text">
     <string>About &amp;Freelance Navigator...</string>
+   </property>
+  </action>
+  <action name="actionUpworkLogIn">
+   <property name="text">
+    <string>Log in to Upwork</string>
+   </property>
+  </action>
+  <action name="actionUpworkLogOut">
+   <property name="text">
+    <string>Log out from Upwork</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

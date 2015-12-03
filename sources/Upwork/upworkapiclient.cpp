@@ -32,6 +32,11 @@ UpworkApiClient::~UpworkApiClient()
     delete m_requestFactory;
 }
 
+bool UpworkApiClient::isLoggedIn() const
+{
+    return !m_accessToken.isEmpty() && !m_accessTokenSecret.isEmpty();
+}
+
 void UpworkApiClient::initialize()
 {
     m_accessToken = m_settings->upworkAccessToken();
@@ -210,6 +215,14 @@ void UpworkApiClient::stopSearchJobs()
     m_stopJobSearching = true;
 }
 
+void UpworkApiClient::logOut()
+{
+    stopSearchJobs();
+    m_accessToken.clear();
+    m_accessTokenSecret.clear();
+    m_settings->removeUpworkAccessToken();
+}
+
 void UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)
 {
     if (errorHandler.isConnectionError())
@@ -218,7 +231,7 @@ void UpworkApiClient::processError(const UpworkErrorHandler & errorHandler)
     }
     else if (errorHandler.isAuthenticationError())
     {
-        m_settings->removeUpworkAccessToken();
+        logOut();
         emit error(UpworkApiError::AuthenticationError);
     }
     else

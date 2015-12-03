@@ -41,6 +41,9 @@ void MainWindow::setupConnections()
 {
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(ui->actionUpworkLogIn, &QAction::triggered,
+            m_upworkApiClient, &UpworkApiClient::initialize);
+    connect(ui->actionUpworkLogOut, &QAction::triggered, this, &MainWindow::logoutFromUpwork);
     connect(ui->upworkJobTypeComboBox,
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &MainWindow::upworkJobTypeChanged);
@@ -48,7 +51,7 @@ void MainWindow::setupConnections()
     connect(m_upworkApiClient, &UpworkApiClient::error, this, &MainWindow::processUpworkError);
     connect(m_upworkApiClient, &UpworkApiClient::warning, this, &MainWindow::processUpworkWarning);
     connect(m_upworkApiClient, &UpworkApiClient::initialized,
-            this, &MainWindow::loadUpworkCategories);
+            this, &MainWindow::processUpworkInitialization);
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
     connect(ui->upworkJobListWidget, &JobListWidget::jobOpenned, this, &MainWindow::openUpworkJob);
@@ -105,6 +108,7 @@ void MainWindow::processUpworkError(UpworkApiError error)
         message = tr("Connection error. Please check your internet connection.");
         break;
     case UpworkApiError::AuthenticationError:
+        logoutFromUpwork();
         message = tr("Upwork authentication error. Could you please log in to Upwork service again?");
         break;
     case UpworkApiError::ServiceError:
@@ -116,18 +120,21 @@ void MainWindow::processUpworkError(UpworkApiError error)
 
 void MainWindow::processUpworkWarning(UpworkApiWarning warning)
 {
+    ui->statusBar->clearMessage();
+
     QString message;
     switch (warning)
     {
     case UpworkApiWarning::AuthorizationRequired:
-        message = tr("Upwork authorization was not finished. You should log in to Upwork service.");
+        message = tr("Upwork authorization was not finished. You should login to Upwork service.");
         break;
     }
     QMessageBox::warning(this, tr("Warning"), message);
 }
 
-void MainWindow::loadUpworkCategories()
+void MainWindow::processUpworkInitialization()
 {
+    updateUpworkActions(true);
     ui->statusBar->showMessage(tr("Load categories..."));
     m_upworkApiClient->loadCategories();
 }
@@ -272,4 +279,20 @@ void MainWindow::processUpworkMaxJobCount(int count)
 void MainWindow::openUpworkJob(const QSharedPointer<Job> & job) const
 {
     QDesktopServices::openUrl(job->url());
+}
+
+void MainWindow::logoutFromUpwork()
+{
+    updateUpworkActions(false);
+    m_upworkApiClient->logOut();
+    ui->upworkCategoryComboBox->clear();
+    ui->upworkSubcategoryListWidget->clear();
+    ui->upworkJobListWidget->clear();
+    updateUpworkSearchButtonState();
+}
+
+void MainWindow::updateUpworkActions(bool isLoggedIn)
+{
+    ui->actionUpworkLogIn->setVisible(!isLoggedIn);
+    ui->actionUpworkLogOut->setVisible(isLoggedIn);
 }

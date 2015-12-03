@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QWebEngineProfile>
 #include <QWebEngineView>
 #include <QLayout>
 #include <QProgressBar>
@@ -16,6 +17,8 @@ AuthorizationDialog::AuthorizationDialog(const QString & serviceName,
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowState(windowState() | Qt::WindowMaximized);
     setWindowTitle(tr("Freelance Navigator - %1 authorization").arg(serviceName));
+
+    m_webView->setPage(new QWebEnginePage(new QWebEngineProfile(this), m_webView));
 
     m_progressBar->setTextVisible(false);
 

@@ -28,10 +28,12 @@ public:
     UpworkApiClient(const UpworkApiClient &) = delete;
     UpworkApiClient & operator=(const UpworkApiClient &) = delete;
 
+    bool isLoggedIn() const;
     void initialize();
     void loadCategories();
     void searchJobs(const UpworkSearchJobParameters & parameters);
     void stopSearchJobs();
+    void logOut();
 
 signals:
     void error(UpworkApiError error) const;

@@ -33,13 +33,14 @@ private slots:
     void upworkJobTypeChanged(int index);
     void processUpworkError(Upwork::UpworkApiError error);
     void processUpworkWarning(Upwork::UpworkApiWarning warning);
-    void loadUpworkCategories();
+    void processUpworkInitialization();
     void fillUpworkCategories(const QList<QSharedPointer<Upwork::UpworkCategory>> & categories);
     void updateUpworkSubcategories(int categoryIndex);
     void searchUpworkJobs();
     void finishUpworkJobSearch();
     void processUpworkMaxJobCount(int count);
     void openUpworkJob(const QSharedPointer<Job> & job) const;
+    void logoutFromUpwork();
 
 private:
     void setupConnections();
@@ -48,6 +49,7 @@ private:
     void updateUpworkSearchButtonState();
     void fillUpworkSubcategories(int categoryIndex, bool loadSettings);
     Upwork::UpworkSearchJobParameters upworkSearchJobParameters() const;
+    void updateUpworkActions(bool isLoggedIn);
 
     Ui::MainWindow * ui;
     Settings * m_settings;
