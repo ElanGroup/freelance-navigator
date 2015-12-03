@@ -217,6 +217,10 @@ void UpworkApiClient::stopSearchJobs()
 
 void UpworkApiClient::logOut()
 {
+    if (!isLoggedIn())
+    {
+        return;
+    }
     stopSearchJobs();
     m_accessToken.clear();
     m_accessTokenSecret.clear();

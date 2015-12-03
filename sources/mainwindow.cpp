@@ -43,7 +43,7 @@ void MainWindow::setupConnections()
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->actionUpworkLogIn, &QAction::triggered,
             m_upworkApiClient, &UpworkApiClient::initialize);
-    connect(ui->actionUpworkLogOut, &QAction::triggered, this, &MainWindow::logoutFromUpwork);
+    connect(ui->actionUpworkLogOut, &QAction::triggered, this, &MainWindow::logOutFromUpwork);
     connect(ui->upworkJobTypeComboBox,
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &MainWindow::upworkJobTypeChanged);
@@ -108,7 +108,7 @@ void MainWindow::processUpworkError(UpworkApiError error)
         message = tr("Connection error. Please check your internet connection.");
         break;
     case UpworkApiError::AuthenticationError:
-        logoutFromUpwork();
+        logOutFromUpwork();
         message = tr("Upwork authentication error. Could you please log in to Upwork service again?");
         break;
     case UpworkApiError::ServiceError:
@@ -135,8 +135,12 @@ void MainWindow::processUpworkWarning(UpworkApiWarning warning)
 void MainWindow::processUpworkInitialization()
 {
     updateUpworkActions(true);
-    ui->statusBar->showMessage(tr("Load categories..."));
-    m_upworkApiClient->loadCategories();
+    updateUpworkSearchButtonState();
+    if (ui->upworkCategoryComboBox->count() == 0)
+    {
+        ui->statusBar->showMessage(tr("Load categories..."));
+        m_upworkApiClient->loadCategories();
+    }
 }
 
 void MainWindow::fillUpworkCategories(const QList<QSharedPointer<UpworkCategory>> & categories)
@@ -255,7 +259,8 @@ UpworkSearchJobParameters MainWindow::upworkSearchJobParameters() const
 
 void MainWindow::updateUpworkSearchButtonState()
 {
-    bool enable = ui->upworkCategoryComboBox->currentIndex() > -1;
+    bool enable = m_upworkApiClient->isLoggedIn() &&
+                  ui->upworkCategoryComboBox->currentIndex() > -1;
     ui->upworkSearchButton->setEnabled(enable);
 }
 
@@ -281,14 +286,12 @@ void MainWindow::openUpworkJob(const QSharedPointer<Job> & job) const
     QDesktopServices::openUrl(job->url());
 }
 
-void MainWindow::logoutFromUpwork()
+void MainWindow::logOutFromUpwork()
 {
     updateUpworkActions(false);
-    m_upworkApiClient->logOut();
-    ui->upworkCategoryComboBox->clear();
-    ui->upworkSubcategoryListWidget->clear();
-    ui->upworkJobListWidget->clear();
     updateUpworkSearchButtonState();
+    m_upworkApiClient->logOut();
+    ui->upworkJobListWidget->clear();
 }
 
 void MainWindow::updateUpworkActions(bool isLoggedIn)

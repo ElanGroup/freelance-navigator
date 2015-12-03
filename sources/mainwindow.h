@@ -40,7 +40,7 @@ private slots:
     void finishUpworkJobSearch();
     void processUpworkMaxJobCount(int count);
     void openUpworkJob(const QSharedPointer<Job> & job) const;
-    void logoutFromUpwork();
+    void logOutFromUpwork();
 
 private:
     void setupConnections();
