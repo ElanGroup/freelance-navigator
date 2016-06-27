@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 #include "Upwork/upworksearchjobparameters.h"
 
 namespace Ui
@@ -29,6 +30,9 @@ public:
     explicit MainWindow(QWidget * parent = 0);
     ~MainWindow();
 
+protected:
+    virtual void closeEvent(QCloseEvent * event) override;
+
 private slots:
     void upworkJobTypeChanged(int index);
     void processUpworkError(Upwork::UpworkApiError error);
@@ -41,8 +45,11 @@ private slots:
     void processUpworkMaxJobCount(int count);
     void openUpworkJob(const QSharedPointer<Job> & job) const;
     void logOutFromUpwork();
+    void restoreWindow();
+    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
+    void createTrayIcon();
     void setupConnections();
     void setupUpworkFilters();
     void showAbout();
@@ -55,6 +62,9 @@ private:
     Settings * m_settings;
     Upwork::UpworkApiClient * m_upworkApiClient;
     QHash<QString, QList<QSharedPointer<Upwork::UpworkCategory>>> m_upworkSubcategories;
+    QSystemTrayIcon * m_trayIcon;
+    QMenu * m_trayIconMenu;
+    QAction * m_actionRestore;
 };
 }
 

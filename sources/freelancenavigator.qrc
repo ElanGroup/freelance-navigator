@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>Resources/upwork-api.ini</file>
+        <file>Resources/FreelanceNavigator.ico</file>
     </qresource>
 </RCC>

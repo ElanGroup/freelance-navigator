@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget * parent) :
     ui->setupUi(this);
     setWindowState(windowState() | Qt::WindowMaximized);
 
+    createTrayIcon();
     setupConnections();
     setupUpworkFilters();
 
@@ -37,9 +38,29 @@ MainWindow::~MainWindow()
     delete m_settings;
 }
 
+void MainWindow::closeEvent(QCloseEvent * event)
+{
+    hide();
+    m_trayIcon->show();
+    event->ignore();
+}
+
+void MainWindow::createTrayIcon()
+{
+    m_actionRestore = new QAction(tr("Open Freelance Navigator"), this);
+
+    m_trayIconMenu = new QMenu(this);
+    m_trayIconMenu->addAction(m_actionRestore);
+    m_trayIconMenu->addAction(ui->actionExit);
+
+    m_trayIcon = new QSystemTrayIcon(QIcon(":/Resources/FreelanceNavigator.ico"), this);
+    m_trayIcon->setContextMenu(m_trayIconMenu);
+    m_trayIcon->setToolTip(tr("Freelance Navigator"));
+}
+
 void MainWindow::setupConnections()
 {
-    connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
+    connect(ui->actionExit, &QAction::triggered, qApp, &QCoreApplication::quit);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->actionUpworkLogIn, &QAction::triggered,
             m_upworkApiClient, &UpworkApiClient::initialize);
@@ -55,6 +76,8 @@ void MainWindow::setupConnections()
     connect(m_upworkApiClient, &UpworkApiClient::categoriesLoaded,
             this, &MainWindow::fillUpworkCategories);
     connect(ui->upworkJobListWidget, &JobListWidget::jobOpenned, this, &MainWindow::openUpworkJob);
+    connect(m_actionRestore, &QAction::triggered, this, &MainWindow::restoreWindow);
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivated);
 }
 
 void MainWindow::setupUpworkFilters()
@@ -298,4 +321,21 @@ void MainWindow::updateUpworkActions(bool isLoggedIn)
 {
     ui->actionUpworkLogIn->setVisible(!isLoggedIn);
     ui->actionUpworkLogOut->setVisible(isLoggedIn);
+}
+
+void MainWindow::restoreWindow()
+{
+    m_trayIcon->hide();
+    show();
+}
+
+void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason)
+    {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+        restoreWindow();
+        break;
+    }
 }
