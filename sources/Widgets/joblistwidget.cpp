@@ -2,6 +2,7 @@
 #include <QStandardItemModel>
 #include <QListView>
 #include <QVBoxLayout>
+#include <QMenu>
 #include "joblistwidget.h"
 #include "job.h"
 #include "jobitemdelegate.h"
@@ -20,13 +21,16 @@ JobListWidget::JobListWidget(QWidget * parent) :
     m_jobListView->setItemDelegate(new JobItemDelegate(this));
     m_jobListView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_jobListView->setResizeMode(QListView::Adjust);
+    m_jobListView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QVBoxLayout * layout = new QVBoxLayout();
     layout->setMargin(0);
     layout->addWidget(m_jobListView);
     setLayout(layout);
 
-    connect(m_jobListView, &QListView::doubleClicked, this, &JobListWidget::onDoubleClick);
+    connect(m_jobListView, &QListView::doubleClicked, this, &JobListWidget::openJob);
+    connect(m_jobListView, &QWidget::customContextMenuRequested,
+            this, &JobListWidget::showContextMenu);
 }
 
 JobListWidget::~JobListWidget()
@@ -51,7 +55,23 @@ void JobListWidget::resizeEvent(QResizeEvent * event)
     m_jobListView->doItemsLayout();
 }
 
-void JobListWidget::onDoubleClick(const QModelIndex & index)
+void JobListWidget::showContextMenu(const QPoint & pos)
+{
+    QModelIndex index = m_jobListView->indexAt(pos);
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    QMenu menu;
+    QAction * openInBrowserAction = menu.addAction(tr("Open in browser"));
+    connect(openInBrowserAction, &QAction::triggered, [=]() { openJob(index); });
+
+    QPoint globalPos = m_jobListView->mapToGlobal(pos);
+    menu.exec(globalPos);
+}
+
+void JobListWidget::openJob(const QModelIndex & index)
 {
     QSharedPointer<JobItem> jobItem = qvariant_cast<QSharedPointer<JobItem>>(index.data());
     Q_ASSERT(jobItem);

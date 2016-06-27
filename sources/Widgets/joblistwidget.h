@@ -34,7 +34,8 @@ protected:
     virtual void resizeEvent(QResizeEvent * event) override;
 
 private slots:
-    void onDoubleClick(const QModelIndex & index);
+    void openJob(const QModelIndex & index);
+    void showContextMenu(const QPoint & pos);
 
 private:
     QListView * m_jobListView;
